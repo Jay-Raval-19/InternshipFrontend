@@ -1,83 +1,165 @@
 
-import React from 'react';
-import { Button } from '@/components/ui/button';
+import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
-import { MessageCircle, Search, BarChart3, CheckCircle, ArrowRight } from 'lucide-react';
+import { MessageCircle, Search, FileText, BarChart, CheckCircle } from 'lucide-react';
 
 const HowItWorks = () => {
-  const handleGetStarted = () => {
-    window.open('https://wa.me/1234567890?text=Hello%20Tradio,%20I%20would%20like%20to%20get%20started', '_blank');
-  };
+  const [activeStep, setActiveStep] = useState(0);
 
   const steps = [
     {
-      step: 1,
+      id: 1,
+      title: "Send Your Requirement",
+      description: "Message us on WhatsApp with your chemical procurement needs in any language",
       icon: MessageCircle,
-      title: "Send Your Requirements",
-      description: "Simply message our WhatsApp agent with your chemical requirements, specifications, and delivery location.",
-      color: "bg-green-500"
+      color: "bg-blue-500",
+      message: "I need 500kg of Sodium Hydroxide with 99% purity for delivery in Mumbai by next month"
     },
     {
-      step: 2,
+      id: 2,
+      title: "AI Compiles Requirements",
+      description: "Our intelligent agent processes and standardizes your requirements",
       icon: Search,
-      title: "AI Finds Best Suppliers",
-      description: "Our AI instantly matches you with verified suppliers from our network of 500+ chemical distributors.",
-      color: "bg-blue-500"
+      color: "bg-blue-600",
+      message: "Processing your requirement for Sodium Hydroxide (NaOH)..."
     },
     {
-      step: 3,
-      icon: BarChart3,
-      title: "Compare & Analyze",
-      description: "Get real-time price comparisons, supplier ratings, and delivery timelines in an easy-to-understand format.",
-      color: "bg-purple-500"
+      id: 3,
+      title: "Suppliers Receive RFQ",
+      description: "Verified suppliers in our network receive detailed quotation requests",
+      icon: FileText,
+      color: "bg-blue-700",
+      message: "RFQ sent to 15 verified chemical suppliers in your region"
     },
     {
-      step: 4,
+      id: 4,
+      title: "Quotations Collected",
+      description: "Suppliers submit their best quotes with pricing and delivery terms",
+      icon: BarChart,
+      color: "bg-blue-800",
+      message: "8 quotations received. Analyzing prices and delivery timelines..."
+    },
+    {
+      id: 5,
+      title: "Comparison Report",
+      description: "Receive detailed comparison with supplier rankings and recommendations",
       icon: CheckCircle,
-      title: "Close the Deal",
-      description: "Choose your preferred supplier and complete the transaction with our secure payment and logistics support.",
-      color: "bg-orange-500"
+      color: "bg-green-600",
+      message: "📊 Your comparison report is ready! Best quote: ₹45/kg with 15-day delivery"
     }
   ];
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveStep((prev) => (prev + 1) % steps.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <section className="py-20 bg-gradient-to-b from-white to-blue-50">
+    <section className="py-20 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-blue-900 mb-4">How Tradio Works</h2>
-          <p className="text-xl text-blue-700 max-w-3xl mx-auto">
-            Experience the future of chemical procurement with our AI-powered WhatsApp agent. 
-            From inquiry to delivery in just 4 simple steps.
+          <p className="text-xl text-blue-700 max-w-2xl mx-auto">
+            Our AI-powered workflow simplifies chemical procurement from inquiry to decision
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-          {steps.map((step, index) => (
-            <Card key={index} className="relative p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
-              <div className={`${step.color} w-12 h-12 rounded-full flex items-center justify-center mb-4`}>
-                <step.icon className="h-6 w-6 text-white" />
+        <div className="max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Animated Phone Demo */}
+            <div className="relative">
+              <div className="bg-gray-800 rounded-3xl p-4 mx-auto w-80 shadow-2xl">
+                <div className="bg-white rounded-2xl p-4 h-96 overflow-hidden">
+                  <div className="flex items-center gap-2 mb-4 pb-4 border-b">
+                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                      <MessageCircle className="h-4 w-4 text-white" />
+                    </div>
+                    <div>
+                      <span className="font-semibold text-gray-800">Tradio AI</span>
+                      <div className="w-2 h-2 bg-green-500 rounded-full inline-block ml-2 animate-pulse"></div>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    {steps.map((step, index) => (
+                      <div
+                        key={step.id}
+                        className={`transition-all duration-500 transform ${
+                          index === activeStep 
+                            ? 'opacity-100 translate-y-0 scale-100' 
+                            : index < activeStep 
+                            ? 'opacity-50 -translate-y-2 scale-95' 
+                            : 'opacity-30 translate-y-2 scale-95'
+                        }`}
+                      >
+                        <div className={`p-3 rounded-lg ${
+                          index % 2 === 0 
+                            ? 'bg-blue-100 ml-auto max-w-xs' 
+                            : 'bg-gray-100 mr-auto max-w-xs'
+                        } shadow-sm`}>
+                          <p className="text-sm text-gray-800">{step.message}</p>
+                          <div className="text-xs text-gray-500 mt-1">
+                            {new Date().toLocaleTimeString()}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
-              <div className="absolute top-4 right-4 text-2xl font-bold text-gray-200">
-                {step.step}
+              
+              {/* Progress indicator */}
+              <div className="flex justify-center mt-4 space-x-2">
+                {steps.map((_, index) => (
+                  <div
+                    key={index}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                      index === activeStep ? 'bg-blue-600' : 'bg-gray-300'
+                    }`}
+                  />
+                ))}
               </div>
-              <h3 className="text-xl font-semibold text-blue-900 mb-3">{step.title}</h3>
-              <p className="text-blue-700">{step.description}</p>
-              {index < steps.length - 1 && (
-                <ArrowRight className="hidden lg:block absolute -right-4 top-1/2 transform -translate-y-1/2 h-8 w-8 text-blue-300" />
-              )}
-            </Card>
-          ))}
-        </div>
+            </div>
 
-        <div className="text-center">
-          <Button 
-            onClick={handleGetStarted}
-            size="lg" 
-            className="bg-green-500 hover:bg-green-600 text-white px-8 py-4 text-lg font-semibold"
-          >
-            <MessageCircle className="mr-2 h-5 w-5" />
-            Get Started on WhatsApp
-          </Button>
+            {/* Steps */}
+            <div className="space-y-6">
+              {steps.map((step, index) => (
+                <Card 
+                  key={step.id}
+                  className={`p-6 transition-all duration-300 cursor-pointer ${
+                    index === activeStep 
+                      ? 'border-blue-500 shadow-xl scale-105 bg-blue-50' 
+                      : 'border-gray-200 hover:border-blue-300 hover:shadow-lg'
+                  }`}
+                  onClick={() => setActiveStep(index)}
+                >
+                  <div className="flex items-start gap-4">
+                    <div className={`${step.color} p-3 rounded-lg transition-transform duration-300 ${
+                      index === activeStep ? 'scale-110' : ''
+                    }`}>
+                      <step.icon className="h-6 w-6 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-semibold text-blue-900 mb-2 flex items-center gap-2">
+                        <span className="bg-blue-100 text-blue-600 w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold">
+                          {step.id}
+                        </span>
+                        {step.title}
+                      </h3>
+                      <p className="text-blue-700">{step.description}</p>
+                      {index === activeStep && (
+                        <div className="mt-3 p-2 bg-blue-100 rounded text-sm text-blue-800 animate-fade-in">
+                          <strong>Current step:</strong> This is happening right now in the demo above
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>
