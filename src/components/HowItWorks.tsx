@@ -70,13 +70,16 @@ const HowItWorks = () => {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Animated Phone Demo */}
             <div className="relative">
-              <div className="bg-gray-800 rounded-3xl p-4 mx-auto w-80">
+              <div className="bg-gray-800 rounded-3xl p-4 mx-auto w-80 shadow-2xl">
                 <div className="bg-white rounded-2xl p-4 h-96 overflow-hidden">
                   <div className="flex items-center gap-2 mb-4 pb-4 border-b">
                     <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
                       <MessageCircle className="h-4 w-4 text-white" />
                     </div>
-                    <span className="font-semibold text-gray-800">Tradio AI</span>
+                    <div>
+                      <span className="font-semibold text-gray-800">Tradio AI</span>
+                      <div className="w-2 h-2 bg-green-500 rounded-full inline-block ml-2 animate-pulse"></div>
+                    </div>
                   </div>
                   
                   <div className="space-y-4">
@@ -85,23 +88,38 @@ const HowItWorks = () => {
                         key={step.id}
                         className={`transition-all duration-500 transform ${
                           index === activeStep 
-                            ? 'opacity-100 translate-y-0' 
+                            ? 'opacity-100 translate-y-0 scale-100' 
                             : index < activeStep 
-                            ? 'opacity-50 -translate-y-2' 
-                            : 'opacity-30 translate-y-2'
+                            ? 'opacity-50 -translate-y-2 scale-95' 
+                            : 'opacity-30 translate-y-2 scale-95'
                         }`}
                       >
                         <div className={`p-3 rounded-lg ${
                           index % 2 === 0 
                             ? 'bg-blue-100 ml-auto max-w-xs' 
                             : 'bg-gray-100 mr-auto max-w-xs'
-                        }`}>
+                        } shadow-sm`}>
                           <p className="text-sm text-gray-800">{step.message}</p>
+                          <div className="text-xs text-gray-500 mt-1">
+                            {new Date().toLocaleTimeString()}
+                          </div>
                         </div>
                       </div>
                     ))}
                   </div>
                 </div>
+              </div>
+              
+              {/* Progress indicator */}
+              <div className="flex justify-center mt-4 space-x-2">
+                {steps.map((_, index) => (
+                  <div
+                    key={index}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                      index === activeStep ? 'bg-blue-600' : 'bg-gray-300'
+                    }`}
+                  />
+                ))}
               </div>
             </div>
 
@@ -110,21 +128,32 @@ const HowItWorks = () => {
               {steps.map((step, index) => (
                 <Card 
                   key={step.id}
-                  className={`p-6 transition-all duration-300 ${
+                  className={`p-6 transition-all duration-300 cursor-pointer ${
                     index === activeStep 
-                      ? 'border-blue-500 shadow-lg scale-105' 
-                      : 'border-gray-200 hover:border-blue-300'
+                      ? 'border-blue-500 shadow-xl scale-105 bg-blue-50' 
+                      : 'border-gray-200 hover:border-blue-300 hover:shadow-lg'
                   }`}
+                  onClick={() => setActiveStep(index)}
                 >
                   <div className="flex items-start gap-4">
-                    <div className={`${step.color} p-3 rounded-lg`}>
+                    <div className={`${step.color} p-3 rounded-lg transition-transform duration-300 ${
+                      index === activeStep ? 'scale-110' : ''
+                    }`}>
                       <step.icon className="h-6 w-6 text-white" />
                     </div>
-                    <div>
-                      <h3 className="text-xl font-semibold text-blue-900 mb-2">
-                        {step.id}. {step.title}
+                    <div className="flex-1">
+                      <h3 className="text-xl font-semibold text-blue-900 mb-2 flex items-center gap-2">
+                        <span className="bg-blue-100 text-blue-600 w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold">
+                          {step.id}
+                        </span>
+                        {step.title}
                       </h3>
                       <p className="text-blue-700">{step.description}</p>
+                      {index === activeStep && (
+                        <div className="mt-3 p-2 bg-blue-100 rounded text-sm text-blue-800 animate-fade-in">
+                          <strong>Current step:</strong> This is happening right now in the demo above
+                        </div>
+                      )}
                     </div>
                   </div>
                 </Card>

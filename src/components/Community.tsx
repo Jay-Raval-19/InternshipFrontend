@@ -13,7 +13,7 @@ const Community = () => {
       date: "Dec 5, 2024",
       readTime: "5 min read",
       category: "Procurement",
-      image: "https://images.unsplash.com/photo-1518389077069-c10ba3c006a0?w=400&h=250&fit=crop&crop=center"
+      image: "https://images.unsplash.com/photo-1518389077069-c10ba3c006a0?w=400&h=250&fit=crop&crop=center&auto=format"
     },
     {
       id: 2,
@@ -22,7 +22,7 @@ const Community = () => {
       date: "Dec 3, 2024",
       readTime: "7 min read",
       category: "Digital Transformation",
-      image: "https://images.unsplash.com/photo-1560472355-536de3962603?w=400&h=250&fit=crop&crop=center"
+      image: "https://images.unsplash.com/photo-1560472355-536de3962603?w=400&h=250&fit=crop&crop=center&auto=format"
     },
     {
       id: 3,
@@ -31,7 +31,7 @@ const Community = () => {
       date: "Nov 28, 2024",
       readTime: "6 min read",
       category: "Risk Management",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=250&fit=crop&crop=center"
+      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=250&fit=crop&crop=center&auto=format"
     },
     {
       id: 4,
@@ -40,7 +40,7 @@ const Community = () => {
       date: "Nov 25, 2024",
       readTime: "8 min read",
       category: "Cost Management",
-      image: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=250&fit=crop&crop=center"
+      image: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=250&fit=crop&crop=center&auto=format"
     },
     {
       id: 5,
@@ -49,7 +49,7 @@ const Community = () => {
       date: "Nov 22, 2024",
       readTime: "6 min read",
       category: "Sustainability",
-      image: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400&h=250&fit=crop&crop=center"
+      image: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400&h=250&fit=crop&crop=center&auto=format"
     },
     {
       id: 6,
@@ -58,7 +58,7 @@ const Community = () => {
       date: "Nov 20, 2024",
       readTime: "10 min read",
       category: "Market Analysis",
-      image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400&h=250&fit=crop&crop=center"
+      image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400&h=250&fit=crop&crop=center&auto=format"
     }
   ];
 
@@ -74,12 +74,15 @@ const Community = () => {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
           {blogs.map((blog) => (
-            <Card key={blog.id} className="overflow-hidden bg-white hover:shadow-lg transition-shadow duration-300">
+            <Card key={blog.id} className="overflow-hidden bg-white hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
               <div className="relative h-48 overflow-hidden">
                 <img 
                   src={blog.image} 
                   alt={blog.title}
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  onError={(e) => {
+                    e.currentTarget.src = "https://images.unsplash.com/photo-1518389077069-c10ba3c006a0?w=400&h=250&fit=crop&crop=center&auto=format";
+                  }}
                 />
                 <div className="absolute top-4 left-4">
                   <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
@@ -96,7 +99,7 @@ const Community = () => {
                   <span>{blog.readTime}</span>
                 </div>
                 
-                <h3 className="text-xl font-semibold text-blue-900 mb-3 line-clamp-2">
+                <h3 className="text-xl font-semibold text-blue-900 mb-3 line-clamp-2 hover:text-blue-600 transition-colors">
                   {blog.title}
                 </h3>
                 
@@ -104,9 +107,9 @@ const Community = () => {
                   {blog.excerpt}
                 </p>
                 
-                <Button variant="ghost" className="text-blue-600 hover:text-blue-700 p-0 h-auto">
+                <Button variant="ghost" className="text-blue-600 hover:text-blue-700 p-0 h-auto group">
                   Read More
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </div>
             </Card>
@@ -117,7 +120,7 @@ const Community = () => {
           <Button 
             variant="outline" 
             size="lg"
-            className="border-blue-600 text-blue-600 hover:bg-blue-50"
+            className="border-blue-600 text-blue-600 hover:bg-blue-50 hover:border-blue-700"
           >
             View All Articles
           </Button>
