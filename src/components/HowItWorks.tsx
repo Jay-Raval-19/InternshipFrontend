@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { FileText, MessageCircle, CheckCircle2, Truck, Package } from 'lucide-react';
@@ -8,8 +9,9 @@ const HowItWorks = () => {
   const [showPdf, setShowPdf] = useState(false);
   const containerRef = useRef(null);
   const phoneRef = useRef(null);
-  const chatMessagesRef = useRef(null);
   const messagesRef = useRef([]);
+  const timelineRef = useRef(null);
+  const intervalRef = useRef(null);
 
   const steps = [
     {
@@ -45,99 +47,122 @@ const HowItWorks = () => {
   ];
 
   useEffect(() => {
-    // Initialize messages
+    // Kill any existing animations
+    if (timelineRef.current) {
+      timelineRef.current.kill();
+    }
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+
+    // Initialize all messages as hidden
     messagesRef.current.forEach((message) => {
       if (message) {
-        gsap.set(message, { opacity: 0, y: 20 });
+        gsap.set(message, { opacity: 0, y: 20, scale: 0.9 });
       }
     });
 
-    // Simple fade in for container
+    // Create main timeline
+    timelineRef.current = gsap.timeline({ repeat: -1, repeatDelay: 1 });
+
+    // Container and phone initial animation
+    gsap.set(containerRef.current, { opacity: 0, y: 30 });
+    gsap.set(phoneRef.current, { opacity: 0, scale: 0.8 });
+
     gsap.to(containerRef.current, {
       opacity: 1,
       y: 0,
-      duration: 1,
+      duration: 0.8,
       ease: "power2.out"
     });
 
-    // Simple fade in for phone
     gsap.to(phoneRef.current, {
       opacity: 1,
       scale: 1,
-      duration: 1,
-      ease: "power2.out",
-      onComplete: startMessageSequence
+      duration: 0.8,
+      delay: 0.2,
+      ease: "back.out(1.7)",
+      onComplete: startMessageAnimation
     });
 
-    function startMessageSequence() {
-      let currentIndex = 0;
-
-      function showNextMessage() {
-        if (currentIndex >= steps.length) {
-          // Reset and start over
-          currentIndex = 0;
-          messagesRef.current.forEach((message) => {
-            if (message) {
-              gsap.set(message, { opacity: 0, y: 20 });
-            }
-          });
-          setTimeout(showNextMessage, 2000);
-          return;
-        }
-
-        const message = messagesRef.current[currentIndex];
+    function startMessageAnimation() {
+      steps.forEach((step, index) => {
+        const message = messagesRef.current[index];
         if (message) {
-          // Show current message
-          gsap.to(message, {
-            opacity: 1,
-            y: 0,
-            duration: 0.5,
-            ease: "power2.out",
-            onComplete: () => {
-              setActiveStep(currentIndex);
-              if (currentIndex === 4) {
-                setShowPdf(true);
+          timelineRef.current
+            .to(message, {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              duration: 0.5,
+              ease: "back.out(1.7)",
+              onStart: () => {
+                setActiveStep(index);
+                if (index === 4) {
+                  setShowPdf(true);
+                }
               }
-              // Schedule next message
-              setTimeout(() => {
-                gsap.to(message, {
-                  opacity: 0,
-                  y: -20,
-                  duration: 0.5,
-                  ease: "power2.in",
-                  onComplete: () => {
-                    if (currentIndex === 4) {
-                      setShowPdf(false);
-                      // Add 1.5 second delay after PDF report message
-                      setTimeout(() => {
-                        currentIndex++;
-                        showNextMessage();
-                      }, 1500);
-                    } else {
-                      currentIndex++;
-                      showNextMessage();
-                    }
-                  }
-                });
-              }, 1500);
-            }
-          });
-        } else {
-          currentIndex++;
-          showNextMessage();
+            })
+            .to(message, {
+              opacity: 0,
+              y: -10,
+              scale: 0.9,
+              duration: 0.3,
+              delay: 1.5,
+              ease: "power2.in",
+              onComplete: () => {
+                if (index === 4) {
+                  setShowPdf(false);
+                }
+              }
+            });
         }
-      }
-
-      // Start with a small delay to ensure first message is visible
-      setTimeout(showNextMessage, 500);
+      });
     }
 
+    // Cleanup function
     return () => {
+      if (timelineRef.current) {
+        timelineRef.current.kill();
+      }
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
       gsap.killTweensOf(messagesRef.current);
       gsap.killTweensOf(containerRef.current);
       gsap.killTweensOf(phoneRef.current);
     };
   }, []);
+
+  const handleStepClick = (index) => {
+    // Pause the timeline and show specific step
+    if (timelineRef.current) {
+      timelineRef.current.pause();
+    }
+
+    // Hide all messages first
+    messagesRef.current.forEach((message, i) => {
+      if (message) {
+        gsap.to(message, {
+          opacity: i === index ? 1 : 0,
+          y: i === index ? 0 : 20,
+          scale: i === index ? 1 : 0.9,
+          duration: 0.3,
+          ease: "power2.out"
+        });
+      }
+    });
+
+    setActiveStep(index);
+    setShowPdf(index === 4);
+
+    // Resume timeline after 3 seconds
+    setTimeout(() => {
+      if (timelineRef.current) {
+        timelineRef.current.play();
+      }
+    }, 3000);
+  };
 
   return (
     <section className="how-it-works" ref={containerRef}>
@@ -160,13 +185,12 @@ const HowItWorks = () => {
                     <span className="chat-status" />
                   </div>
                 </div>
-                <div className="chat-messages" ref={chatMessagesRef}>
+                <div className="chat-messages">
                   {steps.map((step, index) => (
                     <div
                       key={index}
                       ref={(el) => (messagesRef.current[index] = el)}
                       className={`message-bubble ${index % 2 === 0 ? 'received' : 'sent'}`}
-                      style={{ opacity: 0 }} // Start with opacity 0
                     >
                       <div className="message-text">{step.message}</div>
                       <div className="message-time">
@@ -175,7 +199,7 @@ const HowItWorks = () => {
                     </div>
                   ))}
                   {showPdf && (
-                    <div className="pdf-preview" ref={(el) => (messagesRef.current[steps.length] = el)}>
+                    <div className="pdf-preview">
                       <div className="pdf-icon">
                         <FileText />
                       </div>
@@ -195,10 +219,7 @@ const HowItWorks = () => {
               <div
                 key={index}
                 className={`how-it-works-step ${index === activeStep ? 'active' : ''}`}
-                onClick={() => {
-                  setActiveStep(index);
-                  setShowPdf(index === 4);
-                }}
+                onClick={() => handleStepClick(index)}
               >
                 <div className="step-icon">
                   {index === 0 && <MessageCircle />}
