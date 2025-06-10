@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, Zap, Bot, Globe, Target } from 'lucide-react';
+import { ArrowRight, Zap, Bot, Globe, Target, Users, Package, TrendingUp, Clock } from 'lucide-react';
 import './AIAgent.css';
 
 const AIAgent = () => {
@@ -130,10 +131,42 @@ const AIAgent = () => {
               <div className="hub-center">
                 <Bot className="hub-icon" />
               </div>
+              
+              {/* Enhanced connection lines */}
               <div className="connection-line connection-line-1"></div>
               <div className="connection-line connection-line-2"></div>
-              <div className="connection-node connection-node-1">Buyers</div>
-              <div className="connection-node connection-node-2">Suppliers</div>
+              <div className="connection-line connection-line-3"></div>
+              <div className="connection-line connection-line-4"></div>
+              
+              {/* Main nodes */}
+              <div className="connection-node connection-node-1">
+                <Users className="node-icon" />
+                <span>Buyers</span>
+              </div>
+              <div className="connection-node connection-node-2">
+                <Package className="node-icon" />
+                <span>Suppliers</span>
+              </div>
+              
+              {/* Additional nodes */}
+              <div className="connection-node connection-node-3">
+                <TrendingUp className="node-icon" />
+                <span>Analytics</span>
+              </div>
+              <div className="connection-node connection-node-4">
+                <Clock className="node-icon" />
+                <span>Real-time</span>
+              </div>
+              
+              {/* Data flow indicators */}
+              <div className="data-pulse data-pulse-1"></div>
+              <div className="data-pulse data-pulse-2"></div>
+              <div className="data-pulse data-pulse-3"></div>
+              <div className="data-pulse data-pulse-4"></div>
+              
+              {/* Connection success indicators */}
+              <div className="success-indicator success-indicator-1">✓</div>
+              <div className="success-indicator success-indicator-2">✓</div>
             </div>
           </div>
         </div>

@@ -348,7 +348,7 @@
   }
 }
 
-/* Connection Visual */
+/* Enhanced Connection Visual */
 .connection-visual {
   display: flex;
   justify-content: center;
@@ -357,8 +357,8 @@
 
 .connection-hub {
   position: relative;
-  width: 300px;
-  height: 300px;
+  width: 400px;
+  height: 400px;
 }
 
 .hub-center {
@@ -375,6 +375,7 @@
   justify-content: center;
   animation: pulse 2s ease-in-out infinite;
   box-shadow: 0 0 30px rgba(37, 99, 235, 0.3);
+  z-index: 10;
 }
 
 .hub-icon {
@@ -386,7 +387,7 @@
 .connection-line {
   position: absolute;
   width: 3px;
-  height: 100px;
+  height: 120px;
   background: linear-gradient(to bottom, var(--primary), transparent);
   top: 50%;
   left: 50%;
@@ -399,33 +400,157 @@
 }
 
 .connection-line-2 {
+  transform: translate(-50%, -100%) rotate(90deg);
+}
+
+.connection-line-3 {
   transform: translate(-50%, -100%) rotate(180deg);
+}
+
+.connection-line-4 {
+  transform: translate(-50%, -100%) rotate(270deg);
 }
 
 .connection-node {
   position: absolute;
-  padding: 1rem 2rem;
-  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.95);
   border: 2px solid var(--primary-light);
   border-radius: 1rem;
   backdrop-filter: blur(10px);
   font-weight: 600;
   color: var(--secondary);
   animation: float 4s ease-in-out infinite;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.connection-node:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px -4px rgba(0, 0, 0, 0.15);
 }
 
 .connection-node-1 {
-  top: 0;
+  top: -10px;
   left: 50%;
   transform: translateX(-50%);
 }
 
 .connection-node-2 {
-  bottom: 0;
+  right: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  animation-delay: 0.5s;
+}
+
+.connection-node-3 {
+  bottom: -10px;
   left: 50%;
   transform: translateX(-50%);
-  animation-delay: 0.5s;
+  animation-delay: 1s;
+}
+
+.connection-node-4 {
+  left: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  animation-delay: 1.5s;
+}
+
+.node-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--primary);
+}
+
+/* Data pulse animations */
+.data-pulse {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: var(--primary);
+  border-radius: 50%;
+  animation: data-flow 4s ease-in-out infinite;
+  box-shadow: 0 0 10px var(--primary);
+}
+
+.data-pulse-1 {
+  top: 20%;
+  left: 50%;
+  animation-delay: 0s;
+}
+
+.data-pulse-2 {
+  right: 20%;
+  top: 50%;
+  animation-delay: 1s;
+}
+
+.data-pulse-3 {
+  bottom: 20%;
+  left: 50%;
+  animation-delay: 2s;
+}
+
+.data-pulse-4 {
+  left: 20%;
+  top: 50%;
+  animation-delay: 3s;
+}
+
+@keyframes data-flow {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+/* Success indicators */
+.success-indicator {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  background: #10B981;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: bold;
+  animation: success-pop 6s ease-in-out infinite;
+  opacity: 0;
+}
+
+.success-indicator-1 {
+  top: 15%;
+  right: 25%;
+  animation-delay: 2s;
+}
+
+.success-indicator-2 {
+  bottom: 15%;
+  left: 25%;
+  animation-delay: 4s;
+}
+
+@keyframes success-pop {
+  0%, 90%, 100% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  5%, 85% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
 }
 
 @keyframes pulse-line {
@@ -443,7 +568,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.75rem;
-  background: linear-gradient(45deg, var(--primary), var(--primary-dark));
+  background: linear-gradient(45deg, #10B981, #059669);
   color: white;
   padding: 1.25rem 2.5rem;
   font-size: 1.25rem;
@@ -452,12 +577,13 @@
   border-radius: 0.75rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.2);
+  box-shadow: 0 10px 25px rgba(16, 185, 129, 0.2);
 }
 
 .ai-agent-cta-button:hover {
   transform: translateY(-3px);
-  box-shadow: 0 15px 35px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 15px 35px rgba(16, 185, 129, 0.3);
+  background: linear-gradient(45deg, #059669, #047857);
 }
 
 .cta-icon {
@@ -491,8 +617,8 @@
 
   .ai-brain,
   .connection-hub {
-    width: 250px;
-    height: 250px;
+    width: 300px;
+    height: 300px;
   }
 
   .ai-agent-section {
@@ -510,6 +636,16 @@
   .ai-agent-cta-button {
     padding: 1rem 2rem;
     font-size: 1.125rem;
+  }
+
+  .connection-node {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  .node-icon {
+    width: 1.25rem;
+    height: 1.25rem;
   }
 }
 
@@ -534,4 +670,6 @@
   51%, 100% {
     opacity: 0;
   }
+}
+
 }
