@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, Zap, Bot, Globe, Target, Users, Package, TrendingUp, Clock } from 'lucide-react';
 import './AIAgent.css';
@@ -131,8 +132,7 @@ const AIAgent = () => {
                 <Bot className="hub-icon" />
               </div>
               
-              {/* Enhanced connection lines */}
-              <div className="connection-line connection-line-1"></div>
+              {/* Enhanced connection lines - removed line 1 */}
               <div className="connection-line connection-line-2"></div>
               <div className="connection-line connection-line-3"></div>
               <div className="connection-line connection-line-4"></div>
