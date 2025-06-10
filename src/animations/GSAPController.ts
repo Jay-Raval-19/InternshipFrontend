@@ -1,4 +1,3 @@
-
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -187,6 +186,9 @@ export class GSAPController {
   }
 
   private animateCommunityCards() {
+    // Reset any existing animations on blog cards
+    gsap.set('.blog-card', { clearProps: "all" });
+    
     gsap.fromTo('.blog-card',
       {
         opacity: 0,
@@ -203,7 +205,8 @@ export class GSAPController {
         ease: "power3.out",
         scrollTrigger: {
           trigger: '.community-grid',
-          start: "top 75%"
+          start: "top 75%",
+          toggleActions: "play none none reverse"
         }
       }
     );
@@ -228,17 +231,15 @@ export class GSAPController {
       }
     );
 
-    // About image with parallax
+    // About image without parallax to prevent blue overlay issues
     gsap.fromTo('.about-image',
       {
         opacity: 0,
-        scale: 1.2,
-        x: 50
+        scale: 1.1
       },
       {
         opacity: 1,
         scale: 1,
-        x: 0,
         duration: 1.5,
         ease: "power3.out",
         scrollTrigger: {
@@ -248,7 +249,9 @@ export class GSAPController {
       }
     );
 
-    // Value cards stagger
+    // Value cards stagger - reset and animate consistently
+    gsap.set('.value-card', { clearProps: "all" });
+    
     gsap.fromTo('.value-card',
       {
         opacity: 0,
@@ -264,7 +267,8 @@ export class GSAPController {
         ease: "back.out(1.7)",
         scrollTrigger: {
           trigger: '.about-values',
-          start: "top 80%"
+          start: "top 80%",
+          toggleActions: "play none none reverse"
         }
       }
     );
@@ -413,3 +417,5 @@ export class GSAPController {
 }
 
 export const gsapController = GSAPController.getInstance();
+
+}
