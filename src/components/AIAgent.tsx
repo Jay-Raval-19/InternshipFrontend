@@ -1,9 +1,42 @@
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowRight, Zap, Bot, Globe, Target } from 'lucide-react';
 import './AIAgent.css';
 
 const AIAgent = () => {
+  const [displayText, setDisplayText] = useState('');
+  const [isTyping, setIsTyping] = useState(true);
+  const [wordIndex, setWordIndex] = useState(0);
+  
+  const words = ['Smarter', 'AI'];
+
+  useEffect(() => {
+    const currentWord = words[wordIndex];
+    let timeout: NodeJS.Timeout;
+
+    if (isTyping) {
+      if (displayText.length < currentWord.length) {
+        timeout = setTimeout(() => {
+          setDisplayText(currentWord.slice(0, displayText.length + 1));
+        }, 150);
+      } else {
+        timeout = setTimeout(() => {
+          setIsTyping(false);
+        }, 2000);
+      }
+    } else {
+      if (displayText.length > 0) {
+        timeout = setTimeout(() => {
+          setDisplayText(displayText.slice(0, -1));
+        }, 100);
+      } else {
+        setWordIndex((prev) => (prev + 1) % words.length);
+        setIsTyping(true);
+      }
+    }
+
+    return () => clearTimeout(timeout);
+  }, [displayText, isTyping, wordIndex, words]);
+
   const handleGetStarted = () => {
     window.open('https://wa.me/1234567890?text=Hello%20Tradio,%20I%20would%20like%20to%20get%20started', '_blank');
   };
@@ -26,7 +59,10 @@ const AIAgent = () => {
             </div>
             
             <h2 className="ai-agent-title">
-              Make trade <span className="title-highlight">Smarter</span>
+              Make trade <span className="title-highlight typewriter-text">
+                {displayText}
+                <span className="typewriter-cursor">|</span>
+              </span>
             </h2>
             
             <p className="ai-agent-description">
