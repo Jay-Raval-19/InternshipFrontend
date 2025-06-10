@@ -1,7 +1,6 @@
-
 import React from 'react';
-import { Button } from '@/components/ui/button';
 import { MessageCircle, Play } from 'lucide-react';
+import './Hero.css';
 
 const Hero = () => {
   const handleStartInquiry = () => {
@@ -9,65 +8,62 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative bg-gradient-to-br from-blue-50 via-white to-purple-100 min-h-screen flex items-center overflow-hidden pt-16">
+    <section className="hero">
       {/* Subtle background elements */}
-      <div className="absolute top-20 right-20 w-64 h-64 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-40 animate-blob"></div>
-      <div className="absolute bottom-20 left-20 w-64 h-64 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-40 animate-blob animation-delay-4000"></div>
+      <div className="hero-blob hero-blob-1"></div>
+      <div className="hero-blob hero-blob-2"></div>
 
-      <div className="container mx-auto px-4 py-20 relative z-10">
-        <div className="max-w-4xl mx-auto text-center">
+      <div className="hero-container">
+        <div className="hero-content">
           {/* Main Content */}
-          <div className="mb-12">
-            <h1 className="text-6xl lg:text-7xl font-bold text-blue-900 mb-8 leading-tight">
+          <div className="hero-content-main">
+            <h1 className="hero-title">
               Transform Your
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 block">
+              <span className="hero-title-gradient">
                 Chemical Sourcing
               </span>
             </h1>
             
-            <p className="text-2xl text-blue-700 mb-12 max-w-3xl mx-auto leading-relaxed">
+            <p className="hero-description">
               Connect with 500+ verified suppliers instantly. Get competitive quotations and close deals faster than ever.
             </p>
             
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-              <Button 
+            <div className="hero-buttons">
+              <button 
                 onClick={handleStartInquiry}
-                size="lg" 
-                className="bg-[#25D366] hover:bg-[#20B858] text-white px-10 py-6 text-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                className="hero-button-primary"
               >
-                <MessageCircle className="mr-3 h-6 w-6" />
+                <MessageCircle className="button-icon button-icon-primary" />
                 Start Your Inquiry
-              </Button>
+              </button>
               
-              <Button 
-                variant="outline" 
-                size="lg"
-                className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 px-10 py-6 text-xl font-semibold transition-all duration-300"
+              <button 
+                className="hero-button-secondary"
               >
-                <Play className="mr-3 h-5 w-5" />
+                <Play className="button-icon button-icon-secondary" />
                 Watch Demo
-              </Button>
+              </button>
             </div>
           </div>
 
           {/* Simple Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-2xl mx-auto">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600">500+</div>
-              <div className="text-blue-700">Verified Suppliers</div>
+          <div className="hero-stats">
+            <div className="stat-item">
+              <div className="stat-value">500+</div>
+              <div className="stat-label">Verified Suppliers</div>
             </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600">24hrs</div>
-              <div className="text-blue-700">Response Time</div>
+            <div className="stat-item">
+              <div className="stat-value">24hrs</div>
+              <div className="stat-label">Response Time</div>
             </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600">100%</div>
-              <div className="text-blue-700">Free Platform</div>
+            <div className="stat-item">
+              <div className="stat-value">100%</div>
+              <div className="stat-label">Free Platform</div>
             </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600">98%</div>
-              <div className="text-blue-700">Success Rate</div>
+            <div className="stat-item">
+              <div className="stat-value">98%</div>
+              <div className="stat-label">Success Rate</div>
             </div>
           </div>
         </div>

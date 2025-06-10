@@ -1,9 +1,6 @@
-
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { MessageCircle, X, Send } from 'lucide-react';
+import './Chatbot.css';
 
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -78,99 +75,88 @@ const Chatbot = () => {
 
   if (!isOpen) {
     return (
-      <div className="fixed bottom-6 right-6 z-50">
-        <Button
+      <div className="chatbot-button-container">
+        <button
           onClick={() => setIsOpen(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white rounded-full w-16 h-16 shadow-lg hover:shadow-xl transition-all duration-300 animate-pulse"
+          className="chatbot-button"
         >
-          <MessageCircle className="h-8 w-8" />
-        </Button>
+          <MessageCircle className="chatbot-icon" />
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
-      <Card className="w-96 h-[500px] bg-white shadow-2xl border-2 border-blue-200 flex flex-col">
+    <div className="chatbot-container">
+      <div className="chatbot-card">
         {/* Header */}
-        <div className="bg-blue-600 text-white p-4 rounded-t-lg flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-              <MessageCircle className="h-4 w-4" />
+        <div className="chatbot-header">
+          <div className="chatbot-header-content">
+            <div className="chatbot-avatar">
+              <MessageCircle className="chatbot-avatar-icon" />
             </div>
             <div>
-              <h3 className="font-semibold">Tradio Assistant</h3>
-              <p className="text-xs text-blue-100">Online now</p>
+              <h3 className="chatbot-title">Tradio Assistant</h3>
+              <p className="chatbot-status">Online now</p>
             </div>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
+          <button
             onClick={() => setIsOpen(false)}
-            className="text-white hover:bg-blue-500 p-1"
+            className="chatbot-close-button"
           >
-            <X className="h-4 w-4" />
-          </Button>
+            <X className="chatbot-close-icon" />
+          </button>
         </div>
 
         {/* Messages */}
-        <div className="flex-1 p-4 overflow-y-auto space-y-4">
+        <div className="chatbot-messages">
           {messages.map((message) => (
             <div
               key={message.id}
-              className={`flex ${message.isBot ? 'justify-start' : 'justify-end'}`}
+              className={`chatbot-message ${message.isBot ? 'bot' : 'user'}`}
             >
-              <div
-                className={`max-w-xs p-3 rounded-lg ${
-                  message.isBot
-                    ? 'bg-gray-100 text-gray-800'
-                    : 'bg-blue-600 text-white'
-                }`}
-              >
-                <p className="text-sm">{message.text}</p>
+              <div className="chatbot-message-content">
+                <p className="chatbot-message-text">{message.text}</p>
               </div>
             </div>
           ))}
 
           {/* Quick Questions */}
           {messages.length === 1 && (
-            <div className="space-y-2">
-              <p className="text-xs text-gray-500 text-center">Quick questions:</p>
+            <div className="chatbot-quick-questions">
+              <p className="chatbot-quick-questions-title">Quick questions:</p>
               {quickQuestions.map((question, index) => (
-                <Button
+                <button
                   key={index}
-                  variant="outline"
-                  size="sm"
                   onClick={() => handleQuickQuestion(question)}
-                  className="w-full text-left justify-start text-xs border-blue-200 hover:bg-blue-50"
+                  className="chatbot-quick-question-button"
                 >
                   {question}
-                </Button>
+                </button>
               ))}
             </div>
           )}
         </div>
 
         {/* Input */}
-        <div className="p-4 border-t border-gray-200">
-          <div className="flex gap-2">
-            <Input
+        <div className="chatbot-input-container">
+          <div className="chatbot-input-wrapper">
+            <input
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               placeholder="Ask me anything about Tradio..."
               onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-              className="border-blue-200 focus:border-blue-500"
+              className="chatbot-input"
             />
-            <Button
+            <button
               onClick={handleSendMessage}
-              size="sm"
-              className="bg-blue-600 hover:bg-blue-700"
+              className="chatbot-send-button"
             >
-              <Send className="h-4 w-4" />
-            </Button>
+              <Send className="chatbot-send-icon" />
+            </button>
           </div>
         </div>
-      </Card>
+      </div>
     </div>
   );
 };

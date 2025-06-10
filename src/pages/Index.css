@@ -1,0 +1,12 @@
+.index-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+}
+
+#community,
+#about,
+#contact {
+  scroll-margin-top: 80px;
+} 

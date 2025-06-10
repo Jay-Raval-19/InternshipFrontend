@@ -1,7 +1,6 @@
-
 import React from 'react';
-import { Card } from '@/components/ui/card';
 import { Shield, Globe, Users, Zap } from 'lucide-react';
+import './About.css';
 
 const About = () => {
   const values = [
@@ -28,22 +27,22 @@ const About = () => {
   ];
 
   return (
-    <section className="py-20 bg-white">
-      <div className="container mx-auto px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-blue-900 mb-4">About Tradio</h2>
-            <p className="text-xl text-blue-700 max-w-3xl mx-auto">
+    <section className="about">
+      <div className="about-container">
+        <div className="about-content">
+          <div className="about-header">
+            <h2 className="about-title">About Tradio</h2>
+            <p className="about-subtitle">
               Revolutionizing chemical procurement through AI-powered supplier matching and intelligent quotation management
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
-            <div>
-              <h3 className="text-3xl font-bold text-blue-900 mb-6">
+          <div className="about-main">
+            <div className="about-text">
+              <h3 className="about-text-title">
                 Transforming Chemical Industry Procurement
               </h3>
-              <div className="space-y-4 text-blue-700">
+              <div className="about-text-content">
                 <p>
                   Tradio was born from a simple observation: chemical procurement in India was fragmented, 
                   time-consuming, and lacked transparency. Traditional methods of finding suppliers often 
@@ -61,44 +60,44 @@ const About = () => {
               </div>
             </div>
             
-            <div className="relative">
+            <div className="about-image-container">
               <img 
                 src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=600&h=400&fit=crop&crop=center" 
                 alt="Chemical Industry"
-                className="rounded-lg shadow-lg"
+                className="about-image"
               />
-              <div className="absolute inset-0 bg-blue-600 bg-opacity-20 rounded-lg"></div>
+              <div className="about-image-overlay"></div>
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="about-values">
             {values.map((value, index) => (
-              <Card key={index} className="p-6 text-center hover:shadow-lg transition-shadow">
-                <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <value.icon className="h-8 w-8 text-blue-600" />
+              <div key={index} className="value-card">
+                <div className="value-icon-container">
+                  <value.icon className="value-icon" />
                 </div>
-                <h4 className="text-xl font-semibold text-blue-900 mb-3">{value.title}</h4>
-                <p className="text-blue-700">{value.description}</p>
-              </Card>
+                <h4 className="value-title">{value.title}</h4>
+                <p className="value-description">{value.description}</p>
+              </div>
             ))}
           </div>
 
-          <div className="mt-16 bg-blue-50 rounded-2xl p-8 text-center">
-            <h3 className="text-2xl font-bold text-blue-900 mb-4">
+          <div className="about-cta">
+            <h3 className="cta-title">
               Why Choose Tradio?
             </h3>
-            <div className="grid md:grid-cols-3 gap-8 mt-8">
+            <div className="cta-stats">
               <div>
-                <div className="text-3xl font-bold text-blue-600 mb-2">500+</div>
-                <p className="text-blue-700">Verified Chemical Suppliers</p>
+                <div className="cta-stat-value">500+</div>
+                <p className="cta-stat-label">Verified Chemical Suppliers</p>
               </div>
               <div>
-                <div className="text-3xl font-bold text-blue-600 mb-2">24hrs</div>
-                <p className="text-blue-700">Average Response Time</p>
+                <div className="cta-stat-value">24hrs</div>
+                <p className="cta-stat-label">Average Response Time</p>
               </div>
               <div>
-                <div className="text-3xl font-bold text-blue-600 mb-2">100%</div>
-                <p className="text-blue-700">Free for All Users</p>
+                <div className="cta-stat-value">100%</div>
+                <p className="cta-stat-label">Free for All Users</p>
               </div>
             </div>
           </div>

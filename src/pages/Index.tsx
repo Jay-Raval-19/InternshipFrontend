@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Header from '../components/Header';
 import Hero from '../components/Hero';
@@ -7,10 +6,11 @@ import Community from '../components/Community';
 import About from '../components/About';
 import Contact from '../components/Contact';
 import Chatbot from '../components/Chatbot';
+import './Index.css';
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="index-page">
       <Header />
       <Hero />
       <HowItWorks />

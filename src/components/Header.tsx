@@ -1,7 +1,6 @@
-
 import React from 'react';
-import { Button } from '@/components/ui/button';
 import { MessageCircle } from 'lucide-react';
+import './Header.css';
 
 const Header = () => {
   const handleStartInquiry = () => {
@@ -16,52 +15,51 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+    <header className="header">
+      <div className="header-container">
+        <div className="header-content">
           {/* Logo */}
-          <div className="flex items-center">
-            <h1 className="text-2xl font-bold text-blue-900">Tradio</h1>
+          <div className="logo">
+            <h1 className="logo-text">Tradio</h1>
           </div>
 
           {/* Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="nav">
             <button
               onClick={() => scrollToSection('about')}
-              className="text-blue-700 hover:text-blue-900 font-medium transition-colors"
+              className="nav-button"
             >
               About
             </button>
             <button
               onClick={() => scrollToSection('community')}
-              className="text-blue-700 hover:text-blue-900 font-medium transition-colors"
+              className="nav-button"
             >
               Community
             </button>
             <button
               onClick={() => scrollToSection('contact')}
-              className="text-blue-700 hover:text-blue-900 font-medium transition-colors"
+              className="nav-button"
             >
               Contact Us
             </button>
-            <Button
+            <button
               onClick={handleStartInquiry}
-              className="bg-[#25D366] hover:bg-[#20B858] text-white px-6 py-2 font-semibold"
+              className="inquiry-button"
             >
-              <MessageCircle className="mr-2 h-4 w-4" />
+              <MessageCircle className="inquiry-button-icon" />
               Start Inquiry
-            </Button>
+            </button>
           </nav>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
-            <Button
+          <div className="mobile-menu">
+            <button
               onClick={handleStartInquiry}
-              size="sm"
-              className="bg-[#25D366] hover:bg-[#20B858] text-white"
+              className="mobile-inquiry-button"
             >
-              <MessageCircle className="h-4 w-4" />
-            </Button>
+              <MessageCircle className="mobile-inquiry-button-icon" />
+            </button>
           </div>
         </div>
       </div>

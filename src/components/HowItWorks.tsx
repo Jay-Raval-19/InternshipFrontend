@@ -1,164 +1,219 @@
-
-import React, { useState, useEffect } from 'react';
-import { Card } from '@/components/ui/card';
-import { MessageCircle, Search, FileText, BarChart, CheckCircle } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { FileText, MessageCircle, CheckCircle2, Truck, Package } from 'lucide-react';
+import './HowItWorks.css';
 
 const HowItWorks = () => {
   const [activeStep, setActiveStep] = useState(0);
+  const [showPdf, setShowPdf] = useState(false);
+  const containerRef = useRef(null);
+  const phoneRef = useRef(null);
+  const chatMessagesRef = useRef(null);
+  const messagesRef = useRef([]);
 
   const steps = [
     {
-      id: 1,
       title: "Send Your Requirement",
-      description: "Message us on WhatsApp with your chemical procurement needs in any language",
-      icon: MessageCircle,
-      color: "bg-blue-500",
-      message: "I need 500kg of Sodium Hydroxide with 99% purity for delivery in Mumbai by next month"
+      description: "Simply send your chemical requirement on WhatsApp",
+      message: "Hi, I need 1000L of Acetic Acid for delivery in Mumbai",
+      interval: 2000,
     },
     {
-      id: 2,
-      title: "AI Compiles Requirements",
-      description: "Our intelligent agent processes and standardizes your requirements",
-      icon: Search,
-      color: "bg-blue-600",
-      message: "Processing your requirement for Sodium Hydroxide (NaOH)..."
+      title: "AI Processing",
+      description: "Our AI analyzes your needs and finds the best suppliers",
+      message: "Analyzing requirement...\nFinding verified suppliers...\nGenerating RFQs...",
+      interval: 2000,
     },
     {
-      id: 3,
-      title: "Suppliers Receive RFQ",
-      description: "Verified suppliers in our network receive detailed quotation requests",
-      icon: FileText,
-      color: "bg-blue-700",
-      message: "RFQ sent to 15 verified chemical suppliers in your region"
+      title: "Supplier Matching",
+      description: "We match you with verified suppliers in your region",
+      message: "Found 5 verified suppliers in your region\nSending RFQs...",
+      interval: 2000,
     },
     {
-      id: 4,
-      title: "Quotations Collected",
-      description: "Suppliers submit their best quotes with pricing and delivery terms",
-      icon: BarChart,
-      color: "bg-blue-800",
-      message: "8 quotations received. Analyzing prices and delivery timelines..."
+      title: "Quote Collection",
+      description: "Suppliers submit their competitive quotes",
+      message: "Received quotes from suppliers\nGenerating comparison report...",
+      interval: 2000,
     },
     {
-      id: 5,
       title: "Comparison Report",
-      description: "Receive detailed comparison with supplier rankings and recommendations",
-      icon: CheckCircle,
-      color: "bg-green-600",
-      message: "📊 Your comparison report is ready! Best quote: ₹45/kg with 15-day delivery"
-    }
+      description: "Get a detailed PDF report with all quotes",
+      message: "Your comparison report is ready! 📄\nTap to view the detailed PDF with supplier quotes, delivery terms, and payment options.",
+      interval: 2000,
+    },
   ];
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveStep((prev) => (prev + 1) % steps.length);
-    }, 3000);
-    return () => clearInterval(interval);
+    // Initialize messages
+    messagesRef.current.forEach((message) => {
+      if (message) {
+        gsap.set(message, { opacity: 0, y: 20 });
+      }
+    });
+
+    // Simple fade in for container
+    gsap.to(containerRef.current, {
+      opacity: 1,
+      y: 0,
+      duration: 1,
+      ease: "power2.out"
+    });
+
+    // Simple fade in for phone
+    gsap.to(phoneRef.current, {
+      opacity: 1,
+      scale: 1,
+      duration: 1,
+      ease: "power2.out",
+      onComplete: startMessageSequence
+    });
+
+    function startMessageSequence() {
+      let currentIndex = 0;
+
+      function showNextMessage() {
+        if (currentIndex >= steps.length) {
+          // Reset and start over
+          currentIndex = 0;
+          messagesRef.current.forEach((message) => {
+            if (message) {
+              gsap.set(message, { opacity: 0, y: 20 });
+            }
+          });
+          setTimeout(showNextMessage, 2000);
+          return;
+        }
+
+        const message = messagesRef.current[currentIndex];
+        if (message) {
+          // Show current message
+          gsap.to(message, {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            ease: "power2.out",
+            onComplete: () => {
+              setActiveStep(currentIndex);
+              if (currentIndex === 4) {
+                setShowPdf(true);
+              }
+              // Schedule next message
+              setTimeout(() => {
+                gsap.to(message, {
+                  opacity: 0,
+                  y: -20,
+                  duration: 0.5,
+                  ease: "power2.in",
+                  onComplete: () => {
+                    if (currentIndex === 4) {
+                      setShowPdf(false);
+                      // Add 1.5 second delay after PDF report message
+                      setTimeout(() => {
+                        currentIndex++;
+                        showNextMessage();
+                      }, 1500);
+                    } else {
+                      currentIndex++;
+                      showNextMessage();
+                    }
+                  }
+                });
+              }, 1500);
+            }
+          });
+        } else {
+          currentIndex++;
+          showNextMessage();
+        }
+      }
+
+      // Start with a small delay to ensure first message is visible
+      setTimeout(showNextMessage, 500);
+    }
+
+    return () => {
+      gsap.killTweensOf(messagesRef.current);
+      gsap.killTweensOf(containerRef.current);
+      gsap.killTweensOf(phoneRef.current);
+    };
   }, []);
 
   return (
-    <section className="py-20 bg-white">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-blue-900 mb-4">How Tradio Works</h2>
-          <p className="text-xl text-blue-700 max-w-2xl mx-auto">
-            Our AI-powered workflow simplifies chemical procurement from inquiry to decision
-          </p>
+    <section className="how-it-works" ref={containerRef}>
+      <div className="how-it-works-container">
+        <div className="how-it-works-header">
+          <h2 className="how-it-works-title">How It Works</h2>
+          <p className="how-it-works-subtitle">Get competitive quotes in minutes</p>
         </div>
 
-        <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Animated Phone Demo */}
-            <div className="relative">
-              <div className="bg-gray-800 rounded-3xl p-4 mx-auto w-80 shadow-2xl">
-                <div className="bg-white rounded-2xl p-4 h-96 overflow-hidden">
-                  <div className="flex items-center gap-2 mb-4 pb-4 border-b">
-                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                      <MessageCircle className="h-4 w-4 text-white" />
+        <div className="how-it-works-content">
+          <div className="phone-demo" ref={phoneRef}>
+            <div className="phone-frame">
+              <div className="phone-screen">
+                <div className="chat-header">
+                  <div className="chat-info">
+                    <div className="chat-avatar">
+                      <MessageCircle />
                     </div>
-                    <div>
-                      <span className="font-semibold text-gray-800">Tradio AI</span>
-                      <div className="w-2 h-2 bg-green-500 rounded-full inline-block ml-2 animate-pulse"></div>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    {steps.map((step, index) => (
-                      <div
-                        key={step.id}
-                        className={`transition-all duration-500 transform ${
-                          index === activeStep 
-                            ? 'opacity-100 translate-y-0 scale-100' 
-                            : index < activeStep 
-                            ? 'opacity-50 -translate-y-2 scale-95' 
-                            : 'opacity-30 translate-y-2 scale-95'
-                        }`}
-                      >
-                        <div className={`p-3 rounded-lg ${
-                          index % 2 === 0 
-                            ? 'bg-blue-100 ml-auto max-w-xs' 
-                            : 'bg-gray-100 mr-auto max-w-xs'
-                        } shadow-sm`}>
-                          <p className="text-sm text-gray-800">{step.message}</p>
-                          <div className="text-xs text-gray-500 mt-1">
-                            {new Date().toLocaleTimeString()}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+                    <span className="chat-name">Tradio Assistant</span>
+                    <span className="chat-status" />
                   </div>
                 </div>
-              </div>
-              
-              {/* Progress indicator */}
-              <div className="flex justify-center mt-4 space-x-2">
-                {steps.map((_, index) => (
-                  <div
-                    key={index}
-                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                      index === activeStep ? 'bg-blue-600' : 'bg-gray-300'
-                    }`}
-                  />
-                ))}
+                <div className="chat-messages" ref={chatMessagesRef}>
+                  {steps.map((step, index) => (
+                    <div
+                      key={index}
+                      ref={(el) => (messagesRef.current[index] = el)}
+                      className={`message-bubble ${index % 2 === 0 ? 'received' : 'sent'}`}
+                      style={{ opacity: 0 }} // Start with opacity 0
+                    >
+                      <div className="message-text">{step.message}</div>
+                      <div className="message-time">
+                        {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </div>
+                    </div>
+                  ))}
+                  {showPdf && (
+                    <div className="pdf-preview" ref={(el) => (messagesRef.current[steps.length] = el)}>
+                      <div className="pdf-icon">
+                        <FileText />
+                      </div>
+                      <div className="pdf-info">
+                        <div className="pdf-name">Comparison Report.pdf</div>
+                        <div className="pdf-size">2.4 MB</div>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
+          </div>
 
-            {/* Steps */}
-            <div className="space-y-6">
-              {steps.map((step, index) => (
-                <Card 
-                  key={step.id}
-                  className={`p-6 transition-all duration-300 cursor-pointer ${
-                    index === activeStep 
-                      ? 'border-blue-500 shadow-xl scale-105 bg-blue-50' 
-                      : 'border-gray-200 hover:border-blue-300 hover:shadow-lg'
-                  }`}
-                  onClick={() => setActiveStep(index)}
-                >
-                  <div className="flex items-start gap-4">
-                    <div className={`${step.color} p-3 rounded-lg transition-transform duration-300 ${
-                      index === activeStep ? 'scale-110' : ''
-                    }`}>
-                      <step.icon className="h-6 w-6 text-white" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-semibold text-blue-900 mb-2 flex items-center gap-2">
-                        <span className="bg-blue-100 text-blue-600 w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold">
-                          {step.id}
-                        </span>
-                        {step.title}
-                      </h3>
-                      <p className="text-blue-700">{step.description}</p>
-                      {index === activeStep && (
-                        <div className="mt-3 p-2 bg-blue-100 rounded text-sm text-blue-800 animate-fade-in">
-                          <strong>Current step:</strong> This is happening right now in the demo above
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
+          <div className="how-it-works-steps">
+            {steps.map((step, index) => (
+              <div
+                key={index}
+                className={`how-it-works-step ${index === activeStep ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveStep(index);
+                  setShowPdf(index === 4);
+                }}
+              >
+                <div className="step-icon">
+                  {index === 0 && <MessageCircle />}
+                  {index === 1 && <FileText />}
+                  {index === 2 && <CheckCircle2 />}
+                  {index === 3 && <Truck />}
+                  {index === 4 && <Package />}
+                </div>
+                <div className="step-content">
+                  <h3 className="step-title">{step.title}</h3>
+                  <p className="step-description">{step.description}</p>
+                </div>
+                <div className="step-status" />
+              </div>
+            ))}
           </div>
         </div>
       </div>

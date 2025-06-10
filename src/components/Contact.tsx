@@ -1,10 +1,6 @@
-
 import React from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { MessageCircle, Mail, Phone, MapPin } from 'lucide-react';
+import './Contact.css';
 
 const Contact = () => {
   const handleWhatsApp = () => {
@@ -12,145 +8,145 @@ const Contact = () => {
   };
 
   return (
-    <section className="py-20 bg-blue-50">
-      <div className="container mx-auto px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-blue-900 mb-4">Get in Touch</h2>
-            <p className="text-xl text-blue-700 max-w-2xl mx-auto">
+    <section className="contact">
+      <div className="contact-container">
+        <div className="contact-content">
+          <div className="contact-header">
+            <h2 className="contact-title">Get in Touch</h2>
+            <p className="contact-subtitle">
               Have questions about Tradio? We're here to help you streamline your chemical procurement process
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-12">
+          <div className="contact-grid">
             {/* Contact Form */}
-            <Card className="p-8 bg-white">
-              <h3 className="text-2xl font-bold text-blue-900 mb-6">Send us a Message</h3>
-              <form className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-blue-700 mb-2">
+            <div className="contact-card">
+              <h3 className="contact-form-title">Send us a Message</h3>
+              <form className="contact-form">
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="form-label">
                       First Name
                     </label>
-                    <Input placeholder="John" className="border-blue-200 focus:border-blue-500" />
+                    <input type="text" className="form-input" placeholder="John" />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-blue-700 mb-2">
+                  <div className="form-group">
+                    <label className="form-label">
                       Last Name
                     </label>
-                    <Input placeholder="Doe" className="border-blue-200 focus:border-blue-500" />
+                    <input type="text" className="form-input" placeholder="Doe" />
                   </div>
                 </div>
                 
-                <div>
-                  <label className="block text-sm font-medium text-blue-700 mb-2">
+                <div className="form-group">
+                  <label className="form-label">
                     Email
                   </label>
-                  <Input 
+                  <input 
                     type="email" 
+                    className="form-input"
                     placeholder="john@company.com" 
-                    className="border-blue-200 focus:border-blue-500" 
                   />
                 </div>
                 
-                <div>
-                  <label className="block text-sm font-medium text-blue-700 mb-2">
+                <div className="form-group">
+                  <label className="form-label">
                     Company
                   </label>
-                  <Input placeholder="Your Company Name" className="border-blue-200 focus:border-blue-500" />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-blue-700 mb-2">
-                    Message
-                  </label>
-                  <Textarea 
-                    placeholder="Tell us about your procurement needs or any questions you have..."
-                    rows={4}
-                    className="border-blue-200 focus:border-blue-500"
+                  <input 
+                    type="text" 
+                    className="form-input"
+                    placeholder="Your Company Name" 
                   />
                 </div>
                 
-                <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                <div className="form-group">
+                  <label className="form-label">
+                    Message
+                  </label>
+                  <textarea 
+                    className="form-textarea"
+                    placeholder="Tell us about your procurement needs or any questions you have..."
+                    rows={4}
+                  />
+                </div>
+                
+                <button type="submit" className="submit-button">
                   Send Message
-                </Button>
+                </button>
               </form>
-            </Card>
+            </div>
 
             {/* Contact Information */}
-            <div className="space-y-8">
-              <Card className="p-6 bg-white">
-                <h3 className="text-2xl font-bold text-blue-900 mb-6">Contact Information</h3>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-4">
-                    <div className="bg-blue-100 p-3 rounded-lg">
-                      <MessageCircle className="h-6 w-6 text-blue-600" />
+            <div className="contact-info">
+              <div className="info-card">
+                <h3 className="info-card-title">Contact Information</h3>
+                <div className="info-list">
+                  <div className="info-item">
+                    <div className="info-icon-container">
+                      <MessageCircle className="info-icon" />
                     </div>
-                    <div>
-                      <p className="font-semibold text-blue-900">WhatsApp</p>
-                      <p className="text-blue-700">+91 98765 43210</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-4">
-                    <div className="bg-blue-100 p-3 rounded-lg">
-                      <Mail className="h-6 w-6 text-blue-600" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-blue-900">Email</p>
-                      <p className="text-blue-700">hello@tradio.ai</p>
+                    <div className="info-content">
+                      <p className="info-label">WhatsApp</p>
+                      <p className="info-value">+91 98765 43210</p>
                     </div>
                   </div>
                   
-                  <div className="flex items-center gap-4">
-                    <div className="bg-blue-100 p-3 rounded-lg">
-                      <Phone className="h-6 w-6 text-blue-600" />
+                  <div className="info-item">
+                    <div className="info-icon-container">
+                      <Mail className="info-icon" />
                     </div>
-                    <div>
-                      <p className="font-semibold text-blue-900">Phone</p>
-                      <p className="text-blue-700">+91 22 1234 5678</p>
+                    <div className="info-content">
+                      <p className="info-label">Email</p>
+                      <p className="info-value">hello@tradio.ai</p>
                     </div>
                   </div>
                   
-                  <div className="flex items-center gap-4">
-                    <div className="bg-blue-100 p-3 rounded-lg">
-                      <MapPin className="h-6 w-6 text-blue-600" />
+                  <div className="info-item">
+                    <div className="info-icon-container">
+                      <Phone className="info-icon" />
                     </div>
-                    <div>
-                      <p className="font-semibold text-blue-900">Address</p>
-                      <p className="text-blue-700">Mumbai, Maharashtra, India</p>
+                    <div className="info-content">
+                      <p className="info-label">Phone</p>
+                      <p className="info-value">+91 22 1234 5678</p>
+                    </div>
+                  </div>
+                  
+                  <div className="info-item">
+                    <div className="info-icon-container">
+                      <MapPin className="info-icon" />
+                    </div>
+                    <div className="info-content">
+                      <p className="info-label">Address</p>
+                      <p className="info-value">Mumbai, Maharashtra, India</p>
                     </div>
                   </div>
                 </div>
-              </Card>
+              </div>
 
-              <Card className="p-6 bg-gradient-to-br from-blue-600 to-blue-700 text-white">
-                <h3 className="text-xl font-bold mb-4">Quick Start on WhatsApp</h3>
-                <p className="mb-6">
+              <div className="whatsapp-card">
+                <h3 className="whatsapp-title">Quick Start on WhatsApp</h3>
+                <p className="whatsapp-description">
                   Ready to get started? Send us your first procurement requirement directly on WhatsApp and experience the Tradio difference.
                 </p>
-                <Button 
+                <button 
                   onClick={handleWhatsApp}
-                  variant="secondary"
-                  className="w-full bg-white text-blue-600 hover:bg-gray-50"
+                  className="whatsapp-button"
                 >
-                  <MessageCircle className="mr-2 h-5 w-5" />
+                  <MessageCircle className="whatsapp-button-icon" />
                   Start on WhatsApp
-                </Button>
-              </Card>
+                </button>
+              </div>
 
-              <Card className="p-6 bg-white">
-                <h3 className="text-xl font-bold text-blue-900 mb-4">For Suppliers</h3>
-                <p className="text-blue-700 mb-4">
+              <div className="supplier-card">
+                <h3 className="supplier-title">For Suppliers</h3>
+                <p className="supplier-description">
                   Want to join our supplier network? Register your chemical business and start receiving qualified leads.
                 </p>
-                <Button 
-                  variant="outline" 
-                  className="w-full border-blue-600 text-blue-600 hover:bg-blue-50"
-                >
+                <button className="supplier-button">
                   Register as Supplier
-                </Button>
-              </Card>
+                </button>
+              </div>
             </div>
           </div>
         </div>
