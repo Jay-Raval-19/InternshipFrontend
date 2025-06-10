@@ -96,12 +96,8 @@ const AIAgent = () => {
               </div>
               <div className="connection-line connection-line-1"></div>
               <div className="connection-line connection-line-2"></div>
-              <div className="connection-line connection-line-3"></div>
-              <div className="connection-line connection-line-4"></div>
               <div className="connection-node connection-node-1">Buyers</div>
               <div className="connection-node connection-node-2">Suppliers</div>
-              <div className="connection-node connection-node-3">Logistics</div>
-              <div className="connection-node connection-node-4">Payment</div>
             </div>
           </div>
         </div>
