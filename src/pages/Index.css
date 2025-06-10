@@ -5,12 +5,21 @@
   flex-direction: column;
   background-color: #ffffff;
   overflow-x: hidden;
+  /* Ensure content is visible by default */
+  visibility: visible;
+  opacity: 1;
 }
 
 #community,
 #about,
 #contact {
   scroll-margin-top: 80px;
+}
+
+/* Ensure all content is visible by default */
+.index-page * {
+  visibility: visible;
+  opacity: 1;
 }
 
 /* Smooth scrolling and performance optimizations */

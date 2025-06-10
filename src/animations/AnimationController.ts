@@ -24,26 +24,43 @@ export class AnimationController {
   init(): void {
     if (this.isInitialized) return;
 
-    // Set default GSAP settings for performance
-    gsap.config({
-      force3D: true,
-      nullTargetWarn: false,
-    });
+    // Wait for DOM to be ready
+    const initAnimations = () => {
+      // Set default GSAP settings for performance
+      gsap.config({
+        force3D: true,
+        nullTargetWarn: false,
+      });
 
-    // Initialize mobile optimizations first
-    mobileOptimizations.init();
+      // Ensure all elements are visible by default
+      gsap.set("*", { visibility: "visible" });
 
-    // Initialize all animation modules
-    heroAnimations.init();
-    sectionAnimations.init();
-    microInteractions.init();
-    scrollAnimations.init();
+      // Initialize mobile optimizations first
+      mobileOptimizations.init();
 
-    this.isInitialized = true;
+      // Initialize all animation modules with delay to ensure DOM is ready
+      setTimeout(() => {
+        heroAnimations.init();
+        sectionAnimations.init();
+        microInteractions.init();
+        scrollAnimations.init();
+      }, 100);
+
+      this.isInitialized = true;
+    };
+
+    // Check if DOM is already loaded
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initAnimations);
+    } else {
+      initAnimations();
+    }
   }
 
   refresh(): void {
-    ScrollTrigger.refresh();
+    if (this.isInitialized) {
+      ScrollTrigger.refresh();
+    }
   }
 
   destroy(): void {
