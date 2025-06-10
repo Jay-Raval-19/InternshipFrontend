@@ -1,3 +1,4 @@
+
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -417,5 +418,3 @@ export class GSAPController {
 }
 
 export const gsapController = GSAPController.getInstance();
-
-}
