@@ -55,7 +55,7 @@ const AIAgent = () => {
           <div className="ai-agent-content">
             <div className="ai-agent-badge">
               <Bot className="badge-icon" />
-              <span>India's First AI Agent</span>
+              <span>India's First AI Agent for Chemical Procurement</span>
             </div>
             
             <h2 className="ai-agent-title">
