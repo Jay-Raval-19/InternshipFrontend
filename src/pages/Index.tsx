@@ -1,6 +1,8 @@
+
 import React from 'react';
 import Header from '../components/Header';
 import Hero from '../components/Hero';
+import AIAgent from '../components/AIAgent';
 import HowItWorks from '../components/HowItWorks';
 import Community from '../components/Community';
 import About from '../components/About';
@@ -13,6 +15,7 @@ const Index = () => {
     <div className="index-page">
       <Header />
       <Hero />
+      <AIAgent />
       <HowItWorks />
       <div id="community">
         <Community />
