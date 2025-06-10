@@ -568,7 +568,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.75rem;
-  background: linear-gradient(45deg, #10B981, #059669);
+  background: #25D366;
   color: white;
   padding: 1.25rem 2.5rem;
   font-size: 1.25rem;
@@ -577,13 +577,13 @@
   border-radius: 0.75rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 10px 25px rgba(16, 185, 129, 0.2);
+  box-shadow: 0 10px 25px rgba(37, 211, 102, 0.2);
 }
 
 .ai-agent-cta-button:hover {
   transform: translateY(-3px);
-  box-shadow: 0 15px 35px rgba(16, 185, 129, 0.3);
-  background: linear-gradient(45deg, #059669, #047857);
+  box-shadow: 0 15px 35px rgba(37, 211, 102, 0.3);
+  background: #20B858;
 }
 
 .cta-icon {
