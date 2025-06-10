@@ -1,12 +1,41 @@
+
 .index-page {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   background-color: #ffffff;
+  overflow-x: hidden;
 }
 
 #community,
 #about,
 #contact {
   scroll-margin-top: 80px;
-} 
+}
+
+/* Smooth scrolling and performance optimizations */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.index-page * {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+/* Animation performance helpers */
+.animate-on-scroll {
+  will-change: transform, opacity;
+}
+
+.scroll-progress {
+  will-change: width;
+}
+
+/* Ensure smooth animations on mobile */
+@media (max-width: 768px) {
+  .index-page {
+    transform: translateZ(0);
+  }
+}
