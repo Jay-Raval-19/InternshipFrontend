@@ -422,10 +422,6 @@
   animation: pulse-line 3s ease-in-out infinite;
 }
 
-.connection-line-2 {
-  transform: translate(-50%, -100%) rotate(90deg);
-}
-
 .connection-line-3 {
   transform: translate(-50%, -100%) rotate(180deg);
 }
@@ -627,4 +623,3 @@
     opacity: 0;
   }
 }
-
