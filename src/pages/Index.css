@@ -1,73 +1,12 @@
-
 .index-page {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   background-color: #ffffff;
-  overflow-x: hidden;
-  /* Ensure content is visible by default */
-  visibility: visible;
-  opacity: 1;
 }
 
 #community,
 #about,
 #contact {
   scroll-margin-top: 80px;
-}
-
-/* Ensure all content is visible by default - CRITICAL */
-.index-page * {
-  visibility: visible !important;
-  opacity: 1 !important;
-}
-
-/* Override any animation hiding */
-.how-it-works,
-.community,
-.about,
-.contact,
-.how-it-works *,
-.community *,
-.about *,
-.contact * {
-  visibility: visible !important;
-  opacity: 1 !important;
-}
-
-/* Smooth scrolling and performance optimizations */
-* {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-.index-page * {
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
-}
-
-/* Animation performance helpers */
-.animate-on-scroll {
-  will-change: transform, opacity;
-}
-
-.scroll-progress {
-  will-change: width;
-}
-
-/* Ensure smooth animations on mobile */
-@media (max-width: 768px) {
-  .index-page {
-    transform: translateZ(0);
-  }
-}
-
-/* Fallback styles to ensure content is always visible */
-.how-it-works-step,
-.blog-card,
-.value-card,
-.community-header,
-.about-header {
-  visibility: visible !important;
-  opacity: 1 !important;
-}
+} 

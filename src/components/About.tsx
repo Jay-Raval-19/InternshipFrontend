@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Shield, Globe, Users, Zap } from 'lucide-react';
 import './About.css';
@@ -67,6 +66,7 @@ const About = () => {
                 alt="Chemical Industry"
                 className="about-image"
               />
+              <div className="about-image-overlay"></div>
             </div>
           </div>
 

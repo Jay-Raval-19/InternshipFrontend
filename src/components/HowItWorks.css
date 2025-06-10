@@ -6,7 +6,6 @@
 .how-it-works {
   padding: 4rem 2rem;
   background: linear-gradient(to bottom, #f8fafc, #f1f5f9);
-  overflow-x: hidden;
 }
 
 .how-it-works-container {
@@ -34,34 +33,14 @@
 .how-it-works-content {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 2rem;
+  gap: 3rem;
   align-items: start;
-  max-width: 100%;
-  overflow: visible;
 }
 
 @media (min-width: 1024px) {
   .how-it-works-content {
     grid-template-columns: 1fr 1fr;
-    gap: 3rem;
   }
-}
-
-/* Ensure phone demo fits properly */
-.phone-demo {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  max-width: 100%;
-  overflow: visible;
-}
-
-/* Steps container should not overflow */
-.how-it-works-steps {
-  width: 100%;
-  max-width: 100%;
-  overflow: visible;
 }
 
 /* Responsive adjustments */
@@ -72,9 +51,5 @@
 
   .how-it-works-title {
     font-size: 2rem;
-  }
-
-  .how-it-works-content {
-    gap: 1.5rem;
   }
 }
