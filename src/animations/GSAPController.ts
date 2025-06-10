@@ -55,17 +55,17 @@ export class GSAPController {
   private animateHero() {
     const tl = gsap.timeline({ delay: 0.5 });
     
-    // Hero title animation with split reveal - reduced Y movement to prevent overlap
+    // Hero title animation with no Y movement to prevent overlap
     tl.fromTo('.hero-title', 
       { 
         opacity: 0,
-        y: 30,
+        scale: 0.8,
         rotationX: 45,
         transformOrigin: "50% 50% -50px"
       },
       { 
         opacity: 1,
-        y: 0,
+        scale: 1,
         rotationX: 0,
         duration: 1.2,
         ease: "power3.out"
@@ -110,9 +110,9 @@ export class GSAPController {
         ease: "power2.out"
       }, "-=0.3");
 
-    // Floating animation for hero elements - reduced movement
+    // Floating animation for hero elements - minimal movement
     gsap.to('.hero-title', {
-      y: -5,
+      y: -3,
       duration: 4,
       ease: "power1.inOut",
       yoyo: true,
@@ -417,3 +417,5 @@ export class GSAPController {
 }
 
 export const gsapController = GSAPController.getInstance();
+
+}
