@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, Zap, Bot, Globe, Target, Users, Package, TrendingUp, Clock } from 'lucide-react';
 import './AIAgent.css';
@@ -163,10 +162,6 @@ const AIAgent = () => {
               <div className="data-pulse data-pulse-2"></div>
               <div className="data-pulse data-pulse-3"></div>
               <div className="data-pulse data-pulse-4"></div>
-              
-              {/* Connection success indicators */}
-              <div className="success-indicator success-indicator-1">✓</div>
-              <div className="success-indicator success-indicator-2">✓</div>
             </div>
           </div>
         </div>
