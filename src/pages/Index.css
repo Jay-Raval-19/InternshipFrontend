@@ -16,10 +16,23 @@
   scroll-margin-top: 80px;
 }
 
-/* Ensure all content is visible by default */
+/* Ensure all content is visible by default - CRITICAL */
 .index-page * {
-  visibility: visible;
-  opacity: 1;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Override any animation hiding */
+.how-it-works,
+.community,
+.about,
+.contact,
+.how-it-works *,
+.community *,
+.about *,
+.contact * {
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 /* Smooth scrolling and performance optimizations */
@@ -47,4 +60,14 @@
   .index-page {
     transform: translateZ(0);
   }
+}
+
+/* Fallback styles to ensure content is always visible */
+.how-it-works-step,
+.blog-card,
+.value-card,
+.community-header,
+.about-header {
+  visibility: visible !important;
+  opacity: 1 !important;
 }

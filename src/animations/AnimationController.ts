@@ -32,19 +32,29 @@ export class AnimationController {
         nullTargetWarn: false,
       });
 
-      // Ensure all elements are visible by default
-      gsap.set("*", { visibility: "visible" });
+      // Ensure ALL elements are visible by default - this is crucial
+      gsap.set("*", { 
+        visibility: "visible",
+        opacity: 1,
+        clearProps: "transform"
+      });
 
       // Initialize mobile optimizations first
       mobileOptimizations.init();
 
-      // Initialize all animation modules with delay to ensure DOM is ready
+      // Initialize animations with longer delay to ensure DOM is fully ready
       setTimeout(() => {
-        heroAnimations.init();
-        sectionAnimations.init();
-        microInteractions.init();
-        scrollAnimations.init();
-      }, 100);
+        try {
+          heroAnimations.init();
+          sectionAnimations.init();
+          microInteractions.init();
+          scrollAnimations.init();
+        } catch (error) {
+          console.warn('Animation initialization error:', error);
+          // Ensure content is still visible even if animations fail
+          gsap.set("*", { visibility: "visible", opacity: 1 });
+        }
+      }, 300);
 
       this.isInitialized = true;
     };
@@ -53,7 +63,8 @@ export class AnimationController {
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', initAnimations);
     } else {
-      initAnimations();
+      // Add a small delay even if DOM is ready
+      setTimeout(initAnimations, 100);
     }
   }
 
@@ -66,6 +77,8 @@ export class AnimationController {
   destroy(): void {
     ScrollTrigger.killAll();
     gsap.killTweensOf("*");
+    // Ensure content remains visible after cleanup
+    gsap.set("*", { visibility: "visible", opacity: 1, clearProps: "all" });
     this.isInitialized = false;
   }
 }
