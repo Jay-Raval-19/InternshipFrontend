@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { FileText, MessageCircle, CheckCircle2, Truck, Package } from 'lucide-react';
