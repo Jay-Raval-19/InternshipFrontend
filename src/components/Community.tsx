@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Calendar, ArrowRight } from 'lucide-react';
 import './Community.css';
@@ -64,7 +65,7 @@ const Community = () => {
     <section className="community">
       <div className="community-container">
         <div className="community-header">
-          <h2 className="community-title">Community & Insights</h2>
+          <h2 className="community-title section-title">Community & Insights</h2>
           <p className="community-subtitle">
             Stay informed with latest trends, best practices, and industry insights for chemical procurement
           </p>

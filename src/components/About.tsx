@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Shield, Globe, Users, Zap } from 'lucide-react';
 import './About.css';
@@ -31,7 +32,7 @@ const About = () => {
       <div className="about-container">
         <div className="about-content">
           <div className="about-header">
-            <h2 className="about-title">About Tradio</h2>
+            <h2 className="about-title section-title">About Tradio</h2>
             <p className="about-subtitle">
               Revolutionizing chemical procurement through AI-powered supplier matching and intelligent quotation management
             </p>
@@ -66,7 +67,6 @@ const About = () => {
                 alt="Chemical Industry"
                 className="about-image"
               />
-              <div className="about-image-overlay"></div>
             </div>
           </div>
 

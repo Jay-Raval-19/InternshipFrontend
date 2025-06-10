@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Header from '../components/Header';
 import Hero from '../components/Hero';
@@ -6,21 +7,26 @@ import Community from '../components/Community';
 import About from '../components/About';
 import Contact from '../components/Contact';
 import Chatbot from '../components/Chatbot';
+import { useGSAP } from '../hooks/useGSAP';
 import './Index.css';
 
 const Index = () => {
+  useGSAP();
+
   return (
     <div className="index-page">
       <Header />
       <Hero />
-      <HowItWorks />
-      <div id="community">
+      <div className="animate-section">
+        <HowItWorks />
+      </div>
+      <div id="community" className="animate-section">
         <Community />
       </div>
-      <div id="about">
+      <div id="about" className="animate-section">
         <About />
       </div>
-      <div id="contact">
+      <div id="contact" className="animate-section">
         <Contact />
       </div>
       <Chatbot />
