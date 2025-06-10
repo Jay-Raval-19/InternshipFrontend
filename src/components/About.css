@@ -1,4 +1,3 @@
-
 .about {
   padding: 5rem 0;
   background-color: white;
@@ -72,15 +71,20 @@
 .about-image {
   border-radius: 0.5rem;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  height: auto;
+}
+
+.about-image-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: #2563eb;
+  opacity: 0.2;
+  border-radius: 0.5rem;
 }
 
 .about-values {
   display: grid;
   grid-template-columns: repeat(1, 1fr);
   gap: 2rem;
-  align-items: stretch;
 }
 
 @media (min-width: 768px) {
@@ -101,12 +105,7 @@
   background-color: white;
   border-radius: 0.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
+  transition: box-shadow 0.3s;
 }
 
 .value-card:hover {
@@ -122,7 +121,6 @@
   align-items: center;
   justify-content: center;
   margin: 0 auto 1rem;
-  flex-shrink: 0;
 }
 
 .value-icon {
@@ -140,7 +138,6 @@
 
 .value-description {
   color: #1d4ed8;
-  flex-grow: 1;
 }
 
 .about-cta {

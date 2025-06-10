@@ -1,4 +1,3 @@
-
 .hero {
   position: relative;
   background: linear-gradient(to bottom right, #eff6ff, #ffffff, #f3e8ff);
@@ -70,24 +69,15 @@
 
 .hero-title {
   font-size: 3.75rem;
-  line-height: 1.1;
+  line-height: 1;
   font-weight: bold;
   color: #1e3a8a;
   margin-bottom: 2rem;
-  white-space: nowrap;
 }
 
 @media (min-width: 1024px) {
   .hero-title {
     font-size: 4.5rem;
-    line-height: 1;
-  }
-}
-
-@media (max-width: 768px) {
-  .hero-title {
-    font-size: 2.5rem;
-    white-space: normal;
   }
 }
 

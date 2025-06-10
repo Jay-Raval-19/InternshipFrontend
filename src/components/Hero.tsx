@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { MessageCircle, Play } from 'lucide-react';
 import './Hero.css';
