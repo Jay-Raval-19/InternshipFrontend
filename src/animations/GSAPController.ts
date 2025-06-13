@@ -27,7 +27,8 @@ export class GSAPController {
     // Configure ScrollTrigger for mobile optimization
     ScrollTrigger.config({
       limitCallbacks: true,
-      ignoreMobileResize: true
+      ignoreMobileResize: true,
+      autoRefreshEvents: "visibilitychange,DOMContentLoaded,load,resize"
     });
 
     // Initial setup
@@ -36,58 +37,45 @@ export class GSAPController {
     this.initialized = true;
 
     // Force initial refresh and play animations
-    ScrollTrigger.refresh(true);
-    this.playInitialAnimations();
+    this.forceInitialState();
 
-    // Add event listeners for various scroll scenarios
-    window.addEventListener('scrollend', () => {
-      ScrollTrigger.refresh(true);
-    });
-
-    window.addEventListener('resize', () => {
-      ScrollTrigger.refresh(true);
-    });
-
-    // Handle programmatic scrolling
-    const handleScroll = () => {
-      requestAnimationFrame(() => {
-        ScrollTrigger.refresh(true);
-      });
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    // Add comprehensive event listeners for various scroll scenarios
+    this.setupScrollHandlers();
   }
 
-  private playInitialAnimations() {
-    // Get all sections
-    const sections = gsap.utils.toArray('.animate-section');
-    
-    // Find the first visible section
-    let firstVisibleIndex = -1;
-    sections.forEach((section: any, index: number) => {
-      const rect = section.getBoundingClientRect();
-      const isInView = (
-        rect.top >= 0 &&
-        rect.left >= 0 &&
-        rect.bottom <= window.innerHeight &&
-        rect.right <= window.innerWidth
-      );
-
-      if (isInView && firstVisibleIndex === -1) {
-        firstVisibleIndex = index;
-      }
+  private forceInitialState() {
+    // Set all sections to initial state first
+    gsap.utils.toArray('.animate-section').forEach((section: any) => {
+      gsap.set(section, {
+        opacity: 0,
+        y: 30
+      });
     });
 
-    // Animate all sections up to and including the first visible one
+    // Force visibility for sections currently in viewport
+    requestAnimationFrame(() => {
+      this.checkVisibleSections();
+      ScrollTrigger.refresh(true);
+    });
+  }
+
+  private checkVisibleSections() {
+    const sections = gsap.utils.toArray('.animate-section');
+    
     sections.forEach((section: any, index: number) => {
-      if (index <= firstVisibleIndex) {
+      const rect = section.getBoundingClientRect();
+      const isVisible = (
+        rect.top < window.innerHeight * 0.9 &&
+        rect.bottom > window.innerHeight * 0.1
+      );
+
+      if (isVisible) {
         gsap.to(section, {
           opacity: 1,
           y: 0,
           duration: 0.8,
           ease: "power3.out",
-          overwrite: true,
-          delay: index * 0.1
+          overwrite: true
         });
 
         // Animate child elements
@@ -99,9 +87,62 @@ export class GSAPController {
             duration: 0.6,
             ease: "power3.out",
             overwrite: true,
-            delay: (index * 0.1) + 0.2
+            delay: 0.2
           });
         });
+      }
+    });
+  }
+
+  private setupScrollHandlers() {
+    let scrollTimeout: NodeJS.Timeout;
+    let fastScrolling = false;
+
+    const handleScroll = () => {
+      // Detect fast scrolling
+      if (!fastScrolling) {
+        fastScrolling = true;
+        // Check sections immediately during fast scroll
+        this.checkVisibleSections();
+      }
+
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        fastScrolling = false;
+        // Final check after scrolling stops
+        this.checkVisibleSections();
+        ScrollTrigger.refresh(true);
+      }, 100);
+    };
+
+    const handleScrollEnd = () => {
+      // Force check when scrolling ends
+      setTimeout(() => {
+        this.checkVisibleSections();
+        ScrollTrigger.refresh(true);
+      }, 50);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('scrollend', handleScrollEnd, { passive: true });
+    window.addEventListener('resize', () => {
+      this.checkVisibleSections();
+      ScrollTrigger.refresh(true);
+    });
+    window.addEventListener('orientationchange', () => {
+      setTimeout(() => {
+        this.checkVisibleSections();
+        ScrollTrigger.refresh(true);
+      }, 100);
+    });
+
+    // Handle visibility changes (tab switching, etc.)
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        setTimeout(() => {
+          this.checkVisibleSections();
+          ScrollTrigger.refresh(true);
+        }, 100);
       }
     });
   }
@@ -110,7 +151,7 @@ export class GSAPController {
     // Hero section entrance
     this.animateHero();
     
-    // Section reveals with improved trigger points
+    // Section reveals with improved mobile handling
     this.animateSectionReveals();
     
     // Community cards stagger
@@ -189,7 +230,7 @@ export class GSAPController {
   }
 
   private animateSectionReveals() {
-    // Generic section reveal animation with improved trigger points
+    // Enhanced section reveal animation for mobile
     gsap.utils.toArray('.animate-section').forEach((section: any) => {
       // Set initial state
       gsap.set(section, {
@@ -197,53 +238,44 @@ export class GSAPController {
         y: 30
       });
 
-      // Create the animation
+      // Create the animation with more aggressive mobile settings
       ScrollTrigger.create({
         trigger: section,
-        start: "top 90%",
-        end: "bottom 10%",
+        start: "top 95%", // Start earlier for mobile
+        end: "bottom 5%",
+        fastScrollEnd: true, // Important for mobile
         onEnter: () => {
-          // Get all sections up to and including this one
-          const allSections = gsap.utils.toArray('.animate-section');
-          const currentIndex = allSections.indexOf(section);
-          
-          // Animate all sections up to and including this one
-          allSections.forEach((s: any, index: number) => {
-            if (index <= currentIndex) {
-              gsap.to(s, {
-                opacity: 1,
-                y: 0,
-                duration: 0.8,
-                ease: "power3.out",
-                overwrite: true,
-                delay: index * 0.1
-              });
+          gsap.to(section, {
+            opacity: 1,
+            y: 0,
+            duration: 0.6, // Faster for mobile
+            ease: "power3.out",
+            overwrite: true
+          });
 
-              // Animate child elements
-              const childElements = s.querySelectorAll('.section-title, .animate-element');
-              childElements.forEach((element: any) => {
-                gsap.to(element, {
-                  opacity: 1,
-                  y: 0,
-                  duration: 0.6,
-                  ease: "power3.out",
-                  overwrite: true,
-                  delay: (index * 0.1) + 0.2
-                });
-              });
-            }
+          // Animate child elements
+          const childElements = section.querySelectorAll('.section-title, .animate-element');
+          childElements.forEach((element: any) => {
+            gsap.to(element, {
+              opacity: 1,
+              y: 0,
+              duration: 0.4,
+              ease: "power3.out",
+              overwrite: true,
+              delay: 0.1
+            });
           });
         },
         onLeaveBack: () => {
           gsap.to(section, {
             opacity: 0,
             y: 30,
-            duration: 0.8,
+            duration: 0.4,
             ease: "power3.out",
             overwrite: true
           });
         },
-        once: false
+        refreshPriority: 1
       });
     });
 
@@ -259,13 +291,14 @@ export class GSAPController {
       // Create the animation
       ScrollTrigger.create({
         trigger: title,
-        start: "top 90%",
+        start: "top 95%",
+        fastScrollEnd: true,
         onEnter: () => {
           gsap.to(title, {
             opacity: 1,
             y: 0,
             skewY: 0,
-            duration: 0.6,
+            duration: 0.4,
             ease: "power3.out",
             overwrite: true
           });
@@ -275,12 +308,12 @@ export class GSAPController {
             opacity: 0,
             y: 20,
             skewY: 3,
-            duration: 0.6,
+            duration: 0.4,
             ease: "power3.out",
             overwrite: true
           });
         },
-        once: false
+        refreshPriority: 1
       });
     });
   }
@@ -691,6 +724,7 @@ export class GSAPController {
   }
 
   refresh() {
+    this.checkVisibleSections();
     ScrollTrigger.refresh();
   }
 }
