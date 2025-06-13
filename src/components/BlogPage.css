@@ -1,8 +1,11 @@
+
 .blog-page {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
-  color: #333;
+  color: var(--foreground);
+  background-color: var(--background);
+  min-height: 100vh;
 }
 
 .blog-header {
@@ -13,7 +16,7 @@
 .blog-title {
   font-size: 3rem;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--foreground);
   margin-bottom: 1rem;
 }
 
@@ -21,7 +24,7 @@
   display: flex;
   justify-content: center;
   gap: 2rem;
-  color: #666;
+  color: var(--muted);
   font-size: 1.1rem;
 }
 
@@ -56,20 +59,20 @@
 .blog-content h2 {
   font-size: 2.5rem;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--foreground);
   margin: 3rem 0 1.5rem;
 }
 
 .blog-content h3 {
   font-size: 1.8rem;
   font-weight: 600;
-  color: #2a2a2a;
+  color: var(--foreground);
   margin: 2.5rem 0 1rem;
 }
 
 .blog-content p {
   margin-bottom: 1.5rem;
-  color: #444;
+  color: var(--foreground);
 }
 
 .blog-content ul {
@@ -79,18 +82,18 @@
 
 .blog-content li {
   margin-bottom: 1rem;
-  color: #444;
+  color: var(--foreground);
 }
 
 .blog-content li::marker {
-  color: #007bff;
+  color: var(--primary);
 }
 
 .blog-not-found {
   text-align: center;
   padding: 4rem;
   font-size: 1.5rem;
-  color: #666;
+  color: var(--muted);
 }
 
 /* Responsive Design */
@@ -140,7 +143,7 @@
 /* Hover Effects */
 .blog-content h2:hover,
 .blog-content h3:hover {
-  color: #007bff;
+  color: var(--primary);
   transition: color 0.3s ease;
 }
 
@@ -155,16 +158,16 @@
 }
 
 .blog-page::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--surface);
 }
 
 .blog-page::-webkit-scrollbar-thumb {
-  background: #888;
+  background: var(--muted);
   border-radius: 4px;
 }
 
 .blog-page::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: var(--foreground);
 }
 
 .blog-loading {
@@ -173,8 +176,8 @@
   align-items: center;
   min-height: 100vh;
   font-size: 1.5rem;
-  color: #666;
-  background-color: #f8fafc;
+  color: var(--muted);
+  background-color: var(--background);
 }
 
 .blog-loading::after {
@@ -182,7 +185,7 @@
   width: 1.5rem;
   height: 1.5rem;
   margin-left: 1rem;
-  border: 3px solid #007bff;
+  border: 3px solid var(--primary);
   border-top-color: transparent;
   border-radius: 50%;
   animation: loading-spinner 0.8s linear infinite;
