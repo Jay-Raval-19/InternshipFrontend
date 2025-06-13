@@ -384,33 +384,6 @@
   color: white;
 }
 
-.connection-node-1 {
-  top: 15%;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.connection-node-2 {
-  right: -20px;
-  top: 50%;
-  transform: translateY(-50%);
-  animation-delay: 0.5s;
-}
-
-.connection-node-3 {
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  animation-delay: 1s;
-}
-
-.connection-node-4 {
-  left: -20px;
-  top: 50%;
-  transform: translateY(-50%);
-  animation-delay: 1.5s;
-}
-
 .connection-line {
   position: absolute;
   width: 3px;
@@ -420,6 +393,14 @@
   left: 50%;
   transform-origin: bottom center;
   animation: pulse-line 3s ease-in-out infinite;
+}
+
+.connection-line-1 {
+  transform: translate(-50%, -100%) rotate(0deg);
+}
+
+.connection-line-2 {
+  transform: translate(-50%, -100%) rotate(90deg);
 }
 
 .connection-line-3 {
@@ -453,45 +434,37 @@
   box-shadow: 0 12px 24px -4px rgba(0, 0, 0, 0.15);
 }
 
+.connection-node-1 {
+  top: 76px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.connection-node-2 {
+  right: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  animation-delay: 0.5s;
+}
+
+.connection-node-3 {
+  bottom: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation-delay: 1s;
+}
+
+.connection-node-4 {
+  left: 39px;
+  top: 50%;
+  transform: translateY(-50%);
+  animation-delay: 1.5s;
+}
+
 .node-icon {
   width: 1.5rem;
   height: 1.5rem;
   color: var(--primary);
-}
-
-/* Data pulse animations */
-.data-pulse {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  background: var(--primary);
-  border-radius: 50%;
-  animation: data-flow 4s ease-in-out infinite;
-  box-shadow: 0 0 10px var(--primary);
-}
-
-.data-pulse-1 {
-  top: 20%;
-  left: 50%;
-  animation-delay: 0s;
-}
-
-.data-pulse-2 {
-  right: 20%;
-  top: 50%;
-  animation-delay: 1s;
-}
-
-.data-pulse-3 {
-  bottom: 20%;
-  left: 50%;
-  animation-delay: 2s;
-}
-
-.data-pulse-4 {
-  left: 20%;
-  top: 50%;
-  animation-delay: 3s;
 }
 
 @keyframes data-flow {

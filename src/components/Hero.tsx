@@ -1,10 +1,21 @@
 import React from 'react';
 import { MessageCircle, Play } from 'lucide-react';
 import './Hero.css';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 const Hero = () => {
   const handleStartInquiry = () => {
-    window.open('https://wa.me/1234567890?text=Hello%20Tradio,%20I%20would%20like%20to%20make%20an%20inquiry', '_blank');
+    window.open('https://wa.me/14155238886?text=Hello%20Sourceasy,%20I%20would%20like%20to%20make%20an%20inquiry', '_blank');
+  };
+
+  const handleWatchDemo = () => {
+    const howItWorksSection = document.getElementById('how-it-works');
+    if (howItWorksSection) {
+      howItWorksSection.scrollIntoView({ behavior: 'smooth' });
+      setTimeout(() => {
+        ScrollTrigger.refresh();
+      }, 500);
+    }
   };
 
   return (
@@ -25,7 +36,7 @@ const Hero = () => {
             </h1>
             
             <p className="hero-description">
-              Connect with 500+ verified suppliers instantly. Get competitive quotations and close deals faster than ever.
+              Connect with 5000+ verified suppliers instantly. Get competitive quotations and close deals faster than ever.
             </p>
             
             {/* CTA Buttons */}
@@ -40,6 +51,7 @@ const Hero = () => {
               
               <button 
                 className="hero-button-secondary"
+                onClick={handleWatchDemo}
               >
                 <Play className="button-icon button-icon-secondary" />
                 Watch Demo
@@ -50,11 +62,11 @@ const Hero = () => {
           {/* Simple Stats */}
           <div className="hero-stats">
             <div className="stat-item">
-              <div className="stat-value">500+</div>
+              <div className="stat-value">5000+</div>
               <div className="stat-label">Verified Suppliers</div>
             </div>
             <div className="stat-item">
-              <div className="stat-value">24hrs</div>
+              <div className="stat-value">4hrs</div>
               <div className="stat-label">Response Time</div>
             </div>
             <div className="stat-item">

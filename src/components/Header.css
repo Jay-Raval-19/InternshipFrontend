@@ -25,12 +25,46 @@
 .logo {
   display: flex;
   align-items: center;
+  gap: 0rem;
+}
+
+.logo-img {
+  height: 3.25rem;
+  width: 3.25rem;
+  object-fit: contain;
+  display: block;
 }
 
 .logo-text {
   font-size: 1.5rem;
-  font-weight: bold;
-  color: #1e3a8a;
+  font-weight: 700;
+  margin: 0;
+  margin-left: -0.45rem;
+}
+
+.logo-o {
+  color: #00B8BD !important;
+}
+.logo-u {
+  color: #00B8BD !important;
+}
+.logo-r {
+  color: #2F6BFF !important;
+}
+.logo-c {
+  color: #2F6BFF !important;
+}
+.logo-e {
+  color: #1E3A8A !important;
+}
+.logo-a {
+  color: #1E3A8A !important;
+}
+.logo-s {
+  color: #FF7A1B !important;
+}
+.logo-y {
+  color: #FF7A1B !important;
 }
 
 .nav {

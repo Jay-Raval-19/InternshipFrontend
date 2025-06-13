@@ -69,15 +69,24 @@
 
 .hero-title {
   font-size: 3.75rem;
-  line-height: 1;
+  line-height: 1.1;
   font-weight: bold;
   color: #1e3a8a;
   margin-bottom: 2rem;
+  white-space: nowrap;
 }
 
 @media (min-width: 1024px) {
   .hero-title {
     font-size: 4.5rem;
+    line-height: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.5rem;
+    white-space: normal;
   }
 }
 
@@ -87,6 +96,7 @@
   background: linear-gradient(to right, #2563eb, #9333ea);
   -webkit-background-clip: text;
   background-clip: text;
+  padding-bottom: 0.7rem;
 }
 
 .hero-description {

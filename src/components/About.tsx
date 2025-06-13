@@ -1,8 +1,10 @@
-import React from 'react';
-import { Shield, Globe, Users, Zap } from 'lucide-react';
+import React, { useState } from 'react';
+import { Shield, Globe, Users, Zap, TrendingUp, Clock, Gift } from 'lucide-react';
 import './About.css';
 
 const About = () => {
+  const [modalOpen, setModalOpen] = useState(false);
+
   const values = [
     {
       icon: Shield,
@@ -10,7 +12,7 @@ const About = () => {
       description: "All suppliers are GST-verified and undergo rigorous quality checks to ensure reliable partnerships."
     },
     {
-      icon: Globe,
+      icon: TrendingUp,
       title: "Industry Expertise",
       description: "Deep understanding of chemical industry requirements, regulations, and market dynamics."
     },
@@ -26,47 +28,75 @@ const About = () => {
     }
   ];
 
+  const stats = [
+    {
+      icon: Globe,
+      value: "5x",
+      label: "Wider Reach",
+      description: "Connects with more suppliers than a typical purchase manager"
+    },
+    {
+      icon: Clock,
+      value: "24/7",
+      label: "Always Available",
+      description: "Works round the clock to save your time"
+    },
+    {
+      icon: Gift,
+      value: "100%",
+      label: "Free for All Users",
+      description: "No hidden charges or subscription fees"
+    }
+  ];
+
   return (
     <section className="about">
       <div className="about-container">
         <div className="about-content">
           <div className="about-header">
-            <h2 className="about-title">About Tradio</h2>
+            <h2 className="about-title">Transforming Chemical Industry Procurement</h2>
             <p className="about-subtitle">
-              Revolutionizing chemical procurement through AI-powered supplier matching and intelligent quotation management
+              We're revolutionizing how businesses source chemicals through AI-powered matching and transparent pricing
             </p>
           </div>
 
           <div className="about-main">
             <div className="about-text">
-              <h3 className="about-text-title">
-                Transforming Chemical Industry Procurement
-              </h3>
+              <h3 className="about-text-title">Your Trusted Chemical Sourcing Partner</h3>
               <div className="about-text-content">
                 <p>
-                  Tradio was born from a simple observation: chemical procurement in India was fragmented, 
-                  time-consuming, and lacked transparency. Traditional methods of finding suppliers often 
-                  resulted in limited options, delayed responses, and inefficient comparison processes.
+                  At Sourceasy, we understand the complexities of chemical procurement. Our platform connects you with verified suppliers, 
+                  ensuring quality, reliability, and competitive pricing for all your chemical needs.
                 </p>
                 <p>
-                  Our AI-powered platform bridges this gap by creating an intelligent ecosystem where 
-                  chemical buyers can access verified suppliers instantly, receive competitive quotations, 
-                  and make informed decisions based on comprehensive comparisons.
-                </p>
-                <p>
-                  Currently in our early stage, we're proud to offer our services completely free to help 
-                  businesses optimize their procurement processes and build stronger supplier relationships.
+                  With our AI-powered matching system and dedicated support team, we make chemical sourcing simple, 
+                  efficient, and transparent. Whether you're looking for industrial chemicals, raw materials, or specialty compounds, 
+                  we've got you covered.
                 </p>
               </div>
             </div>
-            
+
             <div className="about-image-container">
-              <img 
-                src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=600&h=400&fit=crop&crop=center" 
-                alt="Chemical Industry"
-                className="about-image"
-              />
-              <div className="about-image-overlay"></div>
+              <div className="about-image-wrapper" onClick={() => setModalOpen(true)} style={{cursor: 'zoom-in'}}>
+                <img 
+                  src="/quotation_report.jpg" 
+                  alt="Sourceasy Quotation Report - AI-powered supplier comparison and analysis"
+                  className="about-image"
+                />
+                <div className="about-image-overlay"></div>
+              </div>
+              {modalOpen && (
+                <div className="about-image-modal" onClick={() => setModalOpen(false)}>
+                  <div className="about-image-modal-content" onClick={e => e.stopPropagation()}>
+                    <button className="about-image-modal-close" onClick={() => setModalOpen(false)}>&times;</button>
+                    <img 
+                      src="/quotation_report.jpg" 
+                      alt="Sourceasy Quotation Report - AI-powered supplier comparison and analysis (enlarged)"
+                      className="about-image-modal-img"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -83,22 +113,18 @@ const About = () => {
           </div>
 
           <div className="about-cta">
-            <h3 className="cta-title">
-              Why Choose Tradio?
-            </h3>
+            <h3 className="cta-title">Why Choose Sourceasy?</h3>
             <div className="cta-stats">
-              <div>
-                <div className="cta-stat-value">500+</div>
-                <p className="cta-stat-label">Verified Chemical Suppliers</p>
-              </div>
-              <div>
-                <div className="cta-stat-value">24hrs</div>
-                <p className="cta-stat-label">Average Response Time</p>
-              </div>
-              <div>
-                <div className="cta-stat-value">100%</div>
-                <p className="cta-stat-label">Free for All Users</p>
-              </div>
+              {stats.map((stat, index) => (
+                <div key={index} className="cta-stat-card">
+                  <div className="cta-stat-icon-container">
+                    <stat.icon className="cta-stat-icon" />
+                  </div>
+                  <div className="cta-stat-value">{stat.value}</div>
+                  <p className="cta-stat-label">{stat.label}</p>
+                  <p className="cta-stat-description">{stat.description}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>

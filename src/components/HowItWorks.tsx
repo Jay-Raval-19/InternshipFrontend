@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
-import { FileText, MessageCircle, CheckCircle2, Truck, Package } from 'lucide-react';
+import { FileText, MessageCircle, CheckCircle2, Truck, Package, Smile, Paperclip, IndianRupee, Camera, Mic } from 'lucide-react';
 import './HowItWorks.css';
 
 const HowItWorks = () => {
@@ -11,11 +11,12 @@ const HowItWorks = () => {
   const messagesRef = useRef([]);
   const timelineRef = useRef(null);
   const intervalRef = useRef(null);
+  const inputRef = useRef(null);
 
   const steps = [
     {
       title: "Send Your Requirement",
-      description: "Simply send your chemical requirement on WhatsApp",
+      description: "Simply send your requirement on +91 98260 00000",
       message: "Hi, I need 1000L of Acetic Acid for delivery in Mumbai",
       interval: 2000,
     },
@@ -27,19 +28,19 @@ const HowItWorks = () => {
     },
     {
       title: "Supplier Matching",
-      description: "We match you with verified suppliers in your region",
+      description: "We match you with verified suppliers across India",
       message: "Found 5 verified suppliers in your region\nSending RFQs...",
       interval: 2000,
     },
     {
       title: "Quote Collection",
-      description: "Suppliers submit their competitive quotes",
+      description: "Our agent collects competitive quotes from multiple suppliers",
       message: "Received quotes from suppliers\nGenerating comparison report...",
       interval: 2000,
     },
     {
       title: "Comparison Report",
-      description: "Get a detailed PDF report with all quotes",
+      description: "Get a detailed PDF report with detailed insights of all quotes",
       message: "Your comparison report is ready! 📄\nTap to view the detailed PDF with supplier quotes, delivery terms, and payment options.",
       interval: 2000,
     },
@@ -85,6 +86,7 @@ const HowItWorks = () => {
     });
 
     function startMessageAnimation() {
+      // First show all messages in sequence
       steps.forEach((step, index) => {
         const message = messagesRef.current[index];
         if (message) {
@@ -102,19 +104,22 @@ const HowItWorks = () => {
                 }
               }
             })
-            .to(message, {
-              opacity: 0,
-              y: -10,
-              scale: 0.9,
-              duration: 0.3,
-              delay: 1.5,
-              ease: "power2.in",
-              onComplete: () => {
-                if (index === 4) {
-                  setShowPdf(false);
-                }
-              }
-            });
+            .to({}, { duration: 2 }); // Add 2 second delay after each message
+        }
+      });
+
+      // After all messages are shown, wait for a moment
+      timelineRef.current.to({}, { duration: 1.5 });
+
+      // Then fade out all messages together
+      timelineRef.current.to(messagesRef.current, {
+        opacity: 0,
+        y: -10,
+        scale: 0.9,
+        duration: 0.3,
+        ease: "power2.in",
+        onComplete: () => {
+          setShowPdf(false);
         }
       });
     }
@@ -163,6 +168,22 @@ const HowItWorks = () => {
     }, 3000);
   };
 
+  const handleInputFocus = () => {
+    gsap.to(inputRef.current, {
+      y: -10,
+      duration: 0.3,
+      ease: "power2.out"
+    });
+  };
+
+  const handleInputBlur = () => {
+    gsap.to(inputRef.current, {
+      y: 0,
+      duration: 0.3,
+      ease: "power2.out"
+    });
+  };
+
   return (
     <section className="how-it-works" ref={containerRef}>
       <div className="how-it-works-container">
@@ -180,7 +201,7 @@ const HowItWorks = () => {
                     <div className="chat-avatar">
                       <MessageCircle />
                     </div>
-                    <span className="chat-name">Tradio Assistant</span>
+                    <span className="chat-name">Sourceasy AI</span>
                     <span className="chat-status" />
                   </div>
                 </div>
@@ -208,6 +229,27 @@ const HowItWorks = () => {
                       </div>
                     </div>
                   )}
+                </div>
+
+                <div className="chat-input-container" ref={inputRef}>
+                  <div className="chat-input-wrapper">
+                    <Smile className="chat-input-icon" />
+                    <input
+                      type="text"
+                      className="chat-input"
+                      placeholder="Message"
+                      onFocus={handleInputFocus}
+                      onBlur={handleInputBlur}
+                    />
+                    <Paperclip className="chat-input-icon" />
+                    <div className="chat-input-icon">
+                      <IndianRupee />
+                    </div>
+                    <Camera className="chat-input-icon" />
+                    <button className="chat-mic-button">
+                      <Mic className="chat-mic-icon" />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

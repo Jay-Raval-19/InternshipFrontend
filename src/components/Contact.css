@@ -117,6 +117,26 @@
   border-color: #3b82f6;
 }
 
+.form-success {
+  padding: 1rem;
+  background-color: #dcfce7;
+  border: 1px solid #86efac;
+  border-radius: 0.375rem;
+  color: #166534;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+.form-error {
+  padding: 1rem;
+  background-color: #fee2e2;
+  border: 1px solid #fca5a5;
+  border-radius: 0.375rem;
+  color: #991b1b;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
 .submit-button {
   width: 100%;
   padding: 0.75rem;
@@ -131,6 +151,11 @@
 
 .submit-button:hover {
   background-color: #1d4ed8;
+}
+
+.submit-button:disabled {
+  background-color: #93c5fd;
+  cursor: not-allowed;
 }
 
 .contact-info {
