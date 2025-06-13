@@ -5,7 +5,7 @@
 
 .how-it-works {
   padding: 4rem 2rem;
-  background: linear-gradient(to bottom, var(--surface), var(--surface-secondary));
+  background: linear-gradient(to bottom, #f8fafc, #f1f5f9);
 }
 
 .how-it-works-container {
@@ -21,13 +21,13 @@
 .how-it-works-title {
   font-size: 2.5rem;
   font-weight: 700;
-  color: var(--foreground);
+  color: #1e293b;
   margin-bottom: 1rem;
 }
 
 .how-it-works-subtitle {
   font-size: 1.25rem;
-  color: var(--muted);
+  color: #64748b;
 }
 
 .how-it-works-content {

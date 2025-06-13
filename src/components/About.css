@@ -1,7 +1,6 @@
-
 .about {
   padding: 5rem 0;
-  background: linear-gradient(to bottom, var(--background), var(--surface));
+  background: linear-gradient(to bottom, #ffffff, #f8fafc);
   position: relative;
   overflow: hidden;
 }
@@ -13,7 +12,7 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(to right, transparent, var(--primary), transparent);
+  background: linear-gradient(to right, transparent, #2563eb, transparent);
   opacity: 0.2;
 }
 
@@ -38,7 +37,7 @@
 .about-title {
   font-size: 2.5rem;
   font-weight: 800;
-  background: linear-gradient(to right, var(--secondary), var(--primary));
+  background: linear-gradient(to right, #1e3a8a, #2563eb);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -48,7 +47,7 @@
 
 .about-subtitle {
   font-size: 1.25rem;
-  color: var(--muted);
+  color: #1d4ed8;
   max-width: 48rem;
   margin: 0 auto;
   line-height: 1.6;
@@ -69,13 +68,13 @@
 }
 
 .about-text {
-  color: var(--muted);
+  color: #1d4ed8;
 }
 
 .about-text-title {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--foreground);
+  color: #1e3a8a;
   margin-bottom: 1.5rem;
   line-height: 1.3;
 }
@@ -89,7 +88,7 @@
 .about-text-content p {
   font-size: 1.125rem;
   line-height: 1.7;
-  color: var(--muted);
+  color: #1d4ed8;
 }
 
 .about-image-container {
@@ -149,7 +148,7 @@
 .value-card {
   padding: 2rem;
   text-align: center;
-  background: var(--card);
+  background: white;
   border-radius: 1rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   transition: all 0.3s ease;
@@ -161,7 +160,6 @@
   position: relative;
   overflow: hidden;
   transform: translateY(0);
-  border: 1px solid var(--border);
 }
 
 .value-card::before {
@@ -171,13 +169,13 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(to right, var(--primary), var(--primary-dark));
+  background: linear-gradient(to right, #2563eb, #1d4ed8);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
 
 .value-card:hover {
-  transform: translateY(-10px);
+  transform: translateY(20px);
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
@@ -186,7 +184,7 @@
 }
 
 .value-icon-container {
-  background: linear-gradient(135deg, var(--primary-light), var(--surface));
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
   width: 5rem;
   height: 5rem;
   border-radius: 1rem;
@@ -204,31 +202,30 @@
 .value-icon {
   height: 2.5rem;
   width: 2.5rem;
-  color: var(--primary);
+  color: #2563eb;
 }
 
 .value-title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--card-foreground);
+  color: #1e3a8a;
   margin-bottom: 1rem;
 }
 
 .value-description {
-  color: var(--muted);
+  color: #1d4ed8;
   line-height: 1.6;
   flex-grow: 1;
 }
 
 .about-cta {
   margin-top: 4rem;
-  background: linear-gradient(135deg, var(--surface), var(--primary-light));
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
   border-radius: 1.5rem;
   padding: 3rem 2rem;
   text-align: center;
   position: relative;
   overflow: hidden;
-  border: 1px solid var(--border);
 }
 
 .about-cta::before {
@@ -245,7 +242,7 @@
 .cta-title {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--foreground);
+  color: #1e3a8a;
   margin-bottom: 2rem;
   position: relative;
 }
@@ -264,12 +261,11 @@
 }
 
 .cta-stat-card {
-  background: var(--card);
+  background: white;
   padding: 2rem;
   border-radius: 1rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
-  border: 1px solid var(--border);
 }
 
 .cta-stat-card:hover {
@@ -277,7 +273,7 @@
 }
 
 .cta-stat-icon-container {
-  background: linear-gradient(135deg, var(--primary-light), var(--surface));
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
   width: 4rem;
   height: 4rem;
   border-radius: 1rem;
@@ -290,13 +286,13 @@
 .cta-stat-icon {
   height: 2rem;
   width: 2rem;
-  color: var(--primary);
+  color: #2563eb;
 }
 
 .cta-stat-value {
   font-size: 2.5rem;
   font-weight: 800;
-  color: var(--foreground);
+  color: #1e3a8a;
   margin-bottom: 0.5rem;
   line-height: 1;
 }
@@ -304,13 +300,13 @@
 .cta-stat-label {
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--muted);
+  color: #1d4ed8;
   margin-bottom: 0.5rem;
 }
 
 .cta-stat-description {
   font-size: 0.875rem;
-  color: var(--muted);
+  color: #64748b;
   line-height: 1.5;
 }
 
@@ -347,7 +343,7 @@
   max-height: 80vh;
   border-radius: 1rem;
   box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-  background: var(--card);
+  background: white;
 }
 
 .about-image-modal-close {

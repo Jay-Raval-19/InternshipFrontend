@@ -1,7 +1,6 @@
-
 .articles-page {
   min-height: 100vh;
-  background-color: var(--background);
+  background-color: #f8fafc;
   padding: 4rem 2rem;
 }
 
@@ -19,16 +18,16 @@
 .articles-header h1 {
   font-size: 3rem;
   font-weight: 700;
-  color: var(--foreground);
+  color: #1a1a1a;
   margin-bottom: 1rem;
-  background: linear-gradient(135deg, var(--foreground) 0%, var(--muted) 100%);
+  background: linear-gradient(135deg, #1a1a1a 0%, #4a4a4a 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .articles-header p {
   font-size: 1.2rem;
-  color: var(--muted);
+  color: #666;
   max-width: 600px;
   margin: 0 auto;
 }
@@ -44,24 +43,24 @@
 
 .filter-btn {
   padding: 0.5rem 1.5rem;
-  border: 2px solid var(--border);
+  border: 2px solid #e2e8f0;
   border-radius: 50px;
   background: transparent;
-  color: var(--muted);
+  color: #666;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .filter-btn:hover {
-  border-color: var(--primary);
-  color: var(--primary);
+  border-color: #007bff;
+  color: #007bff;
   transform: translateY(-2px);
 }
 
 .filter-btn.active {
-  background: var(--primary);
-  border-color: var(--primary);
+  background: #007bff;
+  border-color: #007bff;
   color: white;
 }
 
@@ -72,7 +71,7 @@
 }
 
 .article-card {
-  background: var(--card);
+  background: white;
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -82,7 +81,6 @@
   transform-style: preserve-3d;
   backface-visibility: hidden;
   opacity: 1;
-  border: 1px solid var(--border);
 }
 
 .article-image-container {
@@ -102,7 +100,7 @@
   position: absolute;
   top: 1rem;
   right: 1rem;
-  background: rgba(37, 99, 235, 0.9);
+  background: rgba(0, 123, 255, 0.9);
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 50px;
@@ -120,7 +118,7 @@
   gap: 1rem;
   margin-bottom: 1rem;
   font-size: 0.9rem;
-  color: var(--muted);
+  color: #666;
 }
 
 .article-date,
@@ -133,13 +131,13 @@
 .article-title {
   font-size: 1.5rem;
   font-weight: 600;
-  color: var(--card-foreground);
+  color: #1a1a1a;
   margin-bottom: 1rem;
   line-height: 1.3;
 }
 
 .article-excerpt {
-  color: var(--muted);
+  color: #666;
   margin-bottom: 1.5rem;
   line-height: 1.6;
 }
@@ -148,7 +146,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--primary);
+  color: #007bff;
   font-weight: 500;
 }
 

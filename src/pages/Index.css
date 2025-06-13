@@ -1,8 +1,9 @@
+
 .index-page {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: var(--background);
+  background-color: #ffffff;
   /* Enable hardware acceleration for smooth animations */
   transform: translateZ(0);
   backface-visibility: hidden;
@@ -42,9 +43,9 @@
 }
 
 .scroll-up-btn {
-  background-color: var(--card);
-  color: var(--foreground);
-  border: 1px solid var(--border);
+  background-color: #1f2937;
+  color: white;
+  border: none;
   border-radius: 50%;
   width: 3.5rem; /* Slightly larger for better visibility */
   height: 3.5rem;
@@ -58,18 +59,10 @@
 }
 
 .scroll-up-btn:hover {
-  background-color: var(--surface);
+  background-color: #374151;
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
   opacity: 1;
-}
-
-[data-theme="dark"] .scroll-up-btn {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-[data-theme="dark"] .scroll-up-btn:hover {
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
 }
 
 /* Mobile adjustments */

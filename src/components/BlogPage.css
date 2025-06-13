@@ -1,11 +1,8 @@
-
 .blog-page {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
-  color: var(--foreground);
-  background-color: var(--background);
-  min-height: 100vh;
+  color: #333;
 }
 
 .blog-header {
@@ -16,7 +13,7 @@
 .blog-title {
   font-size: 3rem;
   font-weight: 700;
-  color: var(--foreground);
+  color: #1a1a1a;
   margin-bottom: 1rem;
 }
 
@@ -24,7 +21,7 @@
   display: flex;
   justify-content: center;
   gap: 2rem;
-  color: var(--muted);
+  color: #666;
   font-size: 1.1rem;
 }
 
@@ -59,20 +56,20 @@
 .blog-content h2 {
   font-size: 2.5rem;
   font-weight: 700;
-  color: var(--foreground);
+  color: #1a1a1a;
   margin: 3rem 0 1.5rem;
 }
 
 .blog-content h3 {
   font-size: 1.8rem;
   font-weight: 600;
-  color: var(--foreground);
+  color: #2a2a2a;
   margin: 2.5rem 0 1rem;
 }
 
 .blog-content p {
   margin-bottom: 1.5rem;
-  color: var(--foreground);
+  color: #444;
 }
 
 .blog-content ul {
@@ -82,18 +79,18 @@
 
 .blog-content li {
   margin-bottom: 1rem;
-  color: var(--foreground);
+  color: #444;
 }
 
 .blog-content li::marker {
-  color: var(--primary);
+  color: #007bff;
 }
 
 .blog-not-found {
   text-align: center;
   padding: 4rem;
   font-size: 1.5rem;
-  color: var(--muted);
+  color: #666;
 }
 
 /* Responsive Design */
@@ -143,7 +140,7 @@
 /* Hover Effects */
 .blog-content h2:hover,
 .blog-content h3:hover {
-  color: var(--primary);
+  color: #007bff;
   transition: color 0.3s ease;
 }
 
@@ -158,16 +155,16 @@
 }
 
 .blog-page::-webkit-scrollbar-track {
-  background: var(--surface);
+  background: #f1f1f1;
 }
 
 .blog-page::-webkit-scrollbar-thumb {
-  background: var(--muted);
+  background: #888;
   border-radius: 4px;
 }
 
 .blog-page::-webkit-scrollbar-thumb:hover {
-  background: var(--foreground);
+  background: #555;
 }
 
 .blog-loading {
@@ -176,8 +173,8 @@
   align-items: center;
   min-height: 100vh;
   font-size: 1.5rem;
-  color: var(--muted);
-  background-color: var(--background);
+  color: #666;
+  background-color: #f8fafc;
 }
 
 .blog-loading::after {
@@ -185,7 +182,7 @@
   width: 1.5rem;
   height: 1.5rem;
   margin-left: 1rem;
-  border: 3px solid var(--primary);
+  border: 3px solid #007bff;
   border-top-color: transparent;
   border-radius: 50%;
   animation: loading-spinner 0.8s linear infinite;

@@ -1,7 +1,6 @@
-
 .hero {
   position: relative;
-  background: linear-gradient(to bottom right, var(--primary-light), var(--background), var(--surface));
+  background: linear-gradient(to bottom right, #eff6ff, #ffffff, #f3e8ff);
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -23,13 +22,13 @@
 .hero-blob-1 {
   top: 5rem;
   right: 5rem;
-  background-color: var(--primary-light);
+  background-color: #bfdbfe;
 }
 
 .hero-blob-2 {
   bottom: 5rem;
   left: 5rem;
-  background-color: var(--accent);
+  background-color: #e9d5ff;
   animation-delay: 4s;
 }
 
@@ -72,7 +71,7 @@
   font-size: 3.75rem;
   line-height: 1.1;
   font-weight: bold;
-  color: var(--foreground);
+  color: #1e3a8a;
   margin-bottom: 2rem;
   white-space: nowrap;
 }
@@ -94,7 +93,7 @@
 .hero-title-gradient {
   display: block;
   color: transparent;
-  background: linear-gradient(to right, var(--primary), var(--accent));
+  background: linear-gradient(to right, #2563eb, #9333ea);
   -webkit-background-clip: text;
   background-clip: text;
   padding-bottom: 0.7rem;
@@ -102,7 +101,7 @@
 
 .hero-description {
   font-size: 1.5rem;
-  color: var(--muted);
+  color: #1d4ed8;
   margin-bottom: 3rem;
   max-width: 48rem;
   margin-left: auto;
@@ -148,8 +147,8 @@
   display: flex;
   align-items: center;
   background: none;
-  border: 2px solid var(--primary);
-  color: var(--primary);
+  border: 2px solid #2563eb;
+  color: #2563eb;
   padding: 1.5rem 2.5rem;
   font-size: 1.25rem;
   font-weight: 600;
@@ -159,7 +158,7 @@
 }
 
 .hero-button-secondary:hover {
-  background-color: var(--surface);
+  background-color: #eff6ff;
 }
 
 .button-icon {
@@ -197,9 +196,9 @@
 .stat-value {
   font-size: 1.875rem;
   font-weight: bold;
-  color: var(--primary);
+  color: #2563eb;
 }
 
 .stat-label {
-  color: var(--muted);
+  color: #1d4ed8;
 } 
