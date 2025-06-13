@@ -40,14 +40,13 @@ const Index = () => {
   }, []);
 
   useEffect(() => {
-    if (!componentsLoaded) return;
-
     console.log('Index: Setting up scroll handlers...');
 
     // Handle scroll events
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      setShowScrollUp(scrollY > 100);
+      console.log('Scroll position:', scrollY);
+      setShowScrollUp(scrollY > 300); // Lowered threshold for easier testing
     };
 
     // Add event listeners
@@ -62,7 +61,7 @@ const Index = () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', () => ScrollTrigger.refresh(true));
     };
-  }, [componentsLoaded]);
+  }, []); // Removed dependency on componentsLoaded to ensure it always runs
 
   // Add a separate effect for handling keyboard navigation
   useEffect(() => {
@@ -82,11 +81,14 @@ const Index = () => {
   }, []);
 
   const handleScrollToTop = () => {
+    console.log('Scrolling to top...');
     window.scrollTo({ 
       top: 0, 
       behavior: 'smooth' 
     });
   };
+
+  console.log('Index: Rendering with showScrollUp:', showScrollUp);
 
   return (
     <>
@@ -110,17 +112,22 @@ const Index = () => {
         </div>
       </div>
       <Chatbot />
-      {showScrollUp && (
-        <div className="scroll-up-btn-container">
-          <button
-            className="scroll-up-btn"
-            onClick={handleScrollToTop}
-            aria-label="Scroll to top"
-          >
-            <ArrowUp size={24} />
-          </button>
-        </div>
-      )}
+      
+      {/* Back to top button - always render but conditionally show */}
+      <div className={`scroll-up-btn-container ${showScrollUp ? 'visible' : 'hidden'}`}>
+        <button
+          className="scroll-up-btn"
+          onClick={handleScrollToTop}
+          aria-label="Scroll to top"
+          style={{ 
+            opacity: showScrollUp ? 1 : 0,
+            pointerEvents: showScrollUp ? 'auto' : 'none',
+            transform: showScrollUp ? 'translateY(0)' : 'translateY(20px)'
+          }}
+        >
+          <ArrowUp size={24} />
+        </button>
+      </div>
     </>
   );
 };

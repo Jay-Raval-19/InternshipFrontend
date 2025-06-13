@@ -1,3 +1,4 @@
+
 .index-page {
   min-height: 100vh;
   display: flex;
@@ -25,8 +26,20 @@
 .scroll-up-btn-container {
   position: fixed;
   bottom: 2rem;
-  left: 2rem;
+  right: 2rem; /* Changed from left to right for better visibility */
   z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.scroll-up-btn-container.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scroll-up-btn-container.hidden {
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
 }
 
 .scroll-up-btn {
@@ -34,8 +47,8 @@
   color: white;
   border: none;
   border-radius: 50%;
-  width: 3rem;
-  height: 3rem;
+  width: 3.5rem; /* Slightly larger for better visibility */
+  height: 3.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -55,13 +68,13 @@
 /* Mobile adjustments */
 @media (max-width: 768px) {
   .scroll-up-btn-container {
-    left: 1.5rem;
+    right: 1.5rem;
     bottom: 1.5rem;
   }
   
   .scroll-up-btn {
-    width: 2.75rem;
-    height: 2.75rem;
+    width: 3rem;
+    height: 3rem;
   }
 }
 
