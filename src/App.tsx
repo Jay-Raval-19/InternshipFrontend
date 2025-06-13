@@ -7,7 +7,7 @@ import AllArticles from './components/AllArticles';
 import NotFound from './pages/NotFound';
 import { ThemeProvider } from './contexts/ThemeContext';
 import ThemeToggle from './components/ThemeToggle';
-import { Toaster } from './components/ui/toast';
+import { Toaster } from './components/ui/toaster';
 import './App.css';
 
 function App() {
