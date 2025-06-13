@@ -45,19 +45,6 @@ const MobileLoader: React.FC<MobileLoaderProps> = ({ onLoadComplete }) => {
     };
   }, [onLoadComplete]);
 
-  const renderBrandName = () => {
-    const letters = 'SourceEasy'.split('');
-    return (
-      <div className="brand-name">
-        {letters.map((letter, index) => (
-          <span key={index} className="letter" style={{ animationDelay: `${0.1 * (index + 1)}s` }}>
-            {letter}
-          </span>
-        ))}
-      </div>
-    );
-  };
-
   return (
     <div className={`loading-screen ${animationPhase} ${fadeOut ? 'fadeOut' : ''}`}>
       <div className="bg-animation">
@@ -68,20 +55,6 @@ const MobileLoader: React.FC<MobileLoaderProps> = ({ onLoadComplete }) => {
       </div>
       
       <div className="loading-container">
-        <div className="logo-animation">
-          <div className="logo-circle accent"></div>
-          <div className="logo-circle secondary"></div>
-          <div className="logo-circle primary">
-            <img 
-              src="/sourceeasy-logo-final-removebg-preview.png" 
-              alt="SourceEasy" 
-              style={{ width: '40px', height: '40px', objectFit: 'contain' }}
-            />
-          </div>
-        </div>
-
-        {renderBrandName()}
-
         <div className="progress-container">
           <div className="progress-bar">
             <div 
