@@ -10,8 +10,78 @@ const MobileLoader: React.FC<MobileLoaderProps> = ({ onLoadComplete }) => {
   const [progress, setProgress] = useState(0);
   const [animationPhase, setAnimationPhase] = useState('initial');
   const [fadeOut, setFadeOut] = useState(false);
+  const [contentLoaded, setContentLoaded] = useState(false);
 
   useEffect(() => {
+    let allResourcesLoaded = false;
+    
+    // Preload all website content
+    const preloadContent = async () => {
+      try {
+        // Preload images
+        const imageUrls = [
+          '/sourceeasy-logo-final-removebg-preview.png',
+          '/chemical industry trends in 2026.jpg',
+          '/quotation_report.jpg',
+          '/sustainable chemistry.jpg'
+        ];
+
+        const imagePromises = imageUrls.map(url => {
+          return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = resolve;
+            img.onerror = resolve; // Continue even if image fails
+            img.src = url;
+          });
+        });
+
+        // Wait for all images to load
+        await Promise.all(imagePromises);
+
+        // Preload any additional resources
+        await new Promise(resolve => {
+          // Force browser to parse and cache all CSS
+          const links = document.querySelectorAll('link[rel="stylesheet"]');
+          let loadedCount = 0;
+          
+          if (links.length === 0) {
+            resolve(null);
+            return;
+          }
+
+          links.forEach(link => {
+            if (link.sheet) {
+              loadedCount++;
+              if (loadedCount === links.length) resolve(null);
+            } else {
+              link.addEventListener('load', () => {
+                loadedCount++;
+                if (loadedCount === links.length) resolve(null);
+              });
+            }
+          });
+        });
+
+        // Wait for DOM to be fully ready
+        if (document.readyState !== 'complete') {
+          await new Promise(resolve => {
+            window.addEventListener('load', resolve, { once: true });
+          });
+        }
+
+        allResourcesLoaded = true;
+        setContentLoaded(true);
+        
+      } catch (error) {
+        console.log('Some resources failed to preload, continuing anyway');
+        allResourcesLoaded = true;
+        setContentLoaded(true);
+      }
+    };
+
+    // Start preloading immediately
+    preloadContent();
+
     // Simulate progressive loading with realistic timing
     const progressInterval = setInterval(() => {
       setProgress(prev => {
@@ -27,14 +97,22 @@ const MobileLoader: React.FC<MobileLoaderProps> = ({ onLoadComplete }) => {
     const phaseTimeout2 = setTimeout(() => setAnimationPhase('pulsing'), 2000);
     const phaseTimeout3 = setTimeout(() => setAnimationPhase('completing'), 3500);
 
-    // Complete loading after minimum time and when progress reaches 100%
-    const loadingTimeout = setTimeout(() => {
-      setProgress(100);
-      setTimeout(() => {
-        setFadeOut(true);
-        setTimeout(onLoadComplete, 600);
-      }, 500);
-    }, 4000);
+    // Complete loading only after both animation time AND content is loaded
+    const checkCompletion = () => {
+      if (allResourcesLoaded) {
+        setProgress(100);
+        setTimeout(() => {
+          setFadeOut(true);
+          setTimeout(onLoadComplete, 600);
+        }, 500);
+      } else {
+        // Check again in 100ms
+        setTimeout(checkCompletion, 100);
+      }
+    };
+
+    // Start checking for completion after minimum animation time
+    const loadingTimeout = setTimeout(checkCompletion, 4000);
 
     return () => {
       clearInterval(progressInterval);
@@ -71,7 +149,7 @@ const MobileLoader: React.FC<MobileLoaderProps> = ({ onLoadComplete }) => {
           </div>
           
           <div className="loading-text">
-            Loading your experience...
+            {contentLoaded ? 'Finalizing...' : 'Loading your experience...'}
           </div>
         </div>
       </div>
