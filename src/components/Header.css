@@ -93,7 +93,6 @@
   padding: 0.75rem 1.25rem;
   border-radius: 0.75rem;
   position: relative;
-  overflow: hidden;
 }
 
 .nav-button:hover {
@@ -101,21 +100,6 @@
   background: rgba(255, 255, 255, 0.8);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.nav-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
-  transition: left 0.5s ease;
-}
-
-.nav-button:hover::before {
-  left: 100%;
 }
 
 .inquiry-button {
@@ -132,7 +116,6 @@
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
   position: relative;
-  overflow: hidden;
 }
 
 .inquiry-button:hover {
@@ -141,35 +124,10 @@
   background: linear-gradient(135deg, #20B858, #1EA352);
 }
 
-.inquiry-button::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  transition: all 0.3s ease;
-}
-
-.inquiry-button:hover::before {
-  width: 100%;
-  height: 100%;
-}
-
 .inquiry-button-icon {
   margin-right: 0.5rem;
   height: 1.1rem;
   width: 1.1rem;
-  position: relative;
-  z-index: 1;
-}
-
-.inquiry-button span {
-  position: relative;
-  z-index: 1;
 }
 
 .mobile-menu {
@@ -216,15 +174,15 @@
   justify-content: center;
   background: linear-gradient(135deg, #25D366, #20B858);
   color: white;
-  padding: 0.75rem 1rem;
+  padding: 0.875rem 1.25rem;
   border: none;
   border-radius: 0.75rem;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
   font-weight: 600;
-  font-size: 0.9rem;
-  min-width: 120px;
+  font-size: 0.95rem;
+  min-width: 140px;
 }
 
 .mobile-inquiry-button:hover {
@@ -314,8 +272,8 @@
   }
   
   .mobile-inquiry-button {
-    padding: 0.6rem 0.8rem;
-    min-width: 100px;
-    font-size: 0.85rem;
+    padding: 0.8rem 1rem;
+    min-width: 120px;
+    font-size: 0.9rem;
   }
 }
