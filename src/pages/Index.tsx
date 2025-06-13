@@ -72,7 +72,9 @@ const Index = () => {
 
     // Handle scroll events
     const handleScroll = () => {
-      setShowScrollUp(window.scrollY > 200);
+      const scrollY = window.scrollY;
+      console.log('Scroll position:', scrollY); // Debug log
+      setShowScrollUp(scrollY > 300);
       requestAnimationFrame(() => {
         ScrollTrigger.refresh(true);
       });
@@ -81,6 +83,9 @@ const Index = () => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', () => ScrollTrigger.refresh(true));
     window.addEventListener('load', initializeAnimations);
+
+    // Initial check for scroll position
+    handleScroll();
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -109,11 +114,17 @@ const Index = () => {
   }, []);
 
   const handleScrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    console.log('Scrolling to top'); // Debug log
+    window.scrollTo({ 
+      top: 0, 
+      behavior: 'smooth' 
+    });
     requestAnimationFrame(() => {
       ScrollTrigger.refresh(true);
     });
   };
+
+  console.log('Show scroll up button:', showScrollUp); // Debug log
 
   return (
     <>
