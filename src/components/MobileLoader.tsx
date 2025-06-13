@@ -41,7 +41,7 @@ const MobileLoader: React.FC<MobileLoaderProps> = ({ onLoadComplete }) => {
         // Preload any additional resources
         await new Promise(resolve => {
           // Force browser to parse and cache all CSS
-          const links = document.querySelectorAll('link[rel="stylesheet"]');
+          const links = document.querySelectorAll('link[rel="stylesheet"]') as NodeListOf<HTMLLinkElement>;
           let loadedCount = 0;
           
           if (links.length === 0) {
