@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './MobileLoader.css';
 
 interface MobileLoaderProps {
@@ -7,80 +7,100 @@ interface MobileLoaderProps {
 }
 
 const MobileLoader: React.FC<MobileLoaderProps> = ({ onLoadComplete }) => {
-  const [loadingStage, setLoadingStage] = useState(0);
-  const [isExiting, setIsExiting] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [animationPhase, setAnimationPhase] = useState('initial');
+  const [fadeOut, setFadeOut] = useState(false);
 
   useEffect(() => {
-    const stages = [
-      { delay: 500, stage: 1 },
-      { delay: 1000, stage: 2 },
-      { delay: 1500, stage: 3 },
-      { delay: 2000, stage: 4 }
-    ];
+    // Simulate progressive loading with realistic timing
+    const progressInterval = setInterval(() => {
+      setProgress(prev => {
+        if (prev < 30) return prev + 2;
+        if (prev < 60) return prev + 1;
+        if (prev < 90) return prev + 0.5;
+        return Math.min(prev + 0.2, 100);
+      });
+    }, 100);
 
-    stages.forEach(({ delay, stage }) => {
-      setTimeout(() => setLoadingStage(stage), delay);
-    });
+    // Phase transitions for animation
+    const phaseTimeout1 = setTimeout(() => setAnimationPhase('expanding'), 800);
+    const phaseTimeout2 = setTimeout(() => setAnimationPhase('pulsing'), 2000);
+    const phaseTimeout3 = setTimeout(() => setAnimationPhase('completing'), 3500);
 
-    // Check if all resources are loaded
-    const checkResourcesLoaded = () => {
-      const images = Array.from(document.images);
-      const allImagesLoaded = images.every(img => img.complete);
-      
-      if (document.readyState === 'complete' && allImagesLoaded) {
-        setTimeout(() => {
-          setIsExiting(true);
-          setTimeout(onLoadComplete, 800);
-        }, 2500);
-      } else {
-        setTimeout(checkResourcesLoaded, 100);
-      }
+    // Complete loading after minimum time and when progress reaches 100%
+    const loadingTimeout = setTimeout(() => {
+      setProgress(100);
+      setTimeout(() => {
+        setFadeOut(true);
+        setTimeout(onLoadComplete, 600);
+      }, 500);
+    }, 4000);
+
+    return () => {
+      clearInterval(progressInterval);
+      clearTimeout(phaseTimeout1);
+      clearTimeout(phaseTimeout2);
+      clearTimeout(phaseTimeout3);
+      clearTimeout(loadingTimeout);
     };
-
-    setTimeout(checkResourcesLoaded, 2000);
   }, [onLoadComplete]);
 
+  const renderBrandName = () => {
+    const letters = 'SourceEasy'.split('');
+    return (
+      <div className="brand-name">
+        {letters.map((letter, index) => (
+          <span key={index} className="letter" style={{ animationDelay: `${0.1 * (index + 1)}s` }}>
+            {letter}
+          </span>
+        ))}
+      </div>
+    );
+  };
+
   return (
-    <div className={`mobile-loader ${isExiting ? 'exiting' : ''}`}>
-      <div className="loader-background">
-        <div className="loader-gradient"></div>
+    <div className={`loading-screen ${animationPhase} ${fadeOut ? 'fadeOut' : ''}`}>
+      <div className="bg-animation">
+        <div className="floating-shape shape-1"></div>
+        <div className="floating-shape shape-2"></div>
+        <div className="floating-shape shape-3"></div>
+        <div className="floating-shape shape-4"></div>
       </div>
       
-      <div className="loader-content">
-        <div className="logo-container">
-          <div className="animated-logo">
+      <div className="loading-container">
+        <div className="logo-animation">
+          <div className="logo-circle accent"></div>
+          <div className="logo-circle secondary"></div>
+          <div className="logo-circle primary">
             <img 
               src="/sourceeasy-logo-final-removebg-preview.png" 
               alt="SourceEasy" 
-              className="loader-logo"
+              style={{ width: '40px', height: '40px', objectFit: 'contain' }}
             />
-          </div>
-          <div className={`logo-text ${loadingStage >= 1 ? 'visible' : ''}`}>
-            SourceEasy
           </div>
         </div>
 
-        <div className="loading-animation">
-          <div className="dots-container">
-            <div className={`dot dot-1 ${loadingStage >= 2 ? 'active' : ''}`}></div>
-            <div className={`dot dot-2 ${loadingStage >= 3 ? 'active' : ''}`}></div>
-            <div className={`dot dot-3 ${loadingStage >= 4 ? 'active' : ''}`}></div>
+        {renderBrandName()}
+
+        <div className="progress-container">
+          <div className="progress-bar">
+            <div 
+              className="progress-fill" 
+              style={{ width: `${progress}%` }}
+            ></div>
           </div>
           
-          <div className={`loading-text ${loadingStage >= 2 ? 'visible' : ''}`}>
+          <div className="progress-dots">
+            <div className={`dot ${progress > 0 ? 'active' : ''}`}></div>
+            <div className={`dot ${progress > 25 ? 'active' : ''}`}></div>
+            <div className={`dot ${progress > 50 ? 'active' : ''}`}></div>
+            <div className={`dot ${progress > 75 ? 'active' : ''}`}></div>
+          </div>
+          
+          <div className="loading-text">
             Loading your experience...
           </div>
         </div>
-
-        <div className="progress-bar">
-          <div className={`progress-fill stage-${loadingStage}`}></div>
-        </div>
-      </div>
-
-      <div className="floating-elements">
-        <div className="floating-circle circle-1"></div>
-        <div className="floating-circle circle-2"></div>
-        <div className="floating-circle circle-3"></div>
       </div>
     </div>
   );
