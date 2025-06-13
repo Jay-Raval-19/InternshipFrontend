@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Header from '../components/Header';
 import Hero from '../components/Hero';
@@ -143,7 +144,7 @@ const Index = () => {
             onClick={handleScrollToTop}
             aria-label="Scroll to top"
           >
-            <ArrowUp size={28} />
+            <ArrowUp size={24} />
           </button>
         </div>
       )}
