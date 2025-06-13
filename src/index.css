@@ -38,10 +38,12 @@ body {
   --secondary: #1e3a8a;
   --accent: #9333ea;
   --background: #ffffff;
+  --background-rgb: 255, 255, 255;
   --foreground: #1e3a8a;
   --muted: #6b7280;
   --border: #e5e7eb;
   --card: #ffffff;
+  --card-rgb: 255, 255, 255;
   --card-foreground: #1e3a8a;
   --surface: #f8fafc;
   --surface-secondary: #f1f5f9;
@@ -56,10 +58,12 @@ body {
   --secondary: #e2e8f0;
   --accent: #a855f7;
   --background: #0f172a;
+  --background-rgb: 15, 23, 42;
   --foreground: #e2e8f0;
   --muted: #94a3b8;
   --border: #334155;
   --card: #1e293b;
+  --card-rgb: 30, 41, 59;
   --card-foreground: #e2e8f0;
   --surface: #1e293b;
   --surface-secondary: #334155;

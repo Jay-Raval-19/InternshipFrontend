@@ -5,7 +5,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #e2e8f0 100%);
+  background: linear-gradient(135deg, var(--background) 0%, var(--surface) 50%, var(--surface-secondary) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -41,14 +41,14 @@
 .progress-bar {
   width: 100%;
   height: 4px;
-  background: rgba(30, 58, 138, 0.1);
+  background: var(--border);
   border-radius: 2px;
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #2563eb, #9333ea);
+  background: linear-gradient(90deg, var(--primary), var(--accent));
   border-radius: 2px;
   transition: width 0.3s ease-out;
   position: relative;
@@ -74,12 +74,12 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: rgba(30, 58, 138, 0.2);
+  background: var(--border);
   animation: dot-pulse 1.5s ease-in-out infinite;
 }
 
 .dot.active {
-  background: #2563eb;
+  background: var(--primary);
 }
 
 .dot:nth-child(2) { animation-delay: 0.3s; }
@@ -88,7 +88,7 @@
 
 /* Loading Text */
 .loading-text {
-  color: #64748b;
+  color: var(--muted);
   font-size: 0.9rem;
   font-weight: 500;
   animation: text-fade 2s ease-in-out infinite alternate;
@@ -114,7 +114,7 @@
 .shape-1 {
   width: 100px;
   height: 100px;
-  background: linear-gradient(45deg, #2563eb, #9333ea);
+  background: linear-gradient(45deg, var(--primary), var(--accent));
   top: 20%;
   left: 10%;
   animation: float-1 8s ease-in-out infinite;
@@ -123,7 +123,7 @@
 .shape-2 {
   width: 150px;
   height: 150px;
-  background: linear-gradient(45deg, #1e3a8a, #2563eb);
+  background: linear-gradient(45deg, var(--secondary), var(--primary));
   top: 60%;
   right: 15%;
   animation: float-2 10s ease-in-out infinite;
@@ -132,7 +132,7 @@
 .shape-3 {
   width: 80px;
   height: 80px;
-  background: linear-gradient(45deg, #9333ea, #7c3aed);
+  background: linear-gradient(45deg, var(--accent), var(--primary-light));
   bottom: 30%;
   left: 20%;
   animation: float-3 6s ease-in-out infinite;
@@ -141,7 +141,7 @@
 .shape-4 {
   width: 120px;
   height: 120px;
-  background: linear-gradient(45deg, #1d4ed8, #1e3a8a);
+  background: linear-gradient(45deg, var(--primary-dark), var(--secondary));
   top: 10%;
   right: 30%;
   animation: float-4 9s ease-in-out infinite;

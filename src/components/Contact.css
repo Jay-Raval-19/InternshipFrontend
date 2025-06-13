@@ -1,6 +1,7 @@
+
 .contact {
   padding: 5rem 0;
-  background-color: #eff6ff;
+  background-color: var(--surface);
 }
 
 .contact-container {
@@ -22,13 +23,13 @@
 .contact-title {
   font-size: 2.25rem;
   font-weight: bold;
-  color: #1e3a8a;
+  color: var(--foreground);
   margin-bottom: 1rem;
 }
 
 .contact-subtitle {
   font-size: 1.25rem;
-  color: #1d4ed8;
+  color: var(--muted);
   max-width: 42rem;
   margin: 0 auto;
 }
@@ -47,15 +48,16 @@
 
 .contact-card {
   padding: 2rem;
-  background-color: white;
+  background-color: var(--card);
   border-radius: 0.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border);
 }
 
 .contact-form-title {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #1e3a8a;
+  color: var(--card-foreground);
   margin-bottom: 1.5rem;
 }
 
@@ -86,40 +88,44 @@
 .form-label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #1d4ed8;
+  color: var(--foreground);
 }
 
 .form-input {
   padding: 0.75rem;
-  border: 1px solid #bfdbfe;
+  border: 1px solid var(--border);
   border-radius: 0.375rem;
   font-size: 0.875rem;
   transition: border-color 0.2s;
+  background-color: var(--surface);
+  color: var(--foreground);
 }
 
 .form-input:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: var(--primary);
 }
 
 .form-textarea {
   padding: 0.75rem;
-  border: 1px solid #bfdbfe;
+  border: 1px solid var(--border);
   border-radius: 0.375rem;
   font-size: 0.875rem;
   resize: vertical;
   min-height: 6rem;
   transition: border-color 0.2s;
+  background-color: var(--surface);
+  color: var(--foreground);
 }
 
 .form-textarea:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: var(--primary);
 }
 
 .form-success {
   padding: 1rem;
-  background-color: #dcfce7;
+  background-color: var(--surface);
   border: 1px solid #86efac;
   border-radius: 0.375rem;
   color: #166534;
@@ -129,7 +135,7 @@
 
 .form-error {
   padding: 1rem;
-  background-color: #fee2e2;
+  background-color: var(--surface);
   border: 1px solid #fca5a5;
   border-radius: 0.375rem;
   color: #991b1b;
@@ -140,7 +146,7 @@
 .submit-button {
   width: 100%;
   padding: 0.75rem;
-  background-color: #2563eb;
+  background-color: var(--primary);
   color: white;
   border: none;
   border-radius: 0.375rem;
@@ -150,11 +156,11 @@
 }
 
 .submit-button:hover {
-  background-color: #1d4ed8;
+  background-color: var(--primary-dark);
 }
 
 .submit-button:disabled {
-  background-color: #93c5fd;
+  background-color: var(--muted);
   cursor: not-allowed;
 }
 
@@ -166,15 +172,16 @@
 
 .info-card {
   padding: 1.5rem;
-  background-color: white;
+  background-color: var(--card);
   border-radius: 0.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border);
 }
 
 .info-card-title {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #1e3a8a;
+  color: var(--card-foreground);
   margin-bottom: 1.5rem;
 }
 
@@ -191,7 +198,7 @@
 }
 
 .info-icon-container {
-  background-color: #dbeafe;
+  background-color: var(--primary-light);
   padding: 0.75rem;
   border-radius: 0.5rem;
 }
@@ -199,7 +206,7 @@
 .info-icon {
   height: 1.5rem;
   width: 1.5rem;
-  color: #2563eb;
+  color: var(--primary);
 }
 
 .info-content {
@@ -209,16 +216,16 @@
 
 .info-label {
   font-weight: 600;
-  color: #1e3a8a;
+  color: var(--card-foreground);
 }
 
 .info-value {
-  color: #1d4ed8;
+  color: var(--muted);
 }
 
 .whatsapp-card {
   padding: 1.5rem;
-  background: linear-gradient(to bottom right, #2563eb, #1d4ed8);
+  background: linear-gradient(to bottom right, var(--primary), var(--primary-dark));
   color: white;
   border-radius: 0.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -238,7 +245,7 @@
   width: 100%;
   padding: 0.75rem;
   background-color: white;
-  color: #2563eb;
+  color: var(--primary);
   border: none;
   border-radius: 0.375rem;
   font-weight: 500;
@@ -251,7 +258,7 @@
 }
 
 .whatsapp-button:hover {
-  background-color: #f8fafc;
+  background-color: var(--surface);
 }
 
 .whatsapp-button-icon {
@@ -261,20 +268,21 @@
 
 .supplier-card {
   padding: 1.5rem;
-  background-color: white;
+  background-color: var(--card);
   border-radius: 0.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border);
 }
 
 .supplier-title {
   font-size: 1.25rem;
   font-weight: bold;
-  color: #1e3a8a;
+  color: var(--card-foreground);
   margin-bottom: 1rem;
 }
 
 .supplier-description {
-  color: #1d4ed8;
+  color: var(--muted);
   margin-bottom: 1rem;
 }
 
@@ -282,8 +290,8 @@
   width: 100%;
   padding: 0.75rem;
   background: none;
-  color: #2563eb;
-  border: 1px solid #2563eb;
+  color: var(--primary);
+  border: 1px solid var(--primary);
   border-radius: 0.375rem;
   font-weight: 500;
   cursor: pointer;
@@ -291,30 +299,30 @@
 }
 
 .supplier-button:hover {
-  background-color: #eff6ff;
-  border-color: #1d4ed8;
-  color: #1d4ed8;
+  background-color: var(--surface);
+  border-color: var(--primary-dark);
+  color: var(--primary-dark);
 } 
 
 /* Social Media Section */
 .social-media-card {
   margin-top: 2rem;
   padding: 1.5rem;
-  background-color: #f8fafc;
+  background-color: var(--surface);
   border-radius: 0.5rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border);
 }
 
 .social-title {
   font-size: 1.125rem;
   font-weight: bold;
-  color: #1e3a8a;
+  color: var(--foreground);
   margin-bottom: 0.5rem;
 }
 
 .social-description {
   font-size: 0.875rem;
-  color: #1d4ed8;
+  color: var(--muted);
   margin-bottom: 1.5rem;
 }
 
@@ -329,9 +337,9 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1rem;
-  background-color: white;
-  color: #2563eb;
-  border: 1px solid #bfdbfe;
+  background-color: var(--card);
+  color: var(--primary);
+  border: 1px solid var(--border);
   border-radius: 0.375rem;
   font-size: 0.875rem;
   font-weight: 500;
@@ -343,8 +351,8 @@
 }
 
 .social-button:hover {
-  background-color: #eff6ff;
-  border-color: #3b82f6;
+  background-color: var(--surface);
+  border-color: var(--primary);
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
