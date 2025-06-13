@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Header from '../components/Header';
 import Hero from '../components/Hero';
@@ -73,13 +72,13 @@ const Index = () => {
     // Handle scroll events
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      console.log('Scroll position:', scrollY); // Debug log
-      setShowScrollUp(scrollY > 300);
+      setShowScrollUp(scrollY > 100);
       requestAnimationFrame(() => {
         ScrollTrigger.refresh(true);
       });
     };
 
+    // Add event listeners
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', () => ScrollTrigger.refresh(true));
     window.addEventListener('load', initializeAnimations);
@@ -87,17 +86,22 @@ const Index = () => {
     // Initial check for scroll position
     handleScroll();
 
+    // Cleanup function
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', () => ScrollTrigger.refresh(true));
       window.removeEventListener('load', initializeAnimations);
       // Cleanup ScrollTrigger instances
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      // Reset all animations
+      gsap.utils.toArray('.animate-section').forEach((section: any) => {
+        gsap.set(section, { clearProps: "all" });
+      });
     };
-  }, []);
+  }, []); // Empty dependency array means this runs once on mount
 
+  // Add a separate effect for handling keyboard navigation
   useEffect(() => {
-    // Handle keyboard navigation
     const handleKeydown = (e: KeyboardEvent) => {
       const keys = [
         'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' ' // space
@@ -114,17 +118,11 @@ const Index = () => {
   }, []);
 
   const handleScrollToTop = () => {
-    console.log('Scrolling to top'); // Debug log
     window.scrollTo({ 
       top: 0, 
       behavior: 'smooth' 
     });
-    requestAnimationFrame(() => {
-      ScrollTrigger.refresh(true);
-    });
   };
-
-  console.log('Show scroll up button:', showScrollUp); // Debug log
 
   return (
     <>
