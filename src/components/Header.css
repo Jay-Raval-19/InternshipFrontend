@@ -83,7 +83,7 @@
 }
 
 .nav-button {
-  color: #475569;
+  color: rgb(29,78,216);
   font-weight: 500;
   font-size: 0.95rem;
   transition: all 0.3s ease;
@@ -230,7 +230,7 @@
 }
 
 .mobile-nav-button {
-  color: #475569;
+  color: rgb(29,78,216);
   font-weight: 500;
   font-size: 1rem;
   background: none;
