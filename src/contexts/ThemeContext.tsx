@@ -30,12 +30,16 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   });
 
   useEffect(() => {
+    console.log('Theme changed to:', theme);
     // Apply theme to document
     document.documentElement.setAttribute('data-theme', theme);
+    // Also apply to body for better coverage
+    document.body.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
   }, [theme]);
 
   const toggleTheme = () => {
+    console.log('Toggling theme from:', theme);
     setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
   };
 
