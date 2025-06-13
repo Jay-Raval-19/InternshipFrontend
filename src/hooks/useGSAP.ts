@@ -7,11 +7,24 @@ export const useGSAP = () => {
 
   useEffect(() => {
     if (!initialized.current) {
-      // Small delay to ensure DOM is ready
+      // Longer delay to ensure DOM is fully ready after navigation
       const timer = setTimeout(() => {
-        gsapController.init();
-        initialized.current = true;
-      }, 100);
+        // Check if elements exist before initializing
+        const sections = document.querySelectorAll('.animate-section');
+        if (sections.length > 0) {
+          gsapController.init();
+          initialized.current = true;
+        } else {
+          // Retry if elements aren't ready yet
+          setTimeout(() => {
+            const retryCheck = document.querySelectorAll('.animate-section');
+            if (retryCheck.length > 0) {
+              gsapController.init();
+              initialized.current = true;
+            }
+          }, 200);
+        }
+      }, 200);
 
       return () => clearTimeout(timer);
     }
@@ -25,7 +38,9 @@ export const useGSAP = () => {
   }, []);
 
   const refresh = () => {
-    gsapController.refresh();
+    if (initialized.current) {
+      gsapController.refresh();
+    }
   };
 
   return { refresh };

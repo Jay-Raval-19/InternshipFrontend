@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Header from '../components/Header';
 import Hero from '../components/Hero';
@@ -15,22 +16,47 @@ import './Index.css';
 import gsap from 'gsap';
 
 const Index = () => {
-  useGSAP();
   const [showScrollUp, setShowScrollUp] = useState(false);
+  const [componentsLoaded, setComponentsLoaded] = useState(false);
+
+  // Initialize GSAP only after components are loaded
+  const { refresh } = useGSAP();
 
   useEffect(() => {
-    // Initialize animations
+    // Wait for all components to mount before initializing animations
+    const timer = setTimeout(() => {
+      setComponentsLoaded(true);
+    }, 150);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!componentsLoaded) return;
+
+    // Initialize animations after components are loaded
     const initializeAnimations = () => {
+      // Ensure all elements exist before animating
+      const sections = document.querySelectorAll('.animate-section');
+      if (sections.length === 0) {
+        console.log('No animate-section elements found, retrying...');
+        setTimeout(initializeAnimations, 100);
+        return;
+      }
+
       // Force initial state
       gsap.utils.toArray('.animate-section').forEach((section: any) => {
-        gsap.set(section, {
-          opacity: 0,
-          y: 30
-        });
+        if (section) {
+          gsap.set(section, {
+            opacity: 0,
+            y: 30
+          });
+        }
       });
 
       // Force initial animations for visible sections
       const visibleSections = gsap.utils.toArray('.animate-section').filter((section: any) => {
+        if (!section) return false;
         const rect = section.getBoundingClientRect();
         return (
           rect.top >= 0 &&
@@ -41,33 +67,37 @@ const Index = () => {
       });
 
       visibleSections.forEach((section: any) => {
-        gsap.to(section, {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power3.out",
-          overwrite: true
-        });
-
-        // Animate child elements
-        const childElements = section.querySelectorAll('.section-title, .animate-element');
-        childElements.forEach((element: any) => {
-          gsap.to(element, {
+        if (section) {
+          gsap.to(section, {
             opacity: 1,
             y: 0,
-            duration: 0.6,
+            duration: 0.8,
             ease: "power3.out",
-            overwrite: true,
-            delay: 0.2
+            overwrite: true
           });
-        });
+
+          // Animate child elements
+          const childElements = section.querySelectorAll('.section-title, .animate-element');
+          childElements.forEach((element: any) => {
+            if (element) {
+              gsap.to(element, {
+                opacity: 1,
+                y: 0,
+                duration: 0.6,
+                ease: "power3.out",
+                overwrite: true,
+                delay: 0.2
+              });
+            }
+          });
+        }
       });
 
       ScrollTrigger.refresh(true);
     };
 
-    // Initial setup
-    initializeAnimations();
+    // Initial setup with delay to ensure DOM is ready
+    const setupTimer = setTimeout(initializeAnimations, 100);
 
     // Handle scroll events
     const handleScroll = () => {
@@ -88,6 +118,7 @@ const Index = () => {
 
     // Cleanup function
     return () => {
+      clearTimeout(setupTimer);
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', () => ScrollTrigger.refresh(true));
       window.removeEventListener('load', initializeAnimations);
@@ -95,10 +126,12 @@ const Index = () => {
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
       // Reset all animations
       gsap.utils.toArray('.animate-section').forEach((section: any) => {
-        gsap.set(section, { clearProps: "all" });
+        if (section) {
+          gsap.set(section, { clearProps: "all" });
+        }
       });
     };
-  }, []); // Empty dependency array means this runs once on mount
+  }, [componentsLoaded]);
 
   // Add a separate effect for handling keyboard navigation
   useEffect(() => {
