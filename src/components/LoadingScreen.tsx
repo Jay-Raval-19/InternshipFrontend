@@ -1,6 +1,9 @@
-
 import React, { useEffect, useState } from 'react';
-import './LoadingScreen.css';
+import './styles/LoadingScreen.css';
+import './styles/LogoAnimation.css';
+import './styles/ProgressIndicators.css';
+import './styles/HexagonalGrid.css';
+import './styles/LoadingResponsive.css';
 
 interface LoadingScreenProps {
   onLoadingComplete: () => void;
@@ -11,7 +14,6 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadingComplete }) => {
   const [animationPhase, setAnimationPhase] = useState('initial');
 
   useEffect(() => {
-    // Simulate progressive loading with realistic timing
     const progressInterval = setInterval(() => {
       setProgress(prev => {
         if (prev < 30) return prev + 2;
@@ -21,12 +23,10 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadingComplete }) => {
       });
     }, 100);
 
-    // Phase transitions for animation
     const phaseTimeout1 = setTimeout(() => setAnimationPhase('expanding'), 800);
     const phaseTimeout2 = setTimeout(() => setAnimationPhase('pulsing'), 2000);
     const phaseTimeout3 = setTimeout(() => setAnimationPhase('completing'), 3500);
 
-    // Complete loading after minimum time and when progress reaches 100%
     const loadingTimeout = setTimeout(() => {
       setProgress(100);
       setTimeout(() => {
@@ -44,20 +44,16 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadingComplete }) => {
     };
   }, [onLoadingComplete]);
 
-  // Generate hexagonal grid elements
   const generateHexGrid = () => {
     const hexElements = [];
     const positions = [
-      // Center
       { class: 'center-gel', id: 'center' },
-      // Ring 1
       { class: 'c1 r1', id: 'c1' },
       { class: 'c2 r1', id: 'c2' },
       { class: 'c3 r1', id: 'c3' },
       { class: 'c4 r1', id: 'c4' },
       { class: 'c5 r1', id: 'c5' },
       { class: 'c6 r1', id: 'c6' },
-      // Ring 2
       { class: 'c7 r2', id: 'c7' },
       { class: 'c8 r2', id: 'c8' },
       { class: 'c9 r2', id: 'c9' },
@@ -70,7 +66,6 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadingComplete }) => {
       { class: 'c16 r2', id: 'c16' },
       { class: 'c17 r2', id: 'c17' },
       { class: 'c18 r2', id: 'c18' },
-      // Ring 3
       { class: 'c19 r3', id: 'c19' },
       { class: 'c20 r3', id: 'c20' },
       { class: 'c21 r3', id: 'c21' },
@@ -107,14 +102,12 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadingComplete }) => {
   return (
     <div className={`loading-screen ${animationPhase}`}>
       <div className="loading-container">
-        {/* Main logo animation */}
         <div className="logo-animation">
           <div className="logo-circle primary"></div>
           <div className="logo-circle secondary"></div>
           <div className="logo-circle accent"></div>
         </div>
 
-        {/* Brand name with letter animation */}
         <div className="brand-name">
           <span className="letter">T</span>
           <span className="letter">r</span>
@@ -124,7 +117,6 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadingComplete }) => {
           <span className="letter">o</span>
         </div>
 
-        {/* Progress indicators */}
         <div className="progress-container">
           <div className="progress-bar">
             <div 
@@ -140,13 +132,11 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadingComplete }) => {
           </div>
         </div>
 
-        {/* Loading text */}
         <div className="loading-text">
           <span>Loading your procurement platform...</span>
         </div>
       </div>
 
-      {/* Hexagonal grid animation background */}
       <div className="hex-grid-container">
         <div className="hex-socket hex-socket-1">
           {generateHexGrid()}
