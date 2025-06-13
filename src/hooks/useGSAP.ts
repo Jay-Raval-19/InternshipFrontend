@@ -7,30 +7,37 @@ export const useGSAP = () => {
 
   useEffect(() => {
     if (!initialized.current) {
-      // Longer delay to ensure DOM is fully ready after navigation
-      const timer = setTimeout(() => {
-        // Check if elements exist before initializing
+      console.log('useGSAP: Initializing GSAP...');
+      
+      // Ensure content is visible immediately as fallback
+      const ensureVisibility = () => {
         const sections = document.querySelectorAll('.animate-section');
-        if (sections.length > 0) {
-          gsapController.init();
-          initialized.current = true;
-        } else {
-          // Retry if elements aren't ready yet
-          setTimeout(() => {
-            const retryCheck = document.querySelectorAll('.animate-section');
-            if (retryCheck.length > 0) {
-              gsapController.init();
-              initialized.current = true;
-            }
-          }, 200);
-        }
-      }, 200);
+        sections.forEach(section => {
+          (section as HTMLElement).style.opacity = '1';
+          (section as HTMLElement).style.transform = 'translateY(0)';
+        });
+        console.log('useGSAP: Ensured visibility for', sections.length, 'sections');
+      };
+
+      // Immediate visibility check
+      ensureVisibility();
+
+      // Initialize GSAP with a very short delay
+      const timer = setTimeout(() => {
+        // Double-check visibility before initializing
+        ensureVisibility();
+        
+        gsapController.init();
+        initialized.current = true;
+        console.log('useGSAP: GSAP initialized');
+      }, 50);
 
       return () => clearTimeout(timer);
     }
 
     return () => {
       if (initialized.current) {
+        console.log('useGSAP: Cleaning up GSAP...');
         gsapController.destroy();
         initialized.current = false;
       }
@@ -39,6 +46,7 @@ export const useGSAP = () => {
 
   const refresh = () => {
     if (initialized.current) {
+      console.log('useGSAP: Refreshing GSAP...');
       gsapController.refresh();
     }
   };

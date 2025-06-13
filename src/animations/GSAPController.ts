@@ -18,6 +18,8 @@ export class GSAPController {
   init() {
     if (this.initialized) return;
 
+    console.log('GSAPController: Initializing...');
+
     // Set GSAP defaults for premium feel
     gsap.defaults({
       duration: 1.2,
@@ -36,59 +38,94 @@ export class GSAPController {
     this.setupMicroInteractions();
     this.initialized = true;
 
-    // Force initial refresh and play animations
-    this.forceInitialState();
+    // Force immediate visibility check without delays
+    this.immediateVisibilityCheck();
 
     // Add comprehensive event listeners for various scroll scenarios
     this.setupScrollHandlers();
   }
 
-  private forceInitialState() {
-    // Set all sections to initial state first
+  private immediateVisibilityCheck() {
+    console.log('GSAPController: Running immediate visibility check...');
+    
+    // First, ensure all sections are visible by default (fallback)
     gsap.utils.toArray('.animate-section').forEach((section: any) => {
-      gsap.set(section, {
-        opacity: 0,
-        y: 30
-      });
+      if (section) {
+        gsap.set(section, {
+          opacity: 1,
+          y: 0,
+          clearProps: "transform"
+        });
+      }
     });
 
-    // Force visibility for sections currently in viewport
+    // Then apply subtle animations only if elements are ready
     requestAnimationFrame(() => {
-      this.checkVisibleSections();
-      ScrollTrigger.refresh(true);
+      this.applyVisibilityAnimations();
     });
   }
 
-  private checkVisibleSections() {
+  private applyVisibilityAnimations() {
     const sections = gsap.utils.toArray('.animate-section');
+    console.log('GSAPController: Found sections:', sections.length);
     
+    if (sections.length === 0) {
+      console.log('GSAPController: No sections found, content should be visible by default');
+      return;
+    }
+
     sections.forEach((section: any, index: number) => {
+      if (!section) return;
+
       const rect = section.getBoundingClientRect();
       const isVisible = (
         rect.top < window.innerHeight * 0.9 &&
         rect.bottom > window.innerHeight * 0.1
       );
 
+      console.log(`GSAPController: Section ${index} visible:`, isVisible);
+
       if (isVisible) {
-        gsap.to(section, {
+        // Ensure section is immediately visible
+        gsap.set(section, {
           opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power3.out",
-          overwrite: true
+          y: 0
         });
+
+        // Add subtle entrance animation
+        gsap.fromTo(section, 
+          {
+            opacity: 0.8,
+            y: 10
+          },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.4,
+            ease: "power2.out",
+            overwrite: true
+          }
+        );
 
         // Animate child elements
         const childElements = section.querySelectorAll('.section-title, .animate-element');
         childElements.forEach((element: any) => {
-          gsap.to(element, {
-            opacity: 1,
-            y: 0,
-            duration: 0.6,
-            ease: "power3.out",
-            overwrite: true,
-            delay: 0.2
-          });
+          if (element) {
+            gsap.fromTo(element,
+              {
+                opacity: 0.7,
+                y: 5
+              },
+              {
+                opacity: 1,
+                y: 0,
+                duration: 0.3,
+                ease: "power2.out",
+                delay: 0.1,
+                overwrite: true
+              }
+            );
+          }
         });
       }
     });
@@ -96,42 +133,31 @@ export class GSAPController {
 
   private setupScrollHandlers() {
     let scrollTimeout: NodeJS.Timeout;
-    let fastScrolling = false;
 
     const handleScroll = () => {
-      // Detect fast scrolling
-      if (!fastScrolling) {
-        fastScrolling = true;
-        // Check sections immediately during fast scroll
-        this.checkVisibleSections();
-      }
-
       clearTimeout(scrollTimeout);
       scrollTimeout = setTimeout(() => {
-        fastScrolling = false;
-        // Final check after scrolling stops
-        this.checkVisibleSections();
+        this.applyVisibilityAnimations();
         ScrollTrigger.refresh(true);
-      }, 100);
+      }, 50);
     };
 
     const handleScrollEnd = () => {
-      // Force check when scrolling ends
       setTimeout(() => {
-        this.checkVisibleSections();
+        this.applyVisibilityAnimations();
         ScrollTrigger.refresh(true);
-      }, 50);
+      }, 25);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('scrollend', handleScrollEnd, { passive: true });
     window.addEventListener('resize', () => {
-      this.checkVisibleSections();
+      this.applyVisibilityAnimations();
       ScrollTrigger.refresh(true);
     });
     window.addEventListener('orientationchange', () => {
       setTimeout(() => {
-        this.checkVisibleSections();
+        this.applyVisibilityAnimations();
         ScrollTrigger.refresh(true);
       }, 100);
     });
@@ -140,9 +166,9 @@ export class GSAPController {
     document.addEventListener('visibilitychange', () => {
       if (!document.hidden) {
         setTimeout(() => {
-          this.checkVisibleSections();
+          this.applyVisibilityAnimations();
           ScrollTrigger.refresh(true);
-        }, 100);
+        }, 50);
       }
     });
   }
@@ -230,26 +256,26 @@ export class GSAPController {
   }
 
   private animateSectionReveals() {
-    // Enhanced section reveal animation for mobile
+    // Simplified section reveal animation - ensure content is always visible
     gsap.utils.toArray('.animate-section').forEach((section: any) => {
-      // Set initial state
+      // Ensure section is visible by default
       gsap.set(section, {
-        opacity: 0,
-        y: 30
+        opacity: 1,
+        y: 0
       });
 
-      // Create the animation with more aggressive mobile settings
+      // Create the animation with more conservative settings
       ScrollTrigger.create({
         trigger: section,
-        start: "top 95%", // Start earlier for mobile
-        end: "bottom 5%",
-        fastScrollEnd: true, // Important for mobile
+        start: "top 90%", 
+        end: "bottom 10%",
+        fastScrollEnd: true,
         onEnter: () => {
           gsap.to(section, {
             opacity: 1,
             y: 0,
-            duration: 0.6, // Faster for mobile
-            ease: "power3.out",
+            duration: 0.4,
+            ease: "power2.out",
             overwrite: true
           });
 
@@ -259,20 +285,11 @@ export class GSAPController {
             gsap.to(element, {
               opacity: 1,
               y: 0,
-              duration: 0.4,
-              ease: "power3.out",
+              duration: 0.3,
+              ease: "power2.out",
               overwrite: true,
-              delay: 0.1
+              delay: 0.05
             });
-          });
-        },
-        onLeaveBack: () => {
-          gsap.to(section, {
-            opacity: 0,
-            y: 30,
-            duration: 0.4,
-            ease: "power3.out",
-            overwrite: true
           });
         },
         refreshPriority: 1
@@ -281,35 +298,25 @@ export class GSAPController {
 
     // Section titles with split animation
     gsap.utils.toArray('.section-title').forEach((title: any) => {
-      // Set initial state
+      // Ensure title is visible by default
       gsap.set(title, {
-        opacity: 0,
-        y: 20,
-        skewY: 3
+        opacity: 1,
+        y: 0,
+        skewY: 0
       });
 
       // Create the animation
       ScrollTrigger.create({
         trigger: title,
-        start: "top 95%",
+        start: "top 90%",
         fastScrollEnd: true,
         onEnter: () => {
           gsap.to(title, {
             opacity: 1,
             y: 0,
             skewY: 0,
-            duration: 0.4,
-            ease: "power3.out",
-            overwrite: true
-          });
-        },
-        onLeaveBack: () => {
-          gsap.to(title, {
-            opacity: 0,
-            y: 20,
-            skewY: 3,
-            duration: 0.4,
-            ease: "power3.out",
+            duration: 0.3,
+            ease: "power2.out",
             overwrite: true
           });
         },
@@ -334,67 +341,27 @@ export class GSAPController {
       }
     });
 
-    // Initial states
+    // Initial states - ensure visibility
     gsap.set('.community-title', {
-      opacity: 0,
-      y: 30,
-      rotationX: 15,
-      transformOrigin: "50% 50% -100px"
+      opacity: 1,
+      y: 0
     });
 
     gsap.set('.community-subtitle', {
-      opacity: 0,
-      y: 20
+      opacity: 1,
+      y: 0
     });
 
     gsap.set('.blog-card', {
-      opacity: 0,
-      y: 40,
-      scale: 0.95,
-      rotationY: 15
+      opacity: 1,
+      y: 0,
+      scale: 1
     });
 
     gsap.set('.view-all-button', {
-      opacity: 0,
-      y: 20
+      opacity: 1,
+      y: 0
     });
-
-    // Header reveal
-    masterTl.to('.community-title', {
-      opacity: 1,
-      y: 0,
-      rotationX: 0,
-      duration: 0.5,
-      ease: "power3.out"
-    })
-    .to('.community-subtitle', {
-      opacity: 1,
-      y: 0,
-      duration: 0.4,
-      ease: "power2.out"
-    }, "-=0.4")
-    // Cards reveal with 3D effect
-    .to('.blog-card', {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      rotationY: 0,
-      duration: 0.4,
-      stagger: {
-        amount: 0.2,
-        from: "start",
-        grid: "auto",
-        axis: "x"
-      },
-      ease: "power3.out"
-    }, "-=0.2")
-    // View all button reveal
-    .to('.view-all-button', {
-      opacity: 1,
-      y: 0,
-      duration: 0.3,
-      ease: "back.out(1.7)"
-    }, "-=0.3");
 
     // Add hover animations for cards
     gsap.utils.toArray('.blog-card').forEach((card: any) => {
@@ -434,121 +401,20 @@ export class GSAPController {
   }
 
   private animateAboutSection() {
-    // Reset any existing animations
-    gsap.set('.about-title', { clearProps: "all" });
-    gsap.set('.about-subtitle', { clearProps: "all" });
-    gsap.set('.about-text', { clearProps: "all" });
-    gsap.set('.about-image-wrapper', { clearProps: "all" });
-    gsap.set('.value-card', { clearProps: "all" });
-    gsap.set('.cta-stat-card', { clearProps: "all" });
-
-    // Create a master timeline for the about section
-    const masterTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: '.about',
-        start: "top 70%",
-        end: "bottom 20%",
-        toggleActions: "play none none reverse"
-      }
-    });
-
-    // Initial states
-    gsap.set('.about-title', {
-      opacity: 0,
-      y: 30,
-      rotationX: 15,
-      transformOrigin: "50% 50% -100px"
-    });
-
-    gsap.set('.about-subtitle', {
-      opacity: 0,
-      y: 20
-    });
-
-    gsap.set('.about-text', {
-      opacity: 0,
-      x: -50
-    });
-
-    gsap.set('.about-image-wrapper', {
-      opacity: 0,
-      x: 50,
-      rotationY: 15,
-      transformOrigin: "50% 50% -100px"
-    });
-
-    gsap.set('.value-card', {
-      opacity: 0,
-      y: 40,
-      scale: 0.9,
-      rotationY: 15
-    });
-
-    gsap.set('.cta-stat-card', {
-      opacity: 0,
-      y: 30,
-      scale: 0.95
-    });
-
-    // Header reveal
-    masterTl.to('.about-title', {
-      opacity: 1,
-      y: 0,
-      rotationX: 0,
-      duration: 0.5,
-      ease: "power3.out"
-    })
-    .to('.about-subtitle', {
-      opacity: 1,
-      y: 0,
-      duration: 0.3,
-      ease: "power2.out"
-    }, "-=0.4")
-    // Main content reveal
-    .to('.about-text', {
-      opacity: 1,
-      x: 0,
-      duration: 0.3,
-      ease: "power3.out"
-    }, "-=0.2")
-    .to('.about-image-wrapper', {
-      opacity: 1,
-      x: 0,
-      rotationY: 0,
-      duration: 0.3,
-      ease: "power3.out"
-    }, "-=0.8")
-    // Value cards reveal with 3D effect
-    .to('.value-card', {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      rotationY: 0,
-      duration: 0.3,
-      stagger: {
-        amount: 0.2,
-        from: "start",
-        grid: "auto",
-        axis: "x"
-      },
-      ease: "power3.out"
-    }, "-=0.4")
-    // Stats reveal
-    .to('.cta-stat-card', {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      duration: 0.2,
-      stagger: 0.1,
-      ease: "back.out(1.7)"
-    }, "-=0.4");
+    // Reset any existing animations and ensure visibility
+    gsap.set('.about-title', { opacity: 1, y: 0 });
+    gsap.set('.about-subtitle', { opacity: 1, y: 0 });
+    gsap.set('.about-text', { opacity: 1, x: 0 });
+    gsap.set('.about-image-wrapper', { opacity: 1, x: 0 });
+    gsap.set('.value-card', { opacity: 1, y: 0, scale: 1 });
+    gsap.set('.cta-stat-card', { opacity: 1, y: 0, scale: 1 });
 
     // Add hover animations for value cards
     const valueCards = document.querySelectorAll('.value-card');
     valueCards.forEach(card => {
       card.addEventListener('mouseenter', () => {
         gsap.to(card, {
-          y: 20,
+          y: -5,
           duration: 0.3,
           ease: "power2.out"
         });
@@ -587,16 +453,22 @@ export class GSAPController {
   }
 
   private animateContactSection() {
+    // Ensure contact section is visible
+    gsap.set('.contact', {
+      opacity: 1,
+      y: 0
+    });
+
     gsap.fromTo('.contact',
       {
-        opacity: 0,
-        y: 80
+        opacity: 0.8,
+        y: 20
       },
       {
         opacity: 1,
         y: 0,
-        duration: 1.2,
-        ease: "power3.out",
+        duration: 0.6,
+        ease: "power2.out",
         scrollTrigger: {
           trigger: '.contact',
           start: "top 75%"
@@ -718,13 +590,15 @@ export class GSAPController {
   }
 
   destroy() {
+    console.log('GSAPController: Destroying...');
     ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     gsap.killTweensOf("*");
     this.initialized = false;
   }
 
   refresh() {
-    this.checkVisibleSections();
+    console.log('GSAPController: Refreshing...');
+    this.applyVisibilityAnimations();
     ScrollTrigger.refresh();
   }
 }
