@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Index from "./pages/Index";
@@ -7,6 +6,22 @@ import BlogPage from "./components/BlogPage";
 import AllArticles from "./components/AllArticles";
 import MobileLoader from "./components/MobileLoader";
 import { useIsMobile } from "./hooks/use-mobile";
+import { AnimatePresence } from 'framer-motion';
+import { useLocation } from 'react-router-dom';
+
+const AnimatedRoutes = () => {
+  const location = useLocation();
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<Index />} />
+        <Route path="/blog/:id" element={<BlogPage />} />
+        <Route path="/articles" element={<AllArticles />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </AnimatePresence>
+  );
+};
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -29,12 +44,7 @@ const App = () => {
 
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/blog/:id" element={<BlogPage />} />
-        <Route path="/articles" element={<AllArticles />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <AnimatedRoutes />
     </BrowserRouter>
   );
 };

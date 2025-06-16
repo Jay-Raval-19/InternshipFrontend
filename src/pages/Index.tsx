@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import Hero from '../components/Hero';
 import AIAgent from '../components/AIAgent';
@@ -10,27 +9,24 @@ import Contact from '../components/Contact';
 import Chatbot from '../components/Chatbot';
 import { useGSAP } from '../hooks/useGSAP';
 import { ArrowUp } from 'lucide-react';
-import { useState, useEffect } from 'react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './Index.css';
+import { motion } from 'framer-motion';
 
 const Index = () => {
-  const [showScrollUp, setShowScrollUp] = useState(false);
   const [componentsLoaded, setComponentsLoaded] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
 
-  // Initialize GSAP with immediate visibility fallback
   const { refresh } = useGSAP();
 
   useEffect(() => {
     console.log('Index: Components mounting...');
-    // Ensure content is visible immediately
     const sections = document.querySelectorAll('.animate-section');
     sections.forEach(section => {
       (section as HTMLElement).style.opacity = '1';
       (section as HTMLElement).style.transform = 'translateY(0)';
     });
 
-    // Mark components as loaded quickly
     const timer = setTimeout(() => {
       setComponentsLoaded(true);
       console.log('Index: Components loaded, initializing animations...');
@@ -40,35 +36,8 @@ const Index = () => {
   }, []);
 
   useEffect(() => {
-    console.log('Index: Setting up scroll handlers...');
-
-    // Handle scroll events
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      console.log('Scroll position:', scrollY);
-      setShowScrollUp(scrollY > 300); // Lowered threshold for easier testing
-    };
-
-    // Add event listeners
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', () => ScrollTrigger.refresh(true));
-
-    // Initial check for scroll position
-    handleScroll();
-
-    // Cleanup function
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', () => ScrollTrigger.refresh(true));
-    };
-  }, []); // Removed dependency on componentsLoaded to ensure it always runs
-
-  // Add a separate effect for handling keyboard navigation
-  useEffect(() => {
-    const handleKeydown = (e: KeyboardEvent) => {
-      const keys = [
-        'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' ' // space
-      ];
+    const handleKeydown = (e) => {
+      const keys = ['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '];
       if (keys.includes(e.key)) {
         setTimeout(() => {
           ScrollTrigger.refresh();
@@ -81,18 +50,35 @@ const Index = () => {
   }, []);
 
   const handleScrollToTop = () => {
-    console.log('Scrolling to top...');
-    window.scrollTo({ 
-      top: 0, 
-      behavior: 'smooth' 
-    });
+    console.log('Refreshing page'); // Debug log
+    window.location.reload(); // Refresh the page
   };
 
-  console.log('Index: Rendering with showScrollUp:', showScrollUp);
+  useEffect(() => {
+    const toggleVisibility = () => {
+      const scrollY = window.scrollY;
+      const shouldBeVisible = scrollY > 600;
+      console.log(`Scroll position: ${scrollY}px, isVisible: ${shouldBeVisible}`);
+      setIsVisible(shouldBeVisible);
+    };
+
+    window.addEventListener('scroll', toggleVisibility);
+    toggleVisibility();
+    return () => window.removeEventListener('scroll', toggleVisibility);
+  }, []);
+
+  // Conditionally render the back to top button only on larger screens
+  const isMobile = window.innerWidth < 768; // Define mobile breakpoint
 
   return (
     <>
-      <div className="index-page">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -30 }}
+        transition={{ duration: 0.5 }}
+        className="index-page"
+      >
         <Header />
         <Hero />
         <div className="animate-section" style={{ opacity: 1, transform: 'translateY(0)' }}>
@@ -110,24 +96,39 @@ const Index = () => {
         <div id="contact" className="animate-section" style={{ opacity: 1, transform: 'translateY(0)' }}>
           <Contact />
         </div>
-      </div>
+      </motion.div>
       <Chatbot />
       
-      {/* Back to top button - always render but conditionally show */}
-      <div className={`scroll-up-btn-container ${showScrollUp ? 'visible' : 'hidden'}`}>
-        <button
+      {/* Remove the back to top button on mobile devices */}
+      {!isMobile && (
+        <motion.button
           className="scroll-up-btn"
           onClick={handleScrollToTop}
-          aria-label="Scroll to top"
-          style={{ 
-            opacity: showScrollUp ? 1 : 0,
-            pointerEvents: showScrollUp ? 'auto' : 'none',
-            transform: showScrollUp ? 'translateY(0)' : 'translateY(20px)'
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.3 }}
+          style={{
+            position: 'fixed',
+            bottom: '2rem',
+            left: '2rem',
+            background: '#2563eb',
+            color: 'white',
+            border: 'none',
+            borderRadius: '50%',
+            width: '3.5rem',
+            height: '3.5rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+            zIndex: 10000,
           }}
         >
           <ArrowUp size={24} />
-        </button>
-      </div>
+        </motion.button>
+      )}
     </>
   );
 };

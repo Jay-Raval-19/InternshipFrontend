@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { MessageCircle, Menu, X } from 'lucide-react';
 import './Header.css';
@@ -30,42 +29,38 @@ const Header = () => {
       const allSections = gsap.utils.toArray('.animate-section');
       const targetIndex = allSections.indexOf(section);
       
-      // First, set all sections to initial state
-      allSections.forEach((section: any) => {
-        gsap.set(section, {
-          opacity: 0,
-          y: 30
-        });
-      });
-
       // Scroll to the target section
       section.scrollIntoView({ behavior: 'smooth' });
 
-      // Force animation to play immediately for all sections up to and including the target
+      // Animate all sections up to and including the target
       requestAnimationFrame(() => {
-        gsap.to(section, {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power3.out",
-          overwrite: true,
-          onComplete: () => {
-            // Refresh ScrollTrigger after animation completes
-            ScrollTrigger.refresh(true);
-          }
-        });
+        allSections.forEach((section: any, index: number) => {
+          if (index <= targetIndex) {
+            gsap.to(section, {
+              opacity: 1,
+              y: 0,
+              duration: 0.8,
+              ease: "power3.out",
+              overwrite: true,
+              onComplete: () => {
+                // Refresh ScrollTrigger after animation completes
+                ScrollTrigger.refresh(true);
+              }
+            });
 
-        // Also animate any child elements that need it
-        const childElements = section.querySelectorAll('.section-title, .animate-element');
-        childElements.forEach((element: any) => {
-          gsap.to(element, {
-            opacity: 1,
-            y: 0,
-            duration: 0.6,
-            ease: "power3.out",
-            overwrite: true,
-            delay: 0.2
-          });
+            // Also animate any child elements that need it
+            const childElements = section.querySelectorAll('.section-title, .animate-element');
+            childElements.forEach((element: any) => {
+              gsap.to(element, {
+                opacity: 1,
+                y: 0,
+                duration: 0.6,
+                ease: "power3.out",
+                overwrite: true,
+                delay: 0.2
+              });
+            });
+          }
         });
       });
     }

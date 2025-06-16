@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import './MobileLoader.css';
 
@@ -130,6 +129,8 @@ const MobileLoader: React.FC<MobileLoaderProps> = ({ onLoadComplete }) => {
         <div className="floating-shape shape-2"></div>
         <div className="floating-shape shape-3"></div>
         <div className="floating-shape shape-4"></div>
+        <div className="chemistry-element beaker" style={{ position: 'absolute', top: '30%', left: '20%', animation: 'float 3s ease-in-out infinite' }}></div>
+        <div className="chemistry-element flask" style={{ position: 'absolute', top: '50%', right: '20%', animation: 'float 3s ease-in-out infinite' }}></div>
       </div>
       
       <div className="loading-container">
@@ -149,7 +150,7 @@ const MobileLoader: React.FC<MobileLoaderProps> = ({ onLoadComplete }) => {
           </div>
           
           <div className="loading-text">
-            {contentLoaded ? 'Finalizing...' : 'Loading your experience...'}
+            {contentLoaded ? 'Loading Sourceasy...' : 'Loading Sourceasy...'}
           </div>
         </div>
       </div>
