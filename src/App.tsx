@@ -8,6 +8,7 @@ import MobileLoader from "./components/MobileLoader";
 import { useIsMobile } from "./hooks/use-mobile";
 import { AnimatePresence } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
+import LoginModal from './components/Login';
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -17,6 +18,7 @@ const AnimatedRoutes = () => {
         <Route path="/" element={<Index />} />
         <Route path="/blog/:id" element={<BlogPage />} />
         <Route path="/articles" element={<AllArticles />} />
+        <Route path="/login" element={<LoginModal isOpen={true} onClose={() => window.history.back()} />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </AnimatePresence>

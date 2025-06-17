@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MessageCircle, Menu, X } from 'lucide-react';
+import { MessageCircle, Menu, X, LogIn } from 'lucide-react';
 import './Header.css';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import gsap from 'gsap';
@@ -70,6 +70,11 @@ const Header = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
+  const handleLogin = () => {
+    // Add your login navigation logic here
+    window.location.href = '/login';
+  };
+
   return (
     <>
       <header className={`header ${isScrolled ? 'scrolled' : ''}`}>
@@ -107,6 +112,13 @@ const Header = () => {
               >
                 <MessageCircle className="inquiry-button-icon" />
                 <span>Start Inquiry</span>
+              </button>
+              <button
+                onClick={handleLogin}
+                className="login-button"
+              >
+                <LogIn className="login-button-icon" />
+                <span>Login</span>
               </button>
             </nav>
 
@@ -153,6 +165,12 @@ const Header = () => {
             className="mobile-nav-button"
           >
             Contact Us
+          </button>
+          <button
+            onClick={handleLogin}
+            className="mobile-nav-button"
+          >
+            Login
           </button>
         </div>
       </div>

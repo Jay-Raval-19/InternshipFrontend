@@ -276,3 +276,36 @@
     font-size: 0.9rem;
   }
 }
+
+.login-button {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #3A8DCA, #174A7C);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(58, 141, 202, 0.3);
+}
+
+.login-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(58, 141, 202, 0.4);
+  background: linear-gradient(135deg, #174A7C, #0D2B4E);
+}
+
+.login-button-icon {
+  margin-right: 0.5rem;
+  height: 1.1rem;
+  width: 1.1rem;
+}
+
+@media (max-width: 768px) {
+  .login-button {
+    display: none;
+  }
+}
