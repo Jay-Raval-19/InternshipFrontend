@@ -12,12 +12,14 @@ import { ArrowUp } from 'lucide-react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './Index.css';
 import { motion } from 'framer-motion';
+import { useIsMobile } from '../hooks/use-mobile';
 
 const Index = () => {
   const [componentsLoaded, setComponentsLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
 
   const { refresh } = useGSAP();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     console.log('Index: Components mounting...');
@@ -67,16 +69,17 @@ const Index = () => {
     return () => window.removeEventListener('scroll', toggleVisibility);
   }, []);
 
-  // Conditionally render the back to top button only on larger screens
-  const isMobile = window.innerWidth < 768; // Define mobile breakpoint
+  const PageWrapper = isMobile ? 'div' : motion.div;
 
   return (
     <>
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -30 }}
-        transition={{ duration: 0.5 }}
+      <PageWrapper
+        {...(!isMobile && {
+          initial: { opacity: 0, y: 30 },
+          animate: { opacity: 1, y: 0 },
+          exit: { opacity: 0, y: -30 },
+          transition: { duration: 0.5 },
+        })}
         className="index-page"
       >
         <Header />
@@ -96,7 +99,7 @@ const Index = () => {
         <div id="contact" className="animate-section" style={{ opacity: 1, transform: 'translateY(0)' }}>
           <Contact />
         </div>
-      </motion.div>
+      </PageWrapper>
       <Chatbot />
       
       {/* Remove the back to top button on mobile devices */}

@@ -1,9 +1,12 @@
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { motion } from 'framer-motion';
+import { useIsMobile } from '../hooks/use-mobile';
 
 const NotFound = () => {
   const location = useLocation();
+  const isMobile = useIsMobile();
+  const PageWrapper = isMobile ? 'div' : motion.div;
 
   useEffect(() => {
     console.error(
@@ -13,11 +16,13 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -30 }}
-      transition={{ duration: 0.5 }}
+    <PageWrapper
+      {...(!isMobile && {
+        initial: { opacity: 0, y: 30 },
+        animate: { opacity: 1, y: 0 },
+        exit: { opacity: 0, y: -30 },
+        transition: { duration: 0.5 },
+      })}
     >
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="text-center">
@@ -28,7 +33,7 @@ const NotFound = () => {
           </a>
         </div>
       </div>
-    </motion.div>
+    </PageWrapper>
   );
 };
 
