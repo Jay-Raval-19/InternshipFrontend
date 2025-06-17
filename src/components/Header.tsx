@@ -77,7 +77,7 @@ const Header = () => {
           <div className="header-content">
             {/* Logo */}
             <div className="logo" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-              <img src="/sourceeasy-logo-final-removebg-preview.png" alt="Sourceasy Logo" className="logo-img" />
+              <img src="/Sourceasy-logo-Superfinal001.png" alt="Sourceasy Logo" className="logo-img" />
               <h1 className="logo-text">ourceasy</h1>
             </div>
 

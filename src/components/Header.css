@@ -59,7 +59,7 @@
   margin: 0;
   margin-left: -0.5rem;
   letter-spacing: -0.02em;
-  background: linear-gradient(135deg, #00B8BD, #2F6BFF, #FF7A1B);
+  background: linear-gradient(135deg, #6ED6F7, #3A8DCA 50%, #174A7C 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
