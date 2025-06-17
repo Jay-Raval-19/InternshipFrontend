@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { MessageCircle, Mail, Phone, MapPin, Instagram, Linkedin, Facebook } from 'lucide-react';
 import './Contact.css';
@@ -69,13 +68,11 @@ const Contact = () => {
   };
 
   const handleSocialClick = (platform: string) => {
-    // Replace these URLs with actual social media links
     const socialLinks = {
-      instagram: 'https://instagram.com/sourceasy',
-      linkedin: 'https://linkedin.com/company/sourceasy',
-      facebook: 'https://facebook.com/sourceasy'
+      instagram: 'https://www.instagram.com/sourceasy1/',
+      linkedin: 'https://www.linkedin.com/in/sourceasy-1-95400a370/',
+      facebook: 'https://www.facebook.com/profile.php?id=61577305686072'
     };
-    
     window.open(socialLinks[platform as keyof typeof socialLinks], '_blank');
   };
 
