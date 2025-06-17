@@ -19,15 +19,16 @@ const MobileLoader: React.FC<MobileLoaderProps> = ({ onLoadComplete }) => {
       try {
         // Preload images
         const imageUrls = [
+          '/Sourceasy-logo-Superfinal001.png',
           '/sourceeasy-logo-final-removebg-preview.png',
           '/chemical industry trends in 2026.jpg',
           '/quotation_report.jpg',
-          '/sustainable chemistry.jpg'
+          '/sustainable chemistry.jpg',
         ];
 
         const imagePromises = imageUrls.map(url => {
           return new Promise((resolve, reject) => {
-            const img = new Image();
+            const img = new window.Image();
             img.onload = resolve;
             img.onerror = resolve; // Continue even if image fails
             img.src = url;
@@ -37,17 +38,14 @@ const MobileLoader: React.FC<MobileLoaderProps> = ({ onLoadComplete }) => {
         // Wait for all images to load
         await Promise.all(imagePromises);
 
-        // Preload any additional resources
+        // Preload any additional resources (CSS, etc.)
         await new Promise(resolve => {
-          // Force browser to parse and cache all CSS
           const links = document.querySelectorAll('link[rel="stylesheet"]') as NodeListOf<HTMLLinkElement>;
           let loadedCount = 0;
-          
           if (links.length === 0) {
             resolve(null);
             return;
           }
-
           links.forEach(link => {
             if (link.sheet) {
               loadedCount++;
@@ -61,24 +59,14 @@ const MobileLoader: React.FC<MobileLoaderProps> = ({ onLoadComplete }) => {
           });
         });
 
-        // Wait for DOM to be fully ready
-        if (document.readyState !== 'complete') {
-          await new Promise(resolve => {
-            window.addEventListener('load', resolve, { once: true });
-          });
-        }
-
-        allResourcesLoaded = true;
         setContentLoaded(true);
-        
-      } catch (error) {
-        console.log('Some resources failed to preload, continuing anyway');
         allResourcesLoaded = true;
+      } catch (e) {
         setContentLoaded(true);
+        allResourcesLoaded = true;
       }
     };
 
-    // Start preloading immediately
     preloadContent();
 
     // Simulate progressive loading with realistic timing

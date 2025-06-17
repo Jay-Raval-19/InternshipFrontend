@@ -38,14 +38,21 @@ const App = () => {
     setIsLoading(false);
   };
 
-  if (isLoading && isMobile) {
-    return <MobileLoader onLoadComplete={handleLoadComplete} />;
-  }
-
   return (
-    <BrowserRouter>
-      <AnimatedRoutes />
-    </BrowserRouter>
+    <>
+      {/* Main app is always rendered, but hidden on mobile while loading */}
+      <div style={isMobile && isLoading ? { display: 'none' } : {}}>
+        <BrowserRouter>
+          <AnimatedRoutes />
+        </BrowserRouter>
+      </div>
+      {/* Loader overlays only on mobile while loading */}
+      {isMobile && isLoading && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 99999, background: '#fff' }}>
+          <MobileLoader onLoadComplete={handleLoadComplete} />
+        </div>
+      )}
+    </>
   );
 };
 
