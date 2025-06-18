@@ -4,7 +4,22 @@ import './Header.css';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import gsap from 'gsap';
 
-const Header = () => {
+interface HeaderProps {
+  user: any;
+  onLoginClick: () => void;
+  onLogout: () => void;
+}
+
+const getInitials = (name: string) => {
+  if (!name) return '';
+  return name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase();
+};
+
+const Header: React.FC<HeaderProps> = ({ user, onLoginClick, onLogout }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -71,8 +86,8 @@ const Header = () => {
   };
 
   const handleLogin = () => {
-    // Add your login navigation logic here
-    window.location.href = '/login';
+    setIsMobileMenuOpen(false);
+    onLoginClick();
   };
 
   return (
@@ -86,41 +101,47 @@ const Header = () => {
               <h1 className="logo-text">ourceasy</h1>
             </div>
 
-            {/* Desktop Navigation */}
-            <nav className="nav">
-              <button
-                onClick={() => scrollToSection('about')}
-                className="nav-button"
-              >
-                About
-              </button>
-              <button
-                onClick={() => scrollToSection('community')}
-                className="nav-button"
-              >
-                Community
-              </button>
-              <button
-                onClick={() => scrollToSection('contact')}
-                className="nav-button"
-              >
-                Contact Us
-              </button>
-              <button
-                onClick={handleStartInquiry}
-                className="inquiry-button"
-              >
-                <MessageCircle className="inquiry-button-icon" />
-                <span>Start Inquiry</span>
-              </button>
-              <button
-                onClick={handleLogin}
-                className="login-button"
-              >
-                <LogIn className="login-button-icon" />
-                <span>Login</span>
-              </button>
-            </nav>
+            {/* Main flex row: nav/action buttons left, user info right */}
+            <div className="header-main-row">
+              {/* Nav and action buttons cluster */}
+              <nav className="nav nav-cluster">
+                <button onClick={() => scrollToSection('about')} className="nav-button">About</button>
+                <button onClick={() => scrollToSection('community')} className="nav-button">Community</button>
+                <button onClick={() => scrollToSection('contact')} className="nav-button">Contact Us</button>
+                <button onClick={handleStartInquiry} className="inquiry-button">
+                  <MessageCircle className="inquiry-button-icon" />
+                  <span>Start Inquiry</span>
+                </button>
+                {!user && (
+                  <button onClick={onLoginClick} className="login-button">
+                    <LogIn className="login-button-icon" />
+                    <span>Login</span>
+                  </button>
+                )}
+              </nav>
+              {/* Divider and user info cluster only if logged in */}
+              {user && <div className="header-divider" />}
+              {user && (
+                <div className="user-info-cluster">
+                  <div className="user-info">
+                    {user.photoURL ? (
+                      <img
+                        src={user.photoURL}
+                        alt={user.displayName}
+                        className="user-avatar"
+                        onError={e => { e.currentTarget.src = '/default-avatar.png'; }}
+                      />
+                    ) : (
+                      <div className="user-avatar user-avatar-initials">
+                        {getInitials(user.displayName)}
+                      </div>
+                    )}
+                    <span className="user-name">{user.displayName}</span>
+                    <button onClick={onLogout} className="logout-button">Logout</button>
+                  </div>
+                </div>
+              )}
+            </div>
 
             {/* Mobile menu */}
             <div className="mobile-menu">
@@ -166,12 +187,14 @@ const Header = () => {
           >
             Contact Us
           </button>
-          <button
-            onClick={handleLogin}
-            className="mobile-nav-button"
-          >
-            Login
-          </button>
+          {!user && (
+            <button
+              onClick={handleLogin}
+              className="mobile-nav-button"
+            >
+              Login
+            </button>
+          )}
         </div>
       </div>
     </>

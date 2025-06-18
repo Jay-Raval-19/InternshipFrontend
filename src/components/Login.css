@@ -107,6 +107,13 @@
     font-size: 0.9rem;
   }
   
+  .form-description {
+    color: #6b7280;
+    font-size: 0.85rem;
+    margin: 0;
+    line-height: 1.4;
+  }
+  
   .input-wrapper {
     position: relative;
     display: flex;

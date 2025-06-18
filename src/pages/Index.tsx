@@ -14,7 +14,13 @@ import './Index.css';
 import { motion } from 'framer-motion';
 import { useIsMobile } from '../hooks/use-mobile';
 
-const Index = () => {
+interface IndexProps {
+  user: any;
+  onLoginClick: () => void;
+  onLogout: () => void;
+}
+
+const Index: React.FC<IndexProps> = ({ user, onLoginClick, onLogout }) => {
   const [componentsLoaded, setComponentsLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
 
@@ -82,7 +88,7 @@ const Index = () => {
         })}
         className="index-page"
       >
-        <Header />
+        <Header user={user} onLoginClick={onLoginClick} onLogout={onLogout} />
         <Hero />
         <div className="animate-section" style={{ opacity: 1, transform: 'translateY(0)' }}>
           <AIAgent />

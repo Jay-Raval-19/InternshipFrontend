@@ -385,21 +385,21 @@ const BlogPage = () => {
         transition: { duration: 0.5 },
       })}
     >
-      <div className="blog-page">
-        <div className="blog-header">
-          <h1 className="blog-title">{blog.title}</h1>
-          <div className="blog-meta">
-            <span className="blog-date">{blog.date}</span>
-            <span className="blog-read-time">{blog.readTime}</span>
-          </div>
+    <div className="blog-page">
+      <div className="blog-header">
+        <h1 className="blog-title">{blog.title}</h1>
+        <div className="blog-meta">
+          <span className="blog-date">{blog.date}</span>
+          <span className="blog-read-time">{blog.readTime}</span>
         </div>
-
-        <div className="blog-image-container">
-          <img src={blog.image} alt={blog.title} className="blog-image" />
-        </div>
-
-        <div className="blog-content" dangerouslySetInnerHTML={{ __html: blog.content }} />
       </div>
+
+      <div className="blog-image-container">
+        <img src={blog.image} alt={blog.title} className="blog-image" />
+      </div>
+
+      <div className="blog-content" dangerouslySetInnerHTML={{ __html: blog.content }} />
+    </div>
     </PageWrapper>
   );
 };
