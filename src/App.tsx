@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
@@ -13,6 +13,11 @@ import { AnimatePresence } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import LoginModal from './components/Login';
 import Header from './components/Header';
+import DashboardNavbar from './components/DashboardNavbar';
+import Dashboard from './pages/Dashboard';
+import AboutPage from './pages/AboutPage';
+import WhatWeBuy from './pages/WhatWeBuy';
+import WhatWeSell from './pages/WhatWeSell';
 
 const AnimatedRoutes = ({ onLoginClick, user, onLogout }: { onLoginClick: () => void, user: any, onLogout: () => void }) => {
   const location = useLocation();
@@ -23,6 +28,21 @@ const AnimatedRoutes = ({ onLoginClick, user, onLogout }: { onLoginClick: () => 
         <Route path="/blog/:id" element={<BlogPage />} />
         <Route path="/articles" element={<AllArticles />} />
         <Route path="*" element={<NotFound />} />
+      </Routes>
+    </AnimatePresence>
+  );
+};
+
+const DashboardRoutes = ({ user, onLogout }: { user: any, onLogout: () => void }) => {
+  const location = useLocation();
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/dashboard" element={<Dashboard user={user} onLogout={onLogout} />} />
+        <Route path="/dashboard/about" element={<AboutPage user={user} />} />
+        <Route path="/dashboard/what-we-buy" element={<WhatWeBuy user={user} />} />
+        <Route path="/dashboard/what-we-sell" element={<WhatWeSell user={user} />} />
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </AnimatePresence>
   );
@@ -91,6 +111,9 @@ const App = () => {
 
   const handleAuthSuccess = (userData) => {
     setUser(userData);
+    setIsLoginModalOpen(false);
+    // Redirect to dashboard after successful login
+    window.location.href = '/dashboard';
   };
 
   return (
@@ -98,8 +121,21 @@ const App = () => {
       {/* Main app is always rendered, but hidden on mobile while loading */}
       <div style={isMobile && isLoading ? { display: 'none' } : {}}>
         <BrowserRouter>
-          <Header user={user} onLoginClick={handleLoginClick} onLogout={handleLogout} />
-          <AnimatedRoutes onLoginClick={handleLoginClick} user={user} onLogout={handleLogout} />
+          {user ? (
+            // Logged in user - show dashboard navbar and routes
+            <>
+              <DashboardNavbar user={user} onLogout={handleLogout} />
+              <div style={{ paddingTop: '4.5rem' }}>
+                <DashboardRoutes user={user} onLogout={handleLogout} />
+              </div>
+            </>
+          ) : (
+            // Not logged in - show original header and routes
+            <>
+              <Header user={user} onLoginClick={handleLoginClick} onLogout={handleLogout} />
+              <AnimatedRoutes onLoginClick={handleLoginClick} user={user} onLogout={handleLogout} />
+            </>
+          )}
         </BrowserRouter>
       </div>
       {/* Loader overlays only on mobile while loading */}
