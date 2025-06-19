@@ -77,10 +77,12 @@ const DashboardNavbar: React.FC<DashboardNavbarProps> = ({ user, onLogout }) => 
               {/* Mobile Menu Toggle */}
               <button
                 onClick={toggleMobileMenu}
-                className={`dashboard-mobile-toggle ${isMobileMenuOpen ? 'active' : ''}`}
+                className={`dashboard-mobile-toggle mobile-nav-toggle${isMobileMenuOpen ? ' active' : ''}`}
                 aria-label="Toggle menu"
               >
-                {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                <span></span>
+                <span></span>
+                <span></span>
               </button>
             </div>
           </div>
