@@ -16,9 +16,7 @@ const DashboardNavbar: React.FC<DashboardNavbarProps> = ({ user, onLogout }) => 
 
   const navItems = [
     { id: 'home', label: 'Home', icon: Home, path: '/dashboard' },
-    { id: 'about', label: 'About', icon: User, path: '/dashboard/about' },
-    { id: 'buy', label: 'What We Buy', icon: ShoppingCart, path: '/dashboard/what-we-buy' },
-    { id: 'sell', label: 'What We Sell', icon: Package, path: '/dashboard/what-we-sell' }
+    { id: 'profile', label: 'Profile', icon: User, path: '/dashboard/profile' }
   ];
 
   useEffect(() => {
