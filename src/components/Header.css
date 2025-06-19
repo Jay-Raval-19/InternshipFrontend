@@ -75,9 +75,21 @@
   border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
+/* Hide nav on mobile, show on desktop */
+@media (max-width: 767px) {
+  .nav {
+    display: none !important;
+  }
+  .mobile-menu {
+    display: flex !important;
+  }
+}
 @media (min-width: 768px) {
   .nav {
-    display: flex;
+    display: flex !important;
+  }
+  .mobile-menu {
+    display: none !important;
   }
 }
 
@@ -133,12 +145,6 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-}
-
-@media (min-width: 768px) {
-  .mobile-menu {
-    display: none;
-  }
 }
 
 .mobile-nav-toggle {
