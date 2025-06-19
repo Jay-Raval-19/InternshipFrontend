@@ -77,6 +77,10 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
   const [sellProducts, setSellProducts] = useState(mockSellProducts);
   const [editIdx, setEditIdx] = useState(-1);
   const [editProduct, setEditProduct] = useState(null);
+  const [isEditingAddress, setIsEditingAddress] = useState(false);
+  const [isEditingPin, setIsEditingPin] = useState(false);
+  const [addressValue, setAddressValue] = useState(mockProfile.address);
+  const [pinValue, setPinValue] = useState(mockProfile.pin);
 
   const handleEdit = (idx) => {
     setEditIdx(idx);
@@ -93,6 +97,17 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
     setSellProducts(updated);
     setEditIdx(-1);
     setEditProduct(null);
+  };
+
+  const handleAddressEdit = () => setIsEditingAddress(true);
+  const handleAddressSave = () => {
+    setIsEditingAddress(false);
+    // Optionally, update backend here
+  };
+  const handlePinEdit = () => setIsEditingPin(true);
+  const handlePinSave = () => {
+    setIsEditingPin(false);
+    // Optionally, update backend here
   };
 
   // Use user data if available, otherwise fall back to mock data
@@ -145,9 +160,54 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
             
             <div className="info-item">
               <MapPin className="info-icon" />
-              <div>
+              <div style={{width: '100%'}}>
                 <span className="info-label">ADDRESS</span>
-                <span className="info-value">{mockProfile.address}</span>
+                <div className="profile-edit-row">
+                  {isEditingAddress ? (
+                    <>
+                      <input
+                        className="profile-edit-input"
+                        value={addressValue}
+                        onChange={e => setAddressValue(e.target.value)}
+                        style={{marginRight: 8, width: '80%'}}
+                      />
+                      <button className="profile-edit-save" onClick={handleAddressSave}>Save</button>
+                    </>
+                  ) : (
+                    <>
+                      <span className="info-value" style={{marginRight: 8}}>{addressValue}</span>
+                      <button className="profile-edit-icon-btn" onClick={handleAddressEdit} title="Edit address">
+                        <Edit size={18} />
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="info-item">
+              <Pin className="info-icon" />
+              <div style={{width: '100%'}}>
+                <span className="info-label">PIN CODE</span>
+                <div className="profile-edit-row">
+                  {isEditingPin ? (
+                    <>
+                      <input
+                        className="profile-edit-input"
+                        value={pinValue}
+                        onChange={e => setPinValue(e.target.value)}
+                        style={{marginRight: 8, width: '50%'}}
+                      />
+                      <button className="profile-edit-save" onClick={handlePinSave}>Save</button>
+                    </>
+                  ) : (
+                    <>
+                      <span className="info-value" style={{marginRight: 8}}>{pinValue}</span>
+                      <button className="profile-edit-icon-btn" onClick={handlePinEdit} title="Edit pincode">
+                        <Edit size={18} />
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
             
@@ -156,14 +216,6 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
               <div>
                 <span className="info-label">PHONE</span>
                 <span className="info-value">{userPhone}</span>
-              </div>
-            </div>
-            
-            <div className="info-item">
-              <Pin className="info-icon" />
-              <div>
-                <span className="info-label">PIN CODE</span>
-                <span className="info-value">{mockProfile.pin}</span>
               </div>
             </div>
             
