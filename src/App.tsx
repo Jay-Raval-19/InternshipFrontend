@@ -20,6 +20,29 @@ import WhatWeBuy from './pages/WhatWeBuy';
 import WhatWeSell from './pages/WhatWeSell';
 import Profile from './pages/Profile';
 
+// Function to check if email exists in Pinecone database
+const checkEmailInDatabase = async (email: string) => {
+  try {
+    const response = await fetch('http://localhost:5000/api/check-email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to check email in database');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error checking email in database:', error);
+    return { exists: false, message: 'Database check failed' };
+  }
+};
+
 // Wrapper component to access navigation
 const AppContent = ({ user, onLoginClick, onLogout, handleAuthSuccess, isLoginModalOpen, handleLoginClose }) => {
   const navigate = useNavigate();
@@ -104,17 +127,35 @@ const App = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        // Fetch user profile from Firestore
+        // Check if user's email exists in Pinecone database
+        const emailCheckResult = await checkEmailInDatabase(firebaseUser.email || '');
+        
+        if (!emailCheckResult.exists) {
+          // Email not found in database, sign out the user
+          console.log('User email not found in database, signing out...');
+          await signOut(auth);
+          setUser(null);
+          setIsAuthInitialized(true);
+          return;
+        }
+
+        // Email found in database, fetch user profile from Firestore
         try {
           const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
           if (userDoc.exists()) {
-            setUser(userDoc.data());
+            const userData = userDoc.data();
+            // Include supplier data from Pinecone
+            setUser({
+              ...userData,
+              supplierData: emailCheckResult.supplierData || null
+            });
           } else {
             setUser({
               uid: firebaseUser.uid,
               email: firebaseUser.email,
               displayName: firebaseUser.displayName,
               photoURL: firebaseUser.photoURL,
+              supplierData: emailCheckResult.supplierData || null
             });
           }
         } catch (err) {
@@ -123,6 +164,7 @@ const App = () => {
             email: firebaseUser.email,
             displayName: firebaseUser.displayName,
             photoURL: firebaseUser.photoURL,
+            supplierData: emailCheckResult.supplierData || null
           });
         }
       } else {

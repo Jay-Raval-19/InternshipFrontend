@@ -1,15 +1,21 @@
 const express = require("express");
 const cors = require("cors");
 const nodemailer = require("nodemailer");
+const { Pinecone } = require("@pinecone-database/pinecone");
 require("dotenv").config();
 
 const app = express();
+
+// Initialize Pinecone
+const pinecone = new Pinecone({
+  apiKey: process.env.PINECONE_API_KEY,
+});
 
 // Middleware
 app.use(
   cors({
     origin: "http://localhost:8080", // Updated to match your frontend URL
-    methods: ["POST"],
+    methods: ["POST", "GET"],
     credentials: true,
   })
 );
@@ -30,6 +36,71 @@ transporter.verify(function (error, success) {
     console.log("Email configuration error:", error);
   } else {
     console.log("Email server is ready to send messages");
+  }
+});
+
+// Check if email exists in Pinecone database
+app.post("/api/check-email", async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ error: "Email is required" });
+    }
+
+    // Get the index with the correct namespace
+    const index = pinecone.index(
+      process.env.PINECONE_INDEX_NAME || "sourceasy-suppliers"
+    );
+
+    // Create a dummy vector with 1536 dimensions (all zeros)
+    const dummyVector = new Array(1536).fill(0);
+
+    // Query the index for the email in the "chemicals" namespace
+    const queryResponse = await index.namespace("chemicals").query({
+      vector: dummyVector,
+      filter: {
+        "Seller Email Address": { $eq: email },
+      },
+      topK: 1,
+      includeMetadata: true,
+    });
+
+    console.log(
+      "Pinecone query response:",
+      JSON.stringify(queryResponse, null, 2)
+    );
+
+    if (queryResponse.matches && queryResponse.matches.length > 0) {
+      // Email found in database
+      const supplierData = queryResponse.matches[0].metadata;
+      res.status(200).json({
+        exists: true,
+        message: "Email found in database",
+        supplierData: {
+          sellerName: supplierData["Seller Name"],
+          sellerEmail: supplierData["Seller Email Address"],
+          sellerVerified: supplierData["Seller Verified"],
+          sellerRating: supplierData["Seller Rating"],
+          region: supplierData["Region"],
+          sellerAddress: supplierData["Seller Address"],
+          sellerPOCContact: supplierData["Seller POC Contact Number"],
+        },
+      });
+    } else {
+      // Email not found in database
+      res.status(200).json({
+        exists: false,
+        message:
+          "Email is not registered, please register your business with WhatsApp",
+      });
+    }
+  } catch (error) {
+    console.error("Error checking email in Pinecone:", error);
+    res.status(500).json({
+      error: "Failed to check email in database",
+      details: error.message,
+    });
   }
 });
 
@@ -85,5 +156,9 @@ app.listen(PORT, () => {
   console.log("Email configuration:", {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS ? "****" : "not set",
+  });
+  console.log("Pinecone configuration:", {
+    apiKey: process.env.PINECONE_API_KEY ? "****" : "not set",
+    indexName: process.env.PINECONE_INDEX_NAME || "sourceasy-suppliers",
   });
 });
