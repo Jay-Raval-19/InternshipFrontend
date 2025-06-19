@@ -211,13 +211,16 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
               </div>
             </div>
             
-            <div className="info-item">
-              <Phone className="info-icon" />
-              <div>
-                <span className="info-label">PHONE</span>
-                <span className="info-value">{userPhone}</span>
+            {/* Only show phone number if it exists */}
+            {userPhone && (
+              <div className="info-item">
+                <Phone className="info-icon" />
+                <div>
+                  <span className="info-label">PHONE</span>
+                  <span className="info-value">{userPhone}</span>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </aside>
