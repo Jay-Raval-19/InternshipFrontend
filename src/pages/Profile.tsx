@@ -81,6 +81,8 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
   const [isEditingPin, setIsEditingPin] = useState(false);
   const [addressValue, setAddressValue] = useState(mockProfile.address);
   const [pinValue, setPinValue] = useState(mockProfile.pin);
+  const [searchBuy, setSearchBuy] = useState('');
+  const [searchSell, setSearchSell] = useState('');
 
   const handleEdit = (idx) => {
     setEditIdx(idx);
@@ -130,7 +132,7 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
               />
             </div>
             <h2 className="profile-name">{displayName}</h2>
-            <p className="profile-company">{mockProfile.organization}</p>
+            <p className="profile-company">{mockProfile.company}</p>
           </div>
           
           <div className="profile-info">
@@ -141,15 +143,13 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
                 <span className="info-value">{email}</span>
               </div>
             </div>
-            
             <div className="info-item">
-              <Building className="info-icon" />
+              <Building2 className="info-icon" />
               <div>
-                <span className="info-label">ORGANIZATION</span>
-                <span className="info-value">{mockProfile.organization}</span>
+                <span className="info-label">COMPANY</span>
+                <span className="info-value">{mockProfile.company}</span>
               </div>
             </div>
-            
             <div className="info-item">
               <CreditCard className="info-icon" />
               <div>
@@ -218,14 +218,6 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
                 <span className="info-value">{userPhone}</span>
               </div>
             </div>
-            
-            <div className="info-item">
-              <Building2 className="info-icon" />
-              <div>
-                <span className="info-label">COMPANY</span>
-                <span className="info-value">{mockProfile.company}</span>
-              </div>
-            </div>
           </div>
         </div>
       </aside>
@@ -248,13 +240,23 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
         <div className="tab-content">
           {tab === 'buy' && (
             <div className="buy-content">
+              <input
+                className="product-search-input"
+                type="text"
+                placeholder="Search products you buy..."
+                value={searchBuy}
+                onChange={e => setSearchBuy(e.target.value)}
+                style={{marginBottom: 16, width: '100%'}}
+              />
               <h2 className="section-title">Products You Have Bought</h2>
               <div className="buy-grid">
-                {mockBuyProducts.map((product, i) => (
-                  <div key={i} className="buy-item">
-                    <Package className="buy-icon" />
-                    <span>{product}</span>
-                  </div>
+                {mockBuyProducts
+                  .filter(product => product.toLowerCase().includes(searchBuy.toLowerCase()))
+                  .map((product, i) => (
+                    <div key={i} className="buy-item">
+                      <Package className="buy-icon" />
+                      <span>{product}</span>
+                    </div>
                 ))}
               </div>
             </div>
@@ -262,61 +264,126 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
           
           {tab === 'sell' && (
             <div className="sell-content">
+              <input
+                className="product-search-input"
+                type="text"
+                placeholder="Search products you sell..."
+                value={searchSell}
+                onChange={e => setSearchSell(e.target.value)}
+                style={{marginBottom: 16, width: '100%'}}
+              />
               <h2 className="section-title">Products You Sell</h2>
               <div className="sell-grid">
-                {sellProducts.map((product, i) => (
-                  <div key={i} className="product-card">
-                    <div className="product-header">
-                      <h3 className="product-name">{product.productName}</h3>
-                      <button className="edit-btn" onClick={() => handleEdit(i)}>
-                        <Edit size={16} />
-                      </button>
+                {sellProducts
+                  .filter(product => product.productName.toLowerCase().includes(searchSell.toLowerCase()))
+                  .map((product, i) => (
+                    <div key={i} className="product-card">
+                      <div className="product-header">
+                        {editIdx === i ? (
+                          <input
+                            name="productName"
+                            value={editProduct.productName}
+                            onChange={handleEditChange}
+                            className="profile-edit-input"
+                            placeholder="Product Name"
+                            style={{fontWeight: 600, fontSize: '18px', marginBottom: 0}}
+                          />
+                        ) : (
+                          <h3 className="product-name">{product.productName}</h3>
+                        )}
+                        <button className="edit-btn" onClick={() => handleEdit(i)}>
+                          <Edit size={16} />
+                        </button>
+                      </div>
+                      {editIdx === i ? (
+                        <input
+                          name="category"
+                          value={editProduct.category}
+                          onChange={handleEditChange}
+                          className="profile-edit-input"
+                          placeholder="Category"
+                          style={{marginBottom: 8}}
+                        />
+                      ) : (
+                        <p className="product-category">{product.category}</p>
+                      )}
+                      <div className="product-image">
+                        <img src={product.productPicture} alt={product.productName} />
+                      </div>
+                      <div className="product-price">
+                        {editIdx === i ? (
+                          <input
+                            name="price"
+                            value={editProduct.price}
+                            onChange={handleEditChange}
+                            className="profile-edit-input"
+                            placeholder="Price"
+                            type="number"
+                            style={{width: 100, marginRight: 8}}
+                          />
+                        ) : (
+                          <span className="price">₹{product.price}/Kg</span>
+                        )}
+                        <div className="rating">
+                          {'★'.repeat(Math.floor(product.rating))}{'☆'.repeat(5-Math.floor(product.rating))} ({product.rating})
+                        </div>
+                      </div>
+                      <p className="product-description">{product.productDescription}</p>
+                      <div className="product-details">
+                        <div className="detail-item">
+                          <Package size={16} />
+                          {editIdx === i ? (
+                            <input
+                              name="minOrder"
+                              value={editProduct.minOrder}
+                              onChange={handleEditChange}
+                              className="profile-edit-input"
+                              placeholder="Minimum Order Quantity"
+                              type="number"
+                              style={{width: 120}}
+                            />
+                          ) : (
+                            <span>Min Order: {product.minOrder} Kg</span>
+                          )}
+                        </div>
+                        <div className="detail-item">
+                          <Package size={16} />
+                          {editIdx === i ? (
+                            <input
+                              name="size"
+                              value={editProduct.size}
+                              onChange={handleEditChange}
+                              className="profile-edit-input"
+                              placeholder="Size"
+                              style={{width: 100}}
+                            />
+                          ) : (
+                            <span>Size: {product.size}</span>
+                          )}
+                        </div>
+                        <div className="detail-item">
+                          <MapPin size={16} />
+                          <span>{product.region}</span>
+                        </div>
+                      </div>
+                      <div className="seller-info">
+                        <h4>Seller Information</h4>
+                        <div className="seller-name">
+                          {product.sellerName} 
+                          {product.sellerVerified && <span className="verified">✓ Verified</span>}
+                        </div>
+                        <div className="seller-rating">
+                          {'★'.repeat(Math.floor(product.rating))} ({product.rating})
+                        </div>
+                        <div className="seller-contact">
+                          <div><Phone size={14} /> {product.sellerPhone}</div>
+                          <div><Mail size={14} /> {product.sellerEmail}</div>
+                        </div>
+                      </div>
+                      {editIdx === i && (
+                        <button className="profile-edit-save" style={{marginTop: 12}} onClick={() => handleEditSave(i)}>Save</button>
+                      )}
                     </div>
-                    <p className="product-category">{product.category}</p>
-                    
-                    <div className="product-image">
-                      <img src={product.productPicture} alt={product.productName} />
-                    </div>
-                    
-                    <div className="product-price">
-                      <span className="price">₹{product.price}/Kg</span>
-                      <div className="rating">
-                        {'★'.repeat(Math.floor(product.rating))}{'☆'.repeat(5-Math.floor(product.rating))} ({product.rating})
-                      </div>
-                    </div>
-                    
-                    <p className="product-description">{product.productDescription}</p>
-                    
-                    <div className="product-details">
-                      <div className="detail-item">
-                        <Package size={16} />
-                        <span>Min Order: {product.minOrder} Kg</span>
-                      </div>
-                      <div className="detail-item">
-                        <Package size={16} />
-                        <span>Size: {product.size}</span>
-                      </div>
-                      <div className="detail-item">
-                        <MapPin size={16} />
-                        <span>{product.region}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="seller-info">
-                      <h4>Seller Information</h4>
-                      <div className="seller-name">
-                        {product.sellerName} 
-                        {product.sellerVerified && <span className="verified">✓ Verified</span>}
-                      </div>
-                      <div className="seller-rating">
-                        {'★'.repeat(Math.floor(product.rating))} ({product.rating})
-                      </div>
-                      <div className="seller-contact">
-                        <div><Phone size={14} /> {product.sellerPhone}</div>
-                        <div><Mail size={14} /> {product.sellerEmail}</div>
-                      </div>
-                    </div>
-                  </div>
                 ))}
               </div>
             </div>

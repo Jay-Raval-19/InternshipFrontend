@@ -299,15 +299,15 @@
     height: 2rem;
   }
   
-  .dashboard-mobile-nav-button span {
-    display: none;
-  }
-  
   .dashboard-mobile-nav-button {
     padding: 0.75rem;
   }
   
   .dashboard-mobile-content {
     gap: 0.25rem;
+  }
+  
+  .dashboard-mobile-nav-button span {
+    display: inline;
   }
 } 
