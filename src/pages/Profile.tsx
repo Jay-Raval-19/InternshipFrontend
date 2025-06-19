@@ -1,22 +1,25 @@
 import React, { useState } from 'react';
+import { ShoppingCart, Package, History, Mail, Building, CreditCard, MapPin, Phone, Pin, Building2, Edit } from 'lucide-react';
 import './Profile.css';
 
 const mockProfile = {
   profilePic: 'https://www.gstatic.com/images/branding/product/2x/avatar_square_blue_512dp.png',
   fullName: 'Jay Raval',
-  gmail: 'jayraval@gmail.com',
-  organization: 'Ahmedabad University',
-  gst: '24ABCDE1234F1Z5',
-  address: 'Ahmedabad, Gujarat',
+  gmail: 'jay.mrugesh.raval@gmail.com',
+  organization: 'Chemical Industries Ltd.',
+  gst: '22AAAAA0000A1Z5',
+  address: 'B-20, Industrial Area, Mumbai, Maharashtra',
   phone: '+91 9876543210',
-  pin: '380009',
-  company: 'Sourceasy',
+  pin: '400001',
+  company: 'Mumbai Chemical Solutions',
 };
 
 const mockBuyProducts = [
   'Acetic Acid',
+  'Sulfuric Acid', 
+  'Ammonia Solution',
   'Sodium Hydroxide',
-  'Calcium Carbonate',
+  'Hydrochloric Acid'
 ];
 
 const mockSellProducts = [
@@ -28,7 +31,7 @@ const mockSellProducts = [
     size: '50 Kg',
     unit: 'Kg',
     minOrder: 120,
-    productPicture: 'https://example.com/images/sodium_thioglycolate.jpg',
+    productPicture: 'https://via.placeholder.com/200x150/e5e7eb/9ca3af?text=Product+Image',
     sellerName: 'Varanasi Chem Supplies',
     sellerEmail: 'sales@varanasichem.com',
     sellerPhone: '9313456789',
@@ -36,16 +39,40 @@ const mockSellProducts = [
     sellerVerified: true,
     rating: 4.8,
   },
-  // Add more mock products as needed
+  {
+    productName: 'Ethyl Acetate',
+    productDescription: 'High grade industrial solvent, 98% purity.',
+    category: 'Industrial Chemicals',
+    price: 150,
+    size: '100 Kg',
+    unit: 'Kg',
+    minOrder: 200,
+    productPicture: 'https://via.placeholder.com/200x150/e5e7eb/9ca3af?text=Product+Image',
+    sellerName: 'Mumbai Chemical Solutions',
+    sellerEmail: 'contact@mumbaichemicals.com',
+    sellerPhone: '9876543210',
+    region: 'Maharashtra',
+    sellerVerified: true,
+    rating: 4.7,
+  },
 ];
 
 const TABS = [
-  { id: 'buy', label: 'Products You Buy' },
-  { id: 'sell', label: 'Products You Sell' },
-  { id: 'history', label: 'History' },
+  { id: 'buy', label: 'Products You Buy', icon: ShoppingCart },
+  { id: 'sell', label: 'Products You Sell', icon: Package },
+  { id: 'history', label: 'History', icon: History },
 ];
 
-const Profile = () => {
+interface ProfileProps {
+  user?: {
+    displayName?: string;
+    email?: string;
+    photoURL?: string;
+    phone?: string;
+  };
+}
+
+const Profile: React.FC<ProfileProps> = ({ user }) => {
   const [tab, setTab] = useState('buy');
   const [sellProducts, setSellProducts] = useState(mockSellProducts);
   const [editIdx, setEditIdx] = useState(-1);
@@ -68,93 +95,186 @@ const Profile = () => {
     setEditProduct(null);
   };
 
+  // Use user data if available, otherwise fall back to mock data
+  const displayName = user?.displayName || mockProfile.fullName;
+  const email = user?.email || mockProfile.gmail;
+  const profilePhoto = user?.photoURL;
+  const userPhone = user?.phone || mockProfile.phone;
+
   return (
-    <div className="profile-fullpage-container">
+    <div className="profile-container">
       {/* Sidebar */}
-      <aside className="profile-sidebar-fixed">
-        <div className="profile-card-modern">
-          <img src={mockProfile.profilePic} alt="Profile" className="profile-pic-modern" />
-          <h2 className="profile-name-modern">{mockProfile.fullName}</h2>
-          <p className="profile-email-modern">{mockProfile.gmail}</p>
-          <div className="profile-info-modern">
-            <div><span className="profile-label">Organization:</span> <span className="profile-value">{mockProfile.organization}</span></div>
-            <div><span className="profile-label">GST:</span> <span className="profile-value">{mockProfile.gst}</span></div>
-            <div><span className="profile-label">Address:</span> <span className="profile-value">{mockProfile.address}</span></div>
-            <div><span className="profile-label">Phone:</span> <span className="profile-value">{mockProfile.phone}</span></div>
-            <div><span className="profile-label">PIN Code:</span> <span className="profile-value">{mockProfile.pin}</span></div>
-            <div><span className="profile-label">Company:</span> <span className="profile-value">{mockProfile.company}</span></div>
+      <aside className="profile-sidebar">
+        <div className="profile-card">
+          <div className="profile-header">
+            <div className="profile-avatar">
+              <img 
+                src={profilePhoto || 'https://www.gstatic.com/images/branding/product/2x/avatar_square_blue_512dp.png'} 
+                alt="Profile" 
+                className="profile-avatar-img"
+              />
+            </div>
+            <h2 className="profile-name">{displayName}</h2>
+            <p className="profile-company">{mockProfile.organization}</p>
+          </div>
+          
+          <div className="profile-info">
+            <div className="info-item">
+              <Mail className="info-icon" />
+              <div>
+                <span className="info-label">EMAIL</span>
+                <span className="info-value">{email}</span>
+              </div>
+            </div>
+            
+            <div className="info-item">
+              <Building className="info-icon" />
+              <div>
+                <span className="info-label">ORGANIZATION</span>
+                <span className="info-value">{mockProfile.organization}</span>
+              </div>
+            </div>
+            
+            <div className="info-item">
+              <CreditCard className="info-icon" />
+              <div>
+                <span className="info-label">GST NUMBER</span>
+                <span className="info-value">{mockProfile.gst}</span>
+              </div>
+            </div>
+            
+            <div className="info-item">
+              <MapPin className="info-icon" />
+              <div>
+                <span className="info-label">ADDRESS</span>
+                <span className="info-value">{mockProfile.address}</span>
+              </div>
+            </div>
+            
+            <div className="info-item">
+              <Phone className="info-icon" />
+              <div>
+                <span className="info-label">PHONE</span>
+                <span className="info-value">{userPhone}</span>
+              </div>
+            </div>
+            
+            <div className="info-item">
+              <Pin className="info-icon" />
+              <div>
+                <span className="info-label">PIN CODE</span>
+                <span className="info-value">{mockProfile.pin}</span>
+              </div>
+            </div>
+            
+            <div className="info-item">
+              <Building2 className="info-icon" />
+              <div>
+                <span className="info-label">COMPANY</span>
+                <span className="info-value">{mockProfile.company}</span>
+              </div>
+            </div>
           </div>
         </div>
       </aside>
 
-      {/* Main Area */}
-      <main className="profile-main-modern">
-        <div className="profile-tabs-modern">
+      {/* Main Content */}
+      <main className="profile-main">
+        <div className="profile-tabs">
           {TABS.map((t) => (
             <button
               key={t.id}
-              className={`tab-btn-modern${tab === t.id ? ' active' : ''}`}
+              className={`tab-btn ${tab === t.id ? 'active' : ''}`}
               onClick={() => setTab(t.id)}
             >
+              <t.icon className="tab-icon" />
               {t.label}
             </button>
           ))}
         </div>
-        <div className="profile-tab-content-modern animated-tab">
+        
+        <div className="tab-content">
           {tab === 'buy' && (
-            <div className="buy-list-modern">
-              {mockBuyProducts.map((prod, i) => (
-                <div className="buy-card-modern" key={i}>
-                  <span className="buy-product-name">{prod}</span>
-                </div>
-              ))}
+            <div className="buy-content">
+              <h2 className="section-title">Products You Have Bought</h2>
+              <div className="buy-grid">
+                {mockBuyProducts.map((product, i) => (
+                  <div key={i} className="buy-item">
+                    <Package className="buy-icon" />
+                    <span>{product}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
+          
           {tab === 'sell' && (
-            <div className="sell-list-modern">
-              {sellProducts.map((prod, i) => (
-                <div className="product-card-modern" key={i}>
-                  {editIdx === i ? (
-                    <div className="edit-form-modern">
-                      <input name="productName" value={editProduct.productName} onChange={handleEditChange} />
-                      <input name="productDescription" value={editProduct.productDescription} onChange={handleEditChange} />
-                      <input name="category" value={editProduct.category} onChange={handleEditChange} />
-                      <input name="price" value={editProduct.price} onChange={handleEditChange} />
-                      <input name="size" value={editProduct.size} onChange={handleEditChange} />
-                      <input name="unit" value={editProduct.unit} onChange={handleEditChange} />
-                      <input name="minOrder" value={editProduct.minOrder} onChange={handleEditChange} />
-                      <input name="region" value={editProduct.region} onChange={handleEditChange} />
-                      <button onClick={() => handleEditSave(i)}>Save</button>
+            <div className="sell-content">
+              <h2 className="section-title">Products You Sell</h2>
+              <div className="sell-grid">
+                {sellProducts.map((product, i) => (
+                  <div key={i} className="product-card">
+                    <div className="product-header">
+                      <h3 className="product-name">{product.productName}</h3>
+                      <button className="edit-btn" onClick={() => handleEdit(i)}>
+                        <Edit size={16} />
+                      </button>
                     </div>
-                  ) : (
-                    <>
-                      <img src={prod.productPicture} alt={prod.productName} className="product-img-modern" />
-                      <div className="product-main-info">
-                        <h3 className="product-title-modern">{prod.productName}</h3>
-                        <p className="product-desc-modern">{prod.productDescription}</p>
-                        <div className="product-details-modern">
-                          <div><span className="product-label">Category:</span> <span className="product-value">{prod.category}</span></div>
-                          <div><span className="product-label">Region:</span> <span className="product-value">{prod.region}</span></div>
-                          <div><span className="product-label">Size:</span> <span className="product-value">{prod.size}</span></div>
-                          <div><span className="product-label">Min Order:</span> <span className="product-value">{prod.minOrder}</span></div>
-                          <div><span className="product-label">Price:</span> <span className="product-value">₹{prod.price} per {prod.size}</span></div>
-                        </div>
-                        <div className="seller-details-modern">
-                          <div><span className="product-label">Seller:</span> <span className="product-value">{prod.sellerName} {prod.sellerVerified && <span className="verified-badge">✔</span>}</span></div>
-                          <div><span className="product-label">Email:</span> <span className="product-value">{prod.sellerEmail}</span></div>
-                          <div><span className="product-label">Phone:</span> <span className="product-value">{prod.sellerPhone}</span></div>
-                          <div><span className="product-label">Rating:</span> <span className="product-value">{prod.rating}★</span></div>
-                        </div>
-                        <button className="edit-btn-modern" onClick={() => handleEdit(i)}>Edit</button>
+                    <p className="product-category">{product.category}</p>
+                    
+                    <div className="product-image">
+                      <img src={product.productPicture} alt={product.productName} />
+                    </div>
+                    
+                    <div className="product-price">
+                      <span className="price">₹{product.price}/Kg</span>
+                      <div className="rating">
+                        {'★'.repeat(Math.floor(product.rating))}{'☆'.repeat(5-Math.floor(product.rating))} ({product.rating})
                       </div>
-                    </>
-                  )}
-                </div>
-              ))}
+                    </div>
+                    
+                    <p className="product-description">{product.productDescription}</p>
+                    
+                    <div className="product-details">
+                      <div className="detail-item">
+                        <Package size={16} />
+                        <span>Min Order: {product.minOrder} Kg</span>
+                      </div>
+                      <div className="detail-item">
+                        <Package size={16} />
+                        <span>Size: {product.size}</span>
+                      </div>
+                      <div className="detail-item">
+                        <MapPin size={16} />
+                        <span>{product.region}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="seller-info">
+                      <h4>Seller Information</h4>
+                      <div className="seller-name">
+                        {product.sellerName} 
+                        {product.sellerVerified && <span className="verified">✓ Verified</span>}
+                      </div>
+                      <div className="seller-rating">
+                        {'★'.repeat(Math.floor(product.rating))} ({product.rating})
+                      </div>
+                      <div className="seller-contact">
+                        <div><Phone size={14} /> {product.sellerPhone}</div>
+                        <div><Mail size={14} /> {product.sellerEmail}</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
+          
           {tab === 'history' && (
-            <div className="history-list-modern">No history available yet.</div>
+            <div className="history-content">
+              <h2 className="section-title">History</h2>
+              <p className="empty-state">No history available yet.</p>
+            </div>
           )}
         </div>
       </main>
@@ -162,4 +282,4 @@ const Profile = () => {
   );
 };
 
-export default Profile; 
+export default Profile;

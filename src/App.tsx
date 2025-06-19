@@ -40,7 +40,7 @@ const DashboardRoutes = ({ user, onLogout }: { user: any, onLogout: () => void }
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route path="/dashboard" element={<Dashboard user={user} onLogout={onLogout} />} />
-        <Route path="/dashboard/profile" element={<Profile />} />
+        <Route path="/dashboard/profile" element={<Profile user={user} />} />
         <Route path="/dashboard/about" element={<AboutPage user={user} />} />
         <Route path="/dashboard/what-we-buy" element={<WhatWeBuy user={user} />} />
         <Route path="/dashboard/what-we-sell" element={<WhatWeSell user={user} />} />
