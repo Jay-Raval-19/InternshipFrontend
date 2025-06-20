@@ -52,6 +52,18 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
   const [profileData, setProfileData] = useState<any>(null);
   const [profileLoading, setProfileLoading] = useState(true);
 
+  // Add sell product modal state
+  const [showAddSellModal, setShowAddSellModal] = useState(false);
+  const [sellProductForm, setSellProductForm] = useState([{
+    productName: '',
+    productCategory: 'Pharmaceutical',
+    description: '',
+    minimumQuantity: '',
+    unit: 'Kg',
+    customUnit: ''
+  }]);
+  const [addingSellProduct, setAddingSellProduct] = useState(false);
+
   // Fetch user's buy products from Pinecone
   useEffect(() => {
     const fetchBuyProducts = async () => {
@@ -252,6 +264,82 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
     } catch (error) {
       console.error('Error removing product:', error);
       alert('Failed to remove product');
+    }
+  };
+
+  // Add more rows to sell product form
+  const handleAddMoreSellProducts = () => {
+    setSellProductForm([...sellProductForm, {
+      productName: '',
+      productCategory: 'Pharmaceutical',
+      description: '',
+      minimumQuantity: '',
+      unit: 'Kg',
+      customUnit: ''
+    }]);
+  };
+
+  // Update sell product form data
+  const handleSellProductChange = (index: number, field: string, value: string) => {
+    const updatedProducts = [...sellProductForm];
+    updatedProducts[index] = { ...updatedProducts[index], [field]: value };
+    setSellProductForm(updatedProducts);
+  };
+
+  // Submit sell products
+  const handleSubmitSellProducts = async () => {
+    if (!user?.email) return;
+
+    // Validate form
+    const isValid = sellProductForm.every(product => 
+      product.productName.trim() && 
+      product.minimumQuantity.trim() && 
+      (product.unit !== 'Other' || product.customUnit.trim())
+    );
+
+    if (!isValid) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    try {
+      setAddingSellProduct(true);
+      
+      // For now, just add to local state (you can implement backend API later)
+      const newProducts = sellProductForm.map(product => ({
+        productName: product.productName,
+        productDescription: product.description,
+        category: product.productCategory,
+        price: 0, // Default price
+        size: `${product.minimumQuantity} ${product.unit === 'Other' ? product.customUnit : product.unit}`,
+        unit: product.unit === 'Other' ? product.customUnit : product.unit,
+        minOrder: parseInt(product.minimumQuantity),
+        productPicture: 'https://via.placeholder.com/200x150/e5e7eb/9ca3af?text=Product+Image',
+        sellerName: profileData?.["Seller Name"] || 'Unknown Seller',
+        sellerEmail: user.email,
+        sellerPhone: profileData?.["Seller POC Contact Number"] || 'N/A',
+        region: profileData?.["Region"] || 'Unknown Region',
+        sellerVerified: profileData?.["Seller Verified"] || false,
+        rating: profileData?.["Seller Rating"] || 0,
+      }));
+
+      setSellProducts([...sellProducts, ...newProducts]);
+      setShowAddSellModal(false);
+      setSellProductForm([{
+        productName: '',
+        productCategory: 'Pharmaceutical',
+        description: '',
+        minimumQuantity: '',
+        unit: 'Kg',
+        customUnit: ''
+      }]);
+      
+      alert('Products added successfully!');
+    } catch (error) {
+      console.error('Error adding sell products:', error);
+      alert('Failed to add products');
+    } finally {
+      setAddingSellProduct(false);
     }
   };
 
@@ -495,14 +583,38 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
           
           {tab === 'sell' && (
             <div className="sell-content">
-              <input
-                className="product-search-input"
-                type="text"
-                placeholder="Search products you sell..."
-                value={searchSell}
-                onChange={e => setSearchSell(e.target.value)}
-                style={{marginBottom: 16, width: '100%'}}
-              />
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                <input
+                  className="product-search-input"
+                  type="text"
+                  placeholder="Search products you sell..."
+                  value={searchSell}
+                  onChange={e => setSearchSell(e.target.value)}
+                  style={{ width: '70%' }}
+                />
+                <button 
+                  className="add-product-btn"
+                  onClick={() => setShowAddSellModal(true)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '12px 20px',
+                    backgroundColor: '#2563eb',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    transition: 'background-color 0.2s'
+                  }}
+                >
+                  <Plus size={16} />
+                  Add Product
+                </button>
+              </div>
+              
               <h2 className="section-title">Products You Sell</h2>
               
               {loading ? (
@@ -677,6 +789,144 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
                 disabled={!newProductName.trim() || addingProduct}
               >
                 {addingProduct ? 'Adding...' : 'Add Product'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Sell Product Modal */}
+      {showAddSellModal && (
+        <div className="modal-overlay" onClick={() => setShowAddSellModal(false)}>
+          <div className="modal-content sell-product-modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '90%', width: '1200px' }}>
+            <div className="modal-header">
+              <h3>Register Products</h3>
+              <button 
+                className="modal-close-btn"
+                onClick={() => setShowAddSellModal(false)}
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="modal-body">
+              <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: 0, marginBottom: '2rem', borderRadius: '0.5rem', overflow: 'hidden' }}>
+                <thead>
+                  <tr style={{ background: 'linear-gradient(to right, #1A3556, #5DA8E0)', color: 'white' }}>
+                    <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600, textTransform: 'uppercase', fontSize: '0.875rem' }}>Sr No</th>
+                    <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600, textTransform: 'uppercase', fontSize: '0.875rem' }}>Product Name</th>
+                    <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600, textTransform: 'uppercase', fontSize: '0.875rem' }}>Product Category</th>
+                    <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600, textTransform: 'uppercase', fontSize: '0.875rem' }}>Description</th>
+                    <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600, textTransform: 'uppercase', fontSize: '0.875rem' }}>Minimum Quantity</th>
+                    <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600, textTransform: 'uppercase', fontSize: '0.875rem' }}>Unit</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sellProductForm.map((product, index) => (
+                    <tr key={index} style={{ backgroundColor: index % 2 === 0 ? 'white' : '#f8f9fa' }}>
+                      <td style={{ padding: '1rem', borderBottom: '1px solid #e0e0e0' }}>{index + 1}</td>
+                      <td style={{ padding: '1rem', borderBottom: '1px solid #e0e0e0' }}>
+                        <input
+                          type="text"
+                          value={product.productName}
+                          onChange={(e) => handleSellProductChange(index, 'productName', e.target.value)}
+                          style={{ width: '100%', padding: '0.75rem', border: '1px solid #B0B8C4', borderRadius: '0.5rem', fontSize: '1rem' }}
+                          placeholder="Product name"
+                          required
+                        />
+                      </td>
+                      <td style={{ padding: '1rem', borderBottom: '1px solid #e0e0e0' }}>
+                        <select
+                          value={product.productCategory}
+                          onChange={(e) => handleSellProductChange(index, 'productCategory', e.target.value)}
+                          style={{ width: '100%', padding: '0.75rem', border: '1px solid #B0B8C4', borderRadius: '0.5rem', fontSize: '1rem' }}
+                          required
+                        >
+                          <option value="Pharmaceutical">Pharmaceutical</option>
+                          <option value="Industrial">Industrial</option>
+                          <option value="Agrochemical">Agrochemical</option>
+                          <option value="Laboratory">Laboratory</option>
+                        </select>
+                      </td>
+                      <td style={{ padding: '1rem', borderBottom: '1px solid #e0e0e0' }}>
+                        <input
+                          type="text"
+                          value={product.description}
+                          onChange={(e) => handleSellProductChange(index, 'description', e.target.value)}
+                          style={{ width: '100%', padding: '0.75rem', border: '1px solid #B0B8C4', borderRadius: '0.5rem', fontSize: '1rem' }}
+                          placeholder="Description"
+                        />
+                      </td>
+                      <td style={{ padding: '1rem', borderBottom: '1px solid #e0e0e0' }}>
+                        <input
+                          type="number"
+                          value={product.minimumQuantity}
+                          onChange={(e) => handleSellProductChange(index, 'minimumQuantity', e.target.value)}
+                          style={{ width: '100%', padding: '0.75rem', border: '1px solid #B0B8C4', borderRadius: '0.5rem', fontSize: '1rem' }}
+                          placeholder="Min quantity"
+                          min="1"
+                          required
+                        />
+                      </td>
+                      <td style={{ padding: '1rem', borderBottom: '1px solid #e0e0e0' }}>
+                        <select
+                          value={product.unit}
+                          onChange={(e) => handleSellProductChange(index, 'unit', e.target.value)}
+                          style={{ width: '100%', padding: '0.75rem', border: '1px solid #B0B8C4', borderRadius: '0.5rem', fontSize: '1rem' }}
+                          required
+                        >
+                          <option value="Piece">Piece</option>
+                          <option value="Dozen">Dozen</option>
+                          <option value="Unit">Unit</option>
+                          <option value="Cm">Cm</option>
+                          <option value="Inch">Inch</option>
+                          <option value="Feet">Feet</option>
+                          <option value="Meter">Meter</option>
+                          <option value="Gram">Gram</option>
+                          <option value="Kg">Kg</option>
+                          <option value="Tonne">Tonne</option>
+                          <option value="Mtonne">Mtonne</option>
+                          <option value="Litre">Litre</option>
+                          <option value="Other">Other</option>
+                        </select>
+                        {product.unit === 'Other' && (
+                          <input
+                            type="text"
+                            value={product.customUnit}
+                            onChange={(e) => handleSellProductChange(index, 'customUnit', e.target.value)}
+                            style={{ width: '100%', padding: '0.75rem', border: '1px solid #B0B8C4', borderRadius: '0.5rem', fontSize: '1rem', marginTop: '0.5rem' }}
+                            placeholder="Specify unit"
+                            required
+                          />
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="modal-footer">
+              <button 
+                className="modal-submit-btn"
+                onClick={handleAddMoreSellProducts}
+                style={{
+                  backgroundColor: '#5DA8E0',
+                  marginRight: '12px'
+                }}
+              >
+                + Add More
+              </button>
+              <button 
+                className="modal-cancel-btn"
+                onClick={() => setShowAddSellModal(false)}
+              >
+                Cancel
+              </button>
+              <button 
+                className="modal-submit-btn"
+                onClick={handleSubmitSellProducts}
+                disabled={addingSellProduct}
+              >
+                {addingSellProduct ? 'Adding...' : 'Done'}
               </button>
             </div>
           </div>

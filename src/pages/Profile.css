@@ -615,11 +615,88 @@
 }
 
 .modal-submit-btn:disabled {
-  background-color: #9ca3af;
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
 /* Buy item remove button hover effect */
 .buy-item button:hover {
   background-color: #fef2f2 !important;
+}
+
+/* Sell Product Modal Styles */
+.sell-product-modal {
+  max-width: 90% !important;
+  width: 1200px !important;
+}
+
+.sell-product-modal .modal-body {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.sell-product-modal table {
+  font-size: 14px;
+}
+
+.sell-product-modal th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.sell-product-modal input,
+.sell-product-modal select {
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sell-product-modal input:focus,
+.sell-product-modal select:focus {
+  border-color: #5DA8E0 !important;
+  box-shadow: 0 0 0 3px rgba(93, 168, 224, 0.2) !important;
+  outline: none;
+}
+
+.sell-product-modal tr:hover {
+  background-color: #e9ecef !important;
+  transition: background-color 0.3s ease;
+}
+
+/* Responsive styles for sell product modal */
+@media (max-width: 1200px) {
+  .sell-product-modal {
+    width: 95% !important;
+  }
+  
+  .sell-product-modal table {
+    font-size: 12px;
+  }
+  
+  .sell-product-modal th,
+  .sell-product-modal td {
+    padding: 0.5rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .sell-product-modal {
+    width: 98% !important;
+    margin: 10px;
+  }
+  
+  .sell-product-modal .modal-body {
+    padding: 16px;
+  }
+  
+  .sell-product-modal table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  
+  .sell-product-modal th,
+  .sell-product-modal td {
+    min-width: 120px;
+    padding: 0.5rem !important;
+  }
 }
