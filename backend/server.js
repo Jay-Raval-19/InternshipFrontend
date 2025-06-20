@@ -559,6 +559,145 @@ app.get("/api/profile/:email", async (req, res) => {
   }
 });
 
+// Add sell products for a specific email
+app.post("/api/sell-products/add", async (req, res) => {
+  try {
+    const { email, products } = req.body;
+
+    console.log("Adding sell products request:", { email, products });
+
+    if (!email || !products || !Array.isArray(products)) {
+      return res.status(400).json({
+        error: "Email and products array are required",
+      });
+    }
+
+    if (products.length === 0) {
+      return res.status(400).json({
+        error: "At least one product is required",
+      });
+    }
+
+    // Get the chemical-frontend index
+    const index = pinecone.index("chemical-frontend");
+
+    // Create a dummy vector with 1024 dimensions (first element is 1, rest are 0)
+    const dummyVector = new Array(1024).fill(0);
+    dummyVector[0] = 1;
+
+    // First, get the seller's profile data to use for the new products
+    const profileQueryResponse = await index.namespace("chemicals").query({
+      vector: dummyVector,
+      filter: {
+        "Seller Email Address": { $eq: email },
+      },
+      topK: 1,
+      includeMetadata: true,
+    });
+
+    if (
+      !profileQueryResponse.matches ||
+      profileQueryResponse.matches.length === 0
+    ) {
+      return res.status(404).json({
+        error: "Seller profile not found. Please register your business first.",
+      });
+    }
+
+    const profileData = profileQueryResponse.matches[0].metadata;
+    console.log("Found seller profile:", profileData);
+
+    // Check for existing products to avoid duplicates
+    const existingProductsQuery = await index.namespace("chemicals").query({
+      vector: dummyVector,
+      filter: {
+        "Seller Email Address": { $eq: email },
+        "Product Name": { $in: products.map((p) => p.productName) },
+      },
+      topK: 100,
+      includeMetadata: true,
+    });
+
+    const existingProductNames =
+      existingProductsQuery.matches?.map(
+        (match) => match.metadata["Product Name"]
+      ) || [];
+
+    const duplicateProducts = products.filter((product) =>
+      existingProductNames.includes(product.productName)
+    );
+
+    if (duplicateProducts.length > 0) {
+      return res.status(400).json({
+        error: "Some products already exist",
+        duplicates: duplicateProducts.map((p) => p.productName),
+      });
+    }
+
+    // Prepare products for insertion
+    const productsToInsert = products.map((product, index) => {
+      const productId = `sell_product_${Date.now()}_${index}`;
+      const unit = product.unit === "Other" ? product.customUnit : product.unit;
+
+      return {
+        id: productId,
+        values: dummyVector,
+        metadata: {
+          "Product Name": product.productName,
+          "Product Description":
+            product.description || "No description available",
+          "Product Category": product.productCategory,
+          "Product Price": 0, // Default price
+          "Product Size": `${product.minimumQuantity} ${unit}`,
+          "Product Unit": unit,
+          "Minimum Order Quantity": parseInt(product.minimumQuantity) || 1,
+          "Product Pictures":
+            "https://via.placeholder.com/200x150/e5e7eb/9ca3af?text=Product+Image",
+          "Product Rating": 0,
+          "Seller Name": profileData["Seller Name"] || "Unknown Seller",
+          "Seller Email Address": email,
+          "Seller POC Contact Number":
+            profileData["Seller POC Contact Number"] || "N/A",
+          "Seller Address": profileData["Seller Address"] || "N/A",
+          Region: profileData["Region"] || "Unknown Region",
+          "Seller Verified": profileData["Seller Verified"] || false,
+          "Seller Rating": profileData["Seller Rating"] || 0,
+          "PIN Code": profileData["PIN Code"] || "N/A",
+          "Product Address": profileData["Product Address"] || "N/A",
+          "Product ID": productId,
+          "Created At": new Date().toISOString(),
+        },
+      };
+    });
+
+    console.log(
+      "Inserting products:",
+      productsToInsert.map((p) => p.metadata["Product Name"])
+    );
+
+    // Insert all products
+    await index.namespace("chemicals").upsert(productsToInsert);
+
+    console.log(
+      "Successfully added products:",
+      products.map((p) => p.productName)
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Products added successfully",
+      addedProducts: products.map((p) => p.productName),
+      count: products.length,
+    });
+  } catch (error) {
+    console.error("Error adding sell products:", error);
+    res.status(500).json({
+      error: "Failed to add products",
+      details: error.message,
+    });
+  }
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

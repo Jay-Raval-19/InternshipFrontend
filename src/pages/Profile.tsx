@@ -63,133 +63,88 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
     customUnit: ''
   }]);
   const [addingSellProduct, setAddingSellProduct] = useState(false);
+  const [sellLoading, setSellLoading] = useState(false);
 
   // Fetch user's buy products from Pinecone
-  useEffect(() => {
-    const fetchBuyProducts = async () => {
-      if (!user?.email) {
-        console.log("No user email available");
-        setBuyLoading(false);
-        return;
-      }
+  const fetchBuyProducts = async () => {
+    if (!user?.email) return;
 
-      console.log("Fetching buy products for email:", user.email);
+    try {
+      setBuyLoading(true);
+      const response = await fetch(`/api/buy-products/${encodeURIComponent(user.email)}`);
+      const data = await response.json();
 
-      try {
-        setBuyLoading(true);
-        const response = await fetch(`/api/buy-products/${encodeURIComponent(user.email)}`);
-        
-        console.log("API response status:", response.status);
-        console.log("API response ok:", response.ok);
-
-        if (response.ok) {
-          const data = await response.json();
-          console.log("API response data:", data);
-          
-          if (data.success && Array.isArray(data.products)) {
-            console.log("Setting buy products:", data.products);
-            setBuyProducts(data.products);
-          } else {
-            console.log("No products array in response or success is false");
-            setBuyProducts([]);
-          }
-        } else {
-          console.error('Failed to fetch buy products, status:', response.status);
-          const errorText = await response.text();
-          console.error('Error response:', errorText);
-          setBuyProducts([]);
-        }
-      } catch (error) {
-        console.error('Error fetching buy products:', error);
+      if (response.ok) {
+        setBuyProducts(data.products || []);
+      } else {
+        console.error('Error fetching buy products:', data.error);
         setBuyProducts([]);
-      } finally {
-        setBuyLoading(false);
       }
-    };
+    } catch (error) {
+      console.error('Error fetching buy products:', error);
+      setBuyProducts([]);
+    } finally {
+      setBuyLoading(false);
+    }
+  };
 
-    fetchBuyProducts();
-  }, [user?.email]);
+  // Fetch user's sell products from Pinecone
+  const fetchSellProducts = async () => {
+    if (!user?.email) return;
 
-  // Fetch user's products from Pinecone
-  useEffect(() => {
-    const fetchUserProducts = async () => {
-      if (!user?.email) {
-        setLoading(false);
-        return;
-      }
+    try {
+      setSellLoading(true);
+      const response = await fetch('/api/suppliers/email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: user.email }),
+      });
+      const data = await response.json();
 
-      try {
-        setLoading(true);
-        const response = await fetch('/api/suppliers/email', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email: user.email }),
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          if (data.suppliers && Array.isArray(data.suppliers)) {
-            // Transform the data to match the expected format
-            const transformedProducts = data.suppliers.map(supplier => ({
-              productName: supplier.productName || 'Unknown Product',
-              productDescription: supplier.productDescription || 'No description available',
-              category: supplier.productCategory || 'Uncategorized',
-              price: supplier.productPrice || 0,
-              size: supplier.productSize || 'N/A',
-              unit: supplier.productUnit || 'Kg',
-              minOrder: supplier.minimumOrderQuantity || 0,
-              productPicture: supplier.productPictures || 'https://via.placeholder.com/200x150/e5e7eb/9ca3af?text=Product+Image',
-              sellerName: supplier.sellerName || 'Unknown Seller',
-              sellerEmail: supplier.sellerEmail || user.email,
-              sellerPhone: supplier.sellerPOCContactNumber || 'N/A',
-              region: supplier.region || 'Unknown Region',
-              sellerVerified: supplier.sellerVerified || false,
-              rating: supplier.sellerRating || 0,
-            }));
-            setSellProducts(transformedProducts);
-          } else {
-            setSellProducts([]);
-          }
-        } else {
-          console.error('Failed to fetch user products');
-          setSellProducts([]);
-        }
-      } catch (error) {
-        console.error('Error fetching user products:', error);
+      if (response.ok) {
+        setSellProducts(data.suppliers || []);
+      } else {
+        console.error('Error fetching sell products:', data.error);
         setSellProducts([]);
-      } finally {
-        setLoading(false);
       }
-    };
+    } catch (error) {
+      console.error('Error fetching sell products:', error);
+      setSellProducts([]);
+    } finally {
+      setSellLoading(false);
+    }
+  };
 
-    fetchUserProducts();
-  }, [user?.email]);
+  // Fetch profile data from backend
+  const fetchProfileData = async () => {
+    if (!user?.email) return;
 
-  // Fetch real profile data from backend
-  useEffect(() => {
-    const fetchProfile = async () => {
-      if (!user?.email) {
-        setProfileLoading(false);
-        return;
-      }
+    try {
       setProfileLoading(true);
-      try {
-        const response = await fetch(`/api/profile/${encodeURIComponent(user.email)}`);
-        if (response.ok) {
-          const data = await response.json();
-          setProfileData(data.profile);
-        } else {
-          setProfileData(null);
-        }
-      } catch (error) {
+      const response = await fetch(`/api/profile/${encodeURIComponent(user.email)}`);
+      if (response.ok) {
+        const data = await response.json();
+        setProfileData(data.profile);
+      } else {
         setProfileData(null);
-      } finally {
-        setProfileLoading(false);
       }
-    };
-    fetchProfile();
+    } catch (error) {
+      console.error('Error fetching profile data:', error);
+      setProfileData(null);
+    } finally {
+      setProfileLoading(false);
+    }
+  };
+
+  // Fetch data when component mounts
+  useEffect(() => {
+    if (user?.email) {
+      fetchBuyProducts();
+      fetchSellProducts();
+      fetchProfileData();
+    }
   }, [user?.email]);
 
   // Add new product function
@@ -305,36 +260,42 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
     try {
       setAddingSellProduct(true);
       
-      // For now, just add to local state (you can implement backend API later)
-      const newProducts = sellProductForm.map(product => ({
-        productName: product.productName,
-        productDescription: product.description,
-        category: product.productCategory,
-        price: 0, // Default price
-        size: `${product.minimumQuantity} ${product.unit === 'Other' ? product.customUnit : product.unit}`,
-        unit: product.unit === 'Other' ? product.customUnit : product.unit,
-        minOrder: parseInt(product.minimumQuantity),
-        productPicture: 'https://via.placeholder.com/200x150/e5e7eb/9ca3af?text=Product+Image',
-        sellerName: profileData?.["Seller Name"] || 'Unknown Seller',
-        sellerEmail: user.email,
-        sellerPhone: profileData?.["Seller POC Contact Number"] || 'N/A',
-        region: profileData?.["Region"] || 'Unknown Region',
-        sellerVerified: profileData?.["Seller Verified"] || false,
-        rating: profileData?.["Seller Rating"] || 0,
-      }));
+      // Call backend API to add products
+      const response = await fetch('/api/sell-products/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: user.email,
+          products: sellProductForm
+        }),
+      });
 
-      setSellProducts([...sellProducts, ...newProducts]);
-      setShowAddSellModal(false);
-      setSellProductForm([{
-        productName: '',
-        productCategory: 'Pharmaceutical',
-        description: '',
-        minimumQuantity: '',
-        unit: 'Kg',
-        customUnit: ''
-      }]);
-      
-      alert('Products added successfully!');
+      const data = await response.json();
+
+      if (response.ok) {
+        // Refresh the sell products list
+        await fetchSellProducts();
+        
+        setShowAddSellModal(false);
+        setSellProductForm([{
+          productName: '',
+          productCategory: 'Pharmaceutical',
+          description: '',
+          minimumQuantity: '',
+          unit: 'Kg',
+          customUnit: ''
+        }]);
+        
+        alert(`Successfully added ${data.count} product(s)!`);
+      } else {
+        if (data.duplicates && data.duplicates.length > 0) {
+          alert(`Some products already exist: ${data.duplicates.join(', ')}`);
+        } else {
+          alert(data.error || 'Failed to add products');
+        }
+      }
     } catch (error) {
       console.error('Error adding sell products:', error);
       alert('Failed to add products');
@@ -617,7 +578,7 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
               
               <h2 className="section-title">Products You Sell</h2>
               
-              {loading ? (
+              {sellLoading ? (
                 <div className="loading-state">
                   <p>Loading your products...</p>
                 </div>
@@ -670,31 +631,16 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
                               </div>
                               {editIdx === i ? (
                                 <input
-                                  name="category"
-                                  value={editProduct.category}
+                                  name="productCategory"
+                                  value={editProduct.productCategory}
                                   onChange={handleEditChange}
                                   className="profile-edit-input"
                                   placeholder="Category"
                                   style={{marginBottom: 8}}
                                 />
                               ) : (
-                                <p className="product-category">{product.category}</p>
+                                <p className="product-category">{product.productCategory}</p>
                               )}
-                              <div className="product-price">
-                                {editIdx === i ? (
-                                  <input
-                                    name="price"
-                                    value={editProduct.price}
-                                    onChange={handleEditChange}
-                                    className="profile-edit-input"
-                                    placeholder="Price"
-                                    type="number"
-                                    style={{width: 100, marginRight: 8}}
-                                  />
-                                ) : (
-                                  <span className="price">₹{product.price}/Kg</span>
-                                )}
-                              </div>
                               {editIdx === i ? (
                                 <textarea
                                   name="productDescription"
@@ -712,8 +658,8 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
                                   <Package size={16} />
                                   {editIdx === i ? (
                                     <input
-                                      name="minOrder"
-                                      value={editProduct.minOrder}
+                                      name="minimumOrderQuantity"
+                                      value={editProduct.minimumOrderQuantity}
                                       onChange={handleEditChange}
                                       className="profile-edit-input"
                                       placeholder="Minimum Order Quantity"
@@ -721,7 +667,7 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
                                       style={{width: 120}}
                                     />
                                   ) : (
-                                    <span>Min Order: {product.minOrder} Kg</span>
+                                    <span>Min Order: {product.minimumOrderQuantity} {product.productUnit}</span>
                                   )}
                                 </div>
                               </div>
