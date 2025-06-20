@@ -581,47 +581,6 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
                                     <span>Min Order: {product.minOrder} Kg</span>
                                   )}
                                 </div>
-                                <div className="detail-item">
-                                  <Package size={16} />
-                                  {editIdx === i ? (
-                                    <input
-                                      name="size"
-                                      value={editProduct.size}
-                                      onChange={handleEditChange}
-                                      className="profile-edit-input"
-                                      placeholder="Size"
-                                      style={{width: 100}}
-                                    />
-                                  ) : (
-                                    <span>Size: {product.size}</span>
-                                  )}
-                                </div>
-                                <div className="detail-item">
-                                  <MapPin size={16} />
-                                  {editIdx === i ? (
-                                    <input
-                                      name="region"
-                                      value={editProduct.region}
-                                      onChange={handleEditChange}
-                                      className="profile-edit-input"
-                                      placeholder="Region"
-                                      style={{width: 100}}
-                                    />
-                                  ) : (
-                                    <span>{product.region}</span>
-                                  )}
-                                </div>
-                              </div>
-                              <div className="seller-info">
-                                <h4>Seller Information</h4>
-                                <div className="seller-name">
-                                  {product.sellerName} 
-                                  {product.sellerVerified && <span className="verified">✓ Verified</span>}
-                                </div>
-                                <div className="seller-contact">
-                                  <div><Phone size={14} /> {product.sellerPhone}</div>
-                                  <div><Mail size={14} /> {product.sellerEmail}</div>
-                                </div>
                               </div>
                               {editIdx === i && (
                                 <button className="profile-edit-save" style={{marginTop: 12}} onClick={() => handleEditSave(i)}>Save</button>
