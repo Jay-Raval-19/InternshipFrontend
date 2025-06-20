@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart, Package, History, Mail, Building, CreditCard, MapPin, Phone, Pin, Building2, Edit, ChevronDown, ChevronUp } from 'lucide-react';
+import { ShoppingCart, Package, History, Mail, Building, CreditCard, MapPin, Phone, Pin, Building2, Edit, ChevronDown, ChevronUp, Plus, X } from 'lucide-react';
 import './Profile.css';
 
 const mockProfile = {
@@ -14,49 +14,7 @@ const mockProfile = {
   company: 'Mumbai Chemical Solutions',
 };
 
-const mockBuyProducts = [
-  'Acetic Acid',
-  'Sulfuric Acid', 
-  'Ammonia Solution',
-  'Sodium Hydroxide',
-  'Hydrochloric Acid'
-];
-
-// Removed mockSellProducts - now using real data from backend
-// const mockSellProducts = [
-//   {
-//     productName: 'Sodium Thioglycolate',
-//     productDescription: 'White powder with 99% purity, used in cosmetics.',
-//     category: 'Pharmaceutical Chemicals',
-//     price: 205,
-//     size: '50 Kg',
-//     unit: 'Kg',
-//     minOrder: 120,
-//     productPicture: 'https://via.placeholder.com/200x150/e5e7eb/9ca3af?text=Product+Image',
-//     sellerName: 'Varanasi Chem Supplies',
-//     sellerEmail: 'sales@varanasichem.com',
-//     sellerPhone: '9313456789',
-//     region: 'Uttar Pradesh',
-//     sellerVerified: true,
-//     rating: 4.8,
-//   },
-//   {
-//     productName: 'Ethyl Acetate',
-//     productDescription: 'High grade industrial solvent, 98% purity.',
-//     category: 'Industrial Chemicals',
-//     price: 150,
-//     size: '100 Kg',
-//     unit: 'Kg',
-//     minOrder: 200,
-//     productPicture: 'https://via.placeholder.com/200x150/e5e7eb/9ca3af?text=Product+Image',
-//     sellerName: 'Mumbai Chemical Solutions',
-//     sellerEmail: 'contact@mumbaichemicals.com',
-//     sellerPhone: '9876543210',
-//     region: 'Maharashtra',
-//     sellerVerified: true,
-//     rating: 4.7,
-//   },
-// ];
+// Removed mockBuyProducts - now using real data from backend
 
 const TABS = [
   { id: 'buy', label: 'Products You Buy', icon: ShoppingCart },
@@ -76,7 +34,9 @@ interface ProfileProps {
 const Profile: React.FC<ProfileProps> = ({ user }) => {
   const [tab, setTab] = useState('buy');
   const [sellProducts, setSellProducts] = useState([]);
+  const [buyProducts, setBuyProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [buyLoading, setBuyLoading] = useState(true);
   const [editIdx, setEditIdx] = useState(-1);
   const [editProduct, setEditProduct] = useState(null);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
@@ -86,6 +46,57 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
   const [searchBuy, setSearchBuy] = useState('');
   const [searchSell, setSearchSell] = useState('');
   const [expandedSellIdx, setExpandedSellIdx] = useState<number | null>(null);
+  
+  // Add product modal state
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newProductName, setNewProductName] = useState('');
+  const [addingProduct, setAddingProduct] = useState(false);
+
+  // Fetch user's buy products from Pinecone
+  useEffect(() => {
+    const fetchBuyProducts = async () => {
+      if (!user?.email) {
+        console.log("No user email available");
+        setBuyLoading(false);
+        return;
+      }
+
+      console.log("Fetching buy products for email:", user.email);
+
+      try {
+        setBuyLoading(true);
+        const response = await fetch(`/api/buy-products/${encodeURIComponent(user.email)}`);
+        
+        console.log("API response status:", response.status);
+        console.log("API response ok:", response.ok);
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log("API response data:", data);
+          
+          if (data.success && Array.isArray(data.products)) {
+            console.log("Setting buy products:", data.products);
+            setBuyProducts(data.products);
+          } else {
+            console.log("No products array in response or success is false");
+            setBuyProducts([]);
+          }
+        } else {
+          console.error('Failed to fetch buy products, status:', response.status);
+          const errorText = await response.text();
+          console.error('Error response:', errorText);
+          setBuyProducts([]);
+        }
+      } catch (error) {
+        console.error('Error fetching buy products:', error);
+        setBuyProducts([]);
+      } finally {
+        setBuyLoading(false);
+      }
+    };
+
+    fetchBuyProducts();
+  }, [user?.email]);
 
   // Fetch user's products from Pinecone
   useEffect(() => {
@@ -143,6 +154,81 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
 
     fetchUserProducts();
   }, [user?.email]);
+
+  // Add new product function
+  const handleAddProduct = async () => {
+    console.log("handleAddProduct called with:", { newProductName, userEmail: user?.email });
+    
+    if (!newProductName.trim() || !user?.email) {
+      console.log("Validation failed:", { newProductName: newProductName.trim(), userEmail: user?.email });
+      return;
+    }
+
+    try {
+      setAddingProduct(true);
+      console.log("Making API call to add product:", { email: user.email, productName: newProductName.trim() });
+      
+      const response = await fetch('/api/buy-products/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          email: user.email, 
+          productName: newProductName.trim() 
+        }),
+      });
+
+      console.log("Add product response status:", response.status);
+      console.log("Add product response ok:", response.ok);
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Add product success data:", data);
+        setBuyProducts(data.products);
+        setNewProductName('');
+        setShowAddModal(false);
+      } else {
+        const errorData = await response.json();
+        console.error("Add product error:", errorData);
+        alert(errorData.error || 'Failed to add product');
+      }
+    } catch (error) {
+      console.error('Error adding product:', error);
+      alert('Failed to add product');
+    } finally {
+      setAddingProduct(false);
+    }
+  };
+
+  // Remove product function
+  const handleRemoveProduct = async (productName: string) => {
+    if (!user?.email) return;
+
+    try {
+      const response = await fetch('/api/buy-products/remove', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          email: user.email, 
+          productName: productName 
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setBuyProducts(data.products);
+      } else {
+        const errorData = await response.json();
+        alert(errorData.error || 'Failed to remove product');
+      }
+    } catch (error) {
+      console.error('Error removing product:', error);
+      alert('Failed to remove product');
+    }
+  };
 
   const handleEdit = (idx) => {
     setEditIdx(idx);
@@ -303,25 +389,76 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
         <div className="tab-content">
           {tab === 'buy' && (
             <div className="buy-content">
-              <input
-                className="product-search-input"
-                type="text"
-                placeholder="Search products you buy..."
-                value={searchBuy}
-                onChange={e => setSearchBuy(e.target.value)}
-                style={{marginBottom: 16, width: '100%'}}
-              />
-              <h2 className="section-title">Products You Have Bought</h2>
-              <div className="buy-grid">
-                {mockBuyProducts
-                  .filter(product => product.toLowerCase().includes(searchBuy.toLowerCase()))
-                  .map((product, i) => (
-                    <div key={i} className="buy-item">
-                      <Package className="buy-icon" />
-                      <span>{product}</span>
-                    </div>
-                ))}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                <input
+                  className="product-search-input"
+                  type="text"
+                  placeholder="Search products you buy..."
+                  value={searchBuy}
+                  onChange={e => setSearchBuy(e.target.value)}
+                  style={{ width: '70%' }}
+                />
+                <button 
+                  className="add-product-btn"
+                  onClick={() => setShowAddModal(true)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '12px 20px',
+                    backgroundColor: '#2563eb',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    transition: 'background-color 0.2s'
+                  }}
+                >
+                  <Plus size={16} />
+                  Add Product
+                </button>
               </div>
+              
+              <h2 className="section-title">Products You Have Bought</h2>
+              
+              {buyLoading ? (
+                <div className="loading-state">
+                  <p>Loading your buy products...</p>
+                </div>
+              ) : buyProducts.length === 0 ? (
+                <div className="empty-state">
+                  <p>No products found in your buy list.</p>
+                  <p>Click "Add Product" to start adding chemicals you buy.</p>
+                </div>
+              ) : (
+                <div className="buy-grid">
+                  {buyProducts
+                    .filter(product => product.toLowerCase().includes(searchBuy.toLowerCase()))
+                    .map((product, i) => (
+                      <div key={i} className="buy-item" style={{ position: 'relative' }}>
+                        <Package className="buy-icon" />
+                        <span style={{ flex: 1 }}>{product}</span>
+                        <button
+                          onClick={() => handleRemoveProduct(product)}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: '#ef4444',
+                            cursor: 'pointer',
+                            padding: '4px',
+                            borderRadius: '4px',
+                            transition: 'background-color 0.2s'
+                          }}
+                          title="Remove product"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
           
@@ -507,6 +644,54 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
           )}
         </div>
       </main>
+
+      {/* Add Product Modal */}
+      {showAddModal && (
+        <div className="modal-overlay" onClick={() => setShowAddModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Add New Product</h3>
+              <button 
+                className="modal-close-btn"
+                onClick={() => setShowAddModal(false)}
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="modal-body">
+              <label htmlFor="productName">Chemical Name:</label>
+              <input
+                id="productName"
+                type="text"
+                value={newProductName}
+                onChange={(e) => setNewProductName(e.target.value)}
+                placeholder="Enter chemical name (e.g., Acetic Acid)"
+                className="modal-input"
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    handleAddProduct();
+                  }
+                }}
+              />
+            </div>
+            <div className="modal-footer">
+              <button 
+                className="modal-cancel-btn"
+                onClick={() => setShowAddModal(false)}
+              >
+                Cancel
+              </button>
+              <button 
+                className="modal-submit-btn"
+                onClick={handleAddProduct}
+                disabled={!newProductName.trim() || addingProduct}
+              >
+                {addingProduct ? 'Adding...' : 'Add Product'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

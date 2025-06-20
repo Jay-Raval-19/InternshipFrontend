@@ -66,6 +66,17 @@ async function testPineconeConnection() {
     if (emailQueryResponse.matches && emailQueryResponse.matches.length > 0) {
       console.log("✅ Email found in database!");
       console.log("Supplier data:", emailQueryResponse.matches[0].metadata);
+      let products = [];
+      if (Array.isArray(emailQueryResponse.matches[0].metadata.productList)) {
+        products = emailQueryResponse.matches[0].metadata.productList;
+      } else if (
+        typeof emailQueryResponse.matches[0].metadata.productList === "string"
+      ) {
+        products = JSON.parse(
+          emailQueryResponse.matches[0].metadata.productList
+        );
+      }
+      console.log("Products:", products);
     } else {
       console.log("❌ Email not found in database");
     }
