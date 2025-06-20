@@ -14,7 +14,7 @@ const mockProfile = {
   company: 'Mumbai Chemical Solutions',
 };
 
-// Removed mockBuyProducts - now using real data from backend
+const DUMMY_GST = '22AAAAA0000A1Z5';
 
 const TABS = [
   { id: 'buy', label: 'Products You Buy', icon: ShoppingCart },
@@ -41,8 +41,6 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
   const [editProduct, setEditProduct] = useState(null);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [isEditingPin, setIsEditingPin] = useState(false);
-  const [addressValue, setAddressValue] = useState(mockProfile.address);
-  const [pinValue, setPinValue] = useState(mockProfile.pin);
   const [searchBuy, setSearchBuy] = useState('');
   const [searchSell, setSearchSell] = useState('');
   const [expandedSellIdx, setExpandedSellIdx] = useState<number | null>(null);
@@ -51,6 +49,8 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [newProductName, setNewProductName] = useState('');
   const [addingProduct, setAddingProduct] = useState(false);
+  const [profileData, setProfileData] = useState<any>(null);
+  const [profileLoading, setProfileLoading] = useState(true);
 
   // Fetch user's buy products from Pinecone
   useEffect(() => {
@@ -153,6 +153,31 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
     };
 
     fetchUserProducts();
+  }, [user?.email]);
+
+  // Fetch real profile data from backend
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!user?.email) {
+        setProfileLoading(false);
+        return;
+      }
+      setProfileLoading(true);
+      try {
+        const response = await fetch(`/api/profile/${encodeURIComponent(user.email)}`);
+        if (response.ok) {
+          const data = await response.json();
+          setProfileData(data.profile);
+        } else {
+          setProfileData(null);
+        }
+      } catch (error) {
+        setProfileData(null);
+      } finally {
+        setProfileLoading(false);
+      }
+    };
+    fetchProfile();
   }, [user?.email]);
 
   // Add new product function
@@ -258,11 +283,13 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
     // Optionally, update backend here
   };
 
-  // Use user data if available, otherwise fall back to mock data
-  const displayName = user?.displayName || mockProfile.fullName;
-  const email = user?.email || mockProfile.gmail;
+  // Use profileData if available, otherwise fall back to mock data
+  const displayName = profileData?.["Seller Name"] || user?.displayName || mockProfile.fullName;
+  const email = profileData?.["Seller Email Address"] || user?.email || mockProfile.gmail;
   const profilePhoto = user?.photoURL;
-  const userPhone = user?.phone || mockProfile.phone;
+  const userPhone = profileData?.["Seller POC Contact Number"] || user?.phone || mockProfile.phone;
+  const company = profileData?.["Seller Name"] || mockProfile.company;
+  const gstValue = DUMMY_GST;
 
   return (
     <div className="profile-container">
@@ -278,7 +305,7 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
               />
             </div>
             <h2 className="profile-name">{displayName}</h2>
-            <p className="profile-company">{mockProfile.company}</p>
+            <p className="profile-company">{company}</p>
           </div>
           
           <div className="profile-info">
@@ -293,14 +320,14 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
               <Building2 className="info-icon" />
               <div>
                 <span className="info-label">COMPANY</span>
-                <span className="info-value">{mockProfile.company}</span>
+                <span className="info-value">{company}</span>
               </div>
             </div>
             <div className="info-item">
               <CreditCard className="info-icon" />
               <div>
                 <span className="info-label">GST NUMBER</span>
-                <span className="info-value">{mockProfile.gst}</span>
+                <span className="info-value">{gstValue}</span>
               </div>
             </div>
             
@@ -313,15 +340,17 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
                     <>
                       <input
                         className="profile-edit-input"
-                        value={addressValue}
-                        onChange={e => setAddressValue(e.target.value)}
+                        value={profileData?.["Seller Address"] || mockProfile.address}
+                        onChange={e => {
+                          // Handle address change
+                        }}
                         style={{marginRight: 8, width: '80%'}}
                       />
                       <button className="profile-edit-save" onClick={handleAddressSave}>Save</button>
                     </>
                   ) : (
                     <>
-                      <span className="info-value" style={{marginRight: 8}}>{addressValue}</span>
+                      <span className="info-value" style={{marginRight: 8}}>{profileData?.["Seller Address"] || mockProfile.address}</span>
                       <button className="profile-edit-icon-btn" onClick={handleAddressEdit} title="Edit address">
                         <Edit size={18} />
                       </button>
@@ -339,15 +368,17 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
                     <>
                       <input
                         className="profile-edit-input"
-                        value={pinValue}
-                        onChange={e => setPinValue(e.target.value)}
+                        value={profileData?.["PIN Code"] || mockProfile.pin}
+                        onChange={e => {
+                          // Handle pin change
+                        }}
                         style={{marginRight: 8, width: '50%'}}
                       />
                       <button className="profile-edit-save" onClick={handlePinSave}>Save</button>
                     </>
                   ) : (
                     <>
-                      <span className="info-value" style={{marginRight: 8}}>{pinValue}</span>
+                      <span className="info-value" style={{marginRight: 8}}>{profileData?.["PIN Code"] || mockProfile.pin}</span>
                       <button className="profile-edit-icon-btn" onClick={handlePinEdit} title="Edit pincode">
                         <Edit size={18} />
                       </button>

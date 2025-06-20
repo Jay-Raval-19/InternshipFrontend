@@ -518,6 +518,47 @@ app.post("/api/send-email", async (req, res) => {
   }
 });
 
+// Get profile info for a specific email
+app.get("/api/profile/:email", async (req, res) => {
+  try {
+    const { email } = req.params;
+    if (!email) {
+      return res.status(400).json({ error: "Email is required" });
+    }
+    // Get the chemical-frontend index
+    const index = pinecone.index("chemical-frontend");
+    // Create a dummy vector with 1024 dimensions (first element is 1, rest are 0)
+    const dummyVector = new Array(1024).fill(0);
+    dummyVector[0] = 1;
+    // Query the index for the email in the "chemicals" namespace
+    const queryResponse = await index.namespace("chemicals").query({
+      vector: dummyVector,
+      filter: {
+        "Seller Email Address": { $eq: email },
+      },
+      topK: 1,
+      includeMetadata: true,
+    });
+    if (queryResponse.matches && queryResponse.matches.length > 0) {
+      const metadata = queryResponse.matches[0].metadata;
+      res.status(200).json({
+        success: true,
+        profile: metadata,
+      });
+    } else {
+      res.status(404).json({
+        error: "No profile found for this email",
+      });
+    }
+  } catch (error) {
+    console.error("Error fetching profile info:", error);
+    res.status(500).json({
+      error: "Failed to fetch profile info",
+      details: error.message,
+    });
+  }
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
