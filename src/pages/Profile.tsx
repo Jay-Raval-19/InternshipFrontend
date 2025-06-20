@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart, Package, History, Mail, Building, CreditCard, MapPin, Phone, Pin, Building2, Edit, ChevronDown, ChevronUp, Plus, X } from 'lucide-react';
+import { ShoppingCart, Package, History, Mail, Building, CreditCard, MapPin, Phone, Pin, Building2, Edit, ChevronDown, ChevronUp, Plus, X, FileText, DollarSign, Download, Share2 } from 'lucide-react';
 import './Profile.css';
 
 const mockProfile = {
@@ -68,6 +68,96 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
   // Edit and delete sell products state
   const [editingSellProduct, setEditingSellProduct] = useState<any>(null);
   const [deletingSellProduct, setDeletingSellProduct] = useState<string | null>(null);
+
+  // History section state
+  const [historyTab, setHistoryTab] = useState<'inquiry' | 'quotation'>('inquiry');
+
+  // Search state for history sections
+  const [inquirySearch, setInquirySearch] = useState('');
+  const [quotationSearch, setQuotationSearch] = useState('');
+
+  // Dummy data for history section
+  const inquiryData = [
+    {
+      id: 1,
+      date: '2024-01-15',
+      productName: 'Acetic Acid',
+      productCategory: 'Pharmaceutical',
+      moq: 100,
+      unit: 'Kg',
+      pdfLink: 'https://example.com/inquiry1.pdf'
+    },
+    {
+      id: 2,
+      date: '2024-01-10',
+      productName: 'Sulfuric Acid',
+      productCategory: 'Industrial',
+      moq: 500,
+      unit: 'Litre',
+      pdfLink: 'https://example.com/inquiry2.pdf'
+    },
+    {
+      id: 3,
+      date: '2024-01-05',
+      productName: 'Hydrochloric Acid',
+      productCategory: 'Laboratory',
+      moq: 50,
+      unit: 'Kg',
+      pdfLink: 'https://example.com/inquiry3.pdf'
+    },
+    {
+      id: 4,
+      date: '2023-12-28',
+      productName: 'Sodium Hydroxide',
+      productCategory: 'Industrial',
+      moq: 200,
+      unit: 'Kg',
+      pdfLink: 'https://example.com/inquiry4.pdf'
+    }
+  ];
+
+  const quotationData = [
+    {
+      id: 1,
+      productName: 'Acetic Acid',
+      unitRate: 85,
+      cashRate: 80,
+      paymentTerms: '50% advance, 50% before delivery',
+      deliveryTime: '7-10 business days',
+      additionalExpenses: 'Transportation charges extra',
+      description: 'High purity acetic acid suitable for pharmaceutical applications'
+    },
+    {
+      id: 2,
+      productName: 'Sulfuric Acid',
+      unitRate: 45,
+      cashRate: 42,
+      paymentTerms: '100% advance payment',
+      deliveryTime: '5-7 business days',
+      additionalExpenses: 'GST extra as applicable',
+      description: 'Concentrated sulfuric acid for industrial use'
+    },
+    {
+      id: 3,
+      productName: 'Hydrochloric Acid',
+      unitRate: 65,
+      cashRate: 60,
+      paymentTerms: '30% advance, 70% on delivery',
+      deliveryTime: '3-5 business days',
+      additionalExpenses: 'Packaging charges included',
+      description: 'Laboratory grade hydrochloric acid'
+    },
+    {
+      id: 4,
+      productName: 'Sodium Hydroxide',
+      unitRate: 55,
+      cashRate: 52,
+      paymentTerms: 'Net 30 days',
+      deliveryTime: '10-15 business days',
+      additionalExpenses: 'Insurance charges extra',
+      description: 'Industrial grade sodium hydroxide pellets'
+    }
+  ];
 
   // Fetch user's buy products from Pinecone
   const fetchBuyProducts = async () => {
@@ -821,8 +911,419 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
           
           {tab === 'history' && (
             <div className="history-content">
-              <h2 className="section-title">History</h2>
-              <p className="empty-state">No history available yet.</p>
+              {/* History Tabs and Search Bar in one row */}
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '24px',
+                gap: '24px',
+              }}>
+                <div className="history-tabs" style={{
+                  display: 'flex',
+                  gap: '0',
+                  background: 'white',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '8px',
+                  padding: '4px',
+                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+                  maxWidth: 'fit-content',
+                  height: '48px',
+                  alignItems: 'center',
+                }}>
+                  <button
+                    className={`history-tab-btn ${historyTab === 'inquiry' ? 'active' : ''}`}
+                    onClick={() => setHistoryTab('inquiry')}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '12px 24px',
+                      border: 'none',
+                      background: historyTab === 'inquiry' ? '#eff6ff' : 'none',
+                      color: historyTab === 'inquiry' ? '#2563eb' : '#6b7280',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      borderRadius: '6px',
+                      transition: 'all 0.2s ease',
+                      borderBottom: historyTab === 'inquiry' ? '2px solid #2563eb' : 'none',
+                      height: '40px',
+                    }}
+                  >
+                    <FileText size={16} />
+                    Inquiry Raised
+                  </button>
+                  <button
+                    className={`history-tab-btn ${historyTab === 'quotation' ? 'active' : ''}`}
+                    onClick={() => setHistoryTab('quotation')}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '12px 24px',
+                      border: 'none',
+                      background: historyTab === 'quotation' ? '#eff6ff' : 'none',
+                      color: historyTab === 'quotation' ? '#2563eb' : '#6b7280',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      borderRadius: '6px',
+                      transition: 'all 0.2s ease',
+                      borderBottom: historyTab === 'quotation' ? '2px solid #2563eb' : 'none',
+                      height: '40px',
+                    }}
+                  >
+                    <DollarSign size={16} />
+                    Quotation Sent
+                  </button>
+                </div>
+                {/* Search Bar - Aligned and centered with tabs */}
+                <div style={{ display: 'flex', alignItems: 'center', height: '48px' }}>
+                  {historyTab === 'inquiry' && (
+                    <input
+                      type="text"
+                      placeholder="Search inquiries..."
+                      value={inquirySearch}
+                      onChange={(e) => setInquirySearch(e.target.value)}
+                      style={{
+                        padding: '12px 16px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '6px',
+                        fontSize: '14px',
+                        width: '250px',
+                        outline: 'none',
+                        transition: 'border-color 0.2s ease',
+                        height: '40px',
+                        boxSizing: 'border-box',
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
+                      onFocus={(e) => e.target.style.borderColor = '#2563eb'}
+                      onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
+                    />
+                  )}
+                  {historyTab === 'quotation' && (
+                    <input
+                      type="text"
+                      placeholder="Search quotations..."
+                      value={quotationSearch}
+                      onChange={(e) => setQuotationSearch(e.target.value)}
+                      style={{
+                        padding: '12px 16px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '6px',
+                        fontSize: '14px',
+                        width: '250px',
+                        outline: 'none',
+                        transition: 'border-color 0.2s ease',
+                        height: '40px',
+                        boxSizing: 'border-box',
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
+                      onFocus={(e) => e.target.style.borderColor = '#2563eb'}
+                      onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
+                    />
+                  )}
+                </div>
+              </div>
+
+              {/* Inquiry Raised Content */}
+              {historyTab === 'inquiry' && (
+                <div className="inquiry-content">
+                  <div className="inquiry-grid" style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
+                    gap: '20px'
+                  }}>
+                    {inquiryData
+                      .filter(inquiry => 
+                        inquiry.productName.toLowerCase().includes(inquirySearch.toLowerCase()) ||
+                        inquiry.productCategory.toLowerCase().includes(inquirySearch.toLowerCase()) ||
+                        inquiry.unit.toLowerCase().includes(inquirySearch.toLowerCase())
+                      )
+                      .map((inquiry) => (
+                      <div key={inquiry.id} className="inquiry-card" style={{
+                        background: 'white',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '12px',
+                        padding: '20px',
+                        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+                        transition: 'box-shadow 0.2s ease'
+                      }}>
+                        <div className="inquiry-header" style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'flex-start',
+                          marginBottom: '16px'
+                        }}>
+                          <div>
+                            <h3 style={{
+                              fontSize: '18px',
+                              fontWeight: '600',
+                              color: '#1f2937',
+                              margin: '0 0 4px 0'
+                            }}>
+                              {inquiry.productName}
+                            </h3>
+                            <p style={{
+                              fontSize: '14px',
+                              color: '#6b7280',
+                              margin: '0'
+                            }}>
+                              {inquiry.productCategory}
+                            </p>
+                          </div>
+                          <div style={{
+                            textAlign: 'right'
+                          }}>
+                            <div style={{
+                              fontSize: '12px',
+                              color: '#6b7280',
+                              marginBottom: '4px'
+                            }}>
+                              Date
+                            </div>
+                            <div style={{
+                              fontSize: '14px',
+                              fontWeight: '500',
+                              color: '#1f2937'
+                            }}>
+                              {new Date(inquiry.date).toLocaleDateString()}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="inquiry-details" style={{
+                          display: 'grid',
+                          gridTemplateColumns: '1fr 1fr',
+                          gap: '12px',
+                          marginBottom: '16px'
+                        }}>
+                          <div>
+                            <div style={{
+                              fontSize: '12px',
+                              color: '#6b7280',
+                              marginBottom: '2px'
+                            }}>
+                              MOQ
+                            </div>
+                            <div style={{
+                              fontSize: '14px',
+                              fontWeight: '500',
+                              color: '#1f2937'
+                            }}>
+                              {inquiry.moq} {inquiry.unit}
+                            </div>
+                          </div>
+                          <div>
+                            <div style={{
+                              fontSize: '12px',
+                              color: '#6b7280',
+                              marginBottom: '2px'
+                            }}>
+                              Unit
+                            </div>
+                            <div style={{
+                              fontSize: '14px',
+                              fontWeight: '500',
+                              color: '#1f2937'
+                            }}>
+                              {inquiry.unit}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="inquiry-actions">
+                          <a
+                            href={inquiry.pdfLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px',
+                              padding: '8px 16px',
+                              backgroundColor: '#2563eb',
+                              color: 'white',
+                              textDecoration: 'none',
+                              borderRadius: '6px',
+                              fontSize: '14px',
+                              fontWeight: '500',
+                              transition: 'background-color 0.2s ease',
+                              width: 'fit-content'
+                            }}
+                            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#1d4ed8'}
+                            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
+                          >
+                            <FileText size={16} />
+                            View PDF
+                          </a>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Quotation Sent Content */}
+              {historyTab === 'quotation' && (
+                <div className="quotation-content">
+                  <div className="quotation-grid" style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))',
+                    gap: '20px'
+                  }}>
+                    {quotationData
+                      .filter(quotation => 
+                        quotation.productName.toLowerCase().includes(quotationSearch.toLowerCase()) ||
+                        quotation.description.toLowerCase().includes(quotationSearch.toLowerCase()) ||
+                        quotation.paymentTerms.toLowerCase().includes(quotationSearch.toLowerCase()) ||
+                        quotation.deliveryTime.toLowerCase().includes(quotationSearch.toLowerCase())
+                      )
+                      .map((quotation) => (
+                      <div key={quotation.id} className="quotation-card" style={{
+                        background: 'white',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '12px',
+                        padding: '20px',
+                        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+                        transition: 'box-shadow 0.2s ease'
+                      }}>
+                        <div className="quotation-header" style={{
+                          marginBottom: '16px'
+                        }}>
+                          <h3 style={{
+                            fontSize: '18px',
+                            fontWeight: '600',
+                            color: '#1f2937',
+                            margin: '0 0 8px 0'
+                          }}>
+                            {quotation.productName}
+                          </h3>
+                          <p style={{
+                            fontSize: '14px',
+                            color: '#6b7280',
+                            margin: '0',
+                            lineHeight: '1.5'
+                          }}>
+                            {quotation.description}
+                          </p>
+                        </div>
+
+                        <div className="quotation-pricing" style={{
+                          display: 'grid',
+                          gridTemplateColumns: '1fr 1fr',
+                          gap: '12px',
+                          marginBottom: '16px',
+                          padding: '12px',
+                          backgroundColor: '#f8fafc',
+                          borderRadius: '8px'
+                        }}>
+                          <div>
+                            <div style={{
+                              fontSize: '12px',
+                              color: '#6b7280',
+                              marginBottom: '2px'
+                            }}>
+                              Unit Rate
+                            </div>
+                            <div style={{
+                              fontSize: '16px',
+                              fontWeight: '600',
+                              color: '#059669'
+                            }}>
+                              ₹{quotation.unitRate}/unit
+                            </div>
+                          </div>
+                          <div>
+                            <div style={{
+                              fontSize: '12px',
+                              color: '#6b7280',
+                              marginBottom: '2px'
+                            }}>
+                              Cash Rate
+                            </div>
+                            <div style={{
+                              fontSize: '16px',
+                              fontWeight: '600',
+                              color: '#dc2626'
+                            }}>
+                              ₹{quotation.cashRate}/unit
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="quotation-details" style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '8px',
+                          marginBottom: '16px'
+                        }}>
+                          <div style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                          }}>
+                            <span style={{
+                              fontSize: '12px',
+                              color: '#6b7280'
+                            }}>
+                              Payment Terms
+                            </span>
+                            <span style={{
+                              fontSize: '14px',
+                              fontWeight: '500',
+                              color: '#1f2937'
+                            }}>
+                              {quotation.paymentTerms}
+                            </span>
+                          </div>
+                          <div style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                          }}>
+                            <span style={{
+                              fontSize: '12px',
+                              color: '#6b7280'
+                            }}>
+                              Delivery Time
+                            </span>
+                            <span style={{
+                              fontSize: '14px',
+                              fontWeight: '500',
+                              color: '#1f2937'
+                            }}>
+                              {quotation.deliveryTime}
+                            </span>
+                          </div>
+                          <div style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                          }}>
+                            <span style={{
+                              fontSize: '12px',
+                              color: '#6b7280'
+                            }}>
+                              Additional Expenses
+                            </span>
+                            <span style={{
+                              fontSize: '14px',
+                              fontWeight: '500',
+                              color: '#1f2937'
+                            }}>
+                              {quotation.additionalExpenses}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
