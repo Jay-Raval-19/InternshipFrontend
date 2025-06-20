@@ -104,6 +104,89 @@ app.post("/api/check-email", async (req, res) => {
   }
 });
 
+// Get all suppliers/products for a specific email
+app.post("/api/suppliers/email", async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ error: "Email is required" });
+    }
+
+    // Get the index with the correct namespace
+    const index = pinecone.index(
+      process.env.PINECONE_INDEX_NAME || "chemical-frontend"
+    );
+
+    // Create a dummy vector with 1024 dimensions (all zeros)
+    const dummyVector = new Array(1024).fill(0);
+
+    // Query the index for all records with the email in the "chemicals" namespace
+    const queryResponse = await index.namespace("chemicals").query({
+      vector: dummyVector,
+      filter: {
+        "Seller Email Address": { $eq: email },
+      },
+      topK: 100, // Get up to 100 products for this email
+      includeMetadata: true,
+    });
+
+    console.log(
+      "Pinecone query response for suppliers:",
+      JSON.stringify(queryResponse, null, 2)
+    );
+
+    if (queryResponse.matches && queryResponse.matches.length > 0) {
+      // Transform the data to match the frontend expectations
+      const suppliers = queryResponse.matches.map((match) => {
+        const metadata = match.metadata;
+        return {
+          productName: metadata["Product Name"] || "Unknown Product",
+          productDescription:
+            metadata["Product Description"] || "No description available",
+          productCategory: metadata["Product Category"] || "Uncategorized",
+          productPrice: metadata["Product Price"] || 0,
+          productSize: metadata["Product Size"] || "N/A",
+          productUnit: metadata["Product Unit"] || "Kg",
+          minimumOrderQuantity: metadata["Minimum Order Quantity"] || 0,
+          productPictures: metadata["Product Pictures"] || "",
+          productRating: metadata["Product Rating"] || 0,
+          sellerName: metadata["Seller Name"] || "Unknown Seller",
+          sellerEmail: metadata["Seller Email Address"] || email,
+          sellerPOCContactNumber:
+            metadata["Seller POC Contact Number"] || "N/A",
+          sellerAddress: metadata["Seller Address"] || "N/A",
+          region: metadata["Region"] || "Unknown Region",
+          sellerVerified: metadata["Seller Verified"] || false,
+          sellerRating: metadata["Seller Rating"] || 0,
+          pinCode: metadata["PIN Code"] || "N/A",
+          productAddress: metadata["Product Address"] || "N/A",
+        };
+      });
+
+      res.status(200).json({
+        success: true,
+        suppliers: suppliers,
+        count: suppliers.length,
+      });
+    } else {
+      // No products found for this email
+      res.status(200).json({
+        success: true,
+        suppliers: [],
+        count: 0,
+        message: "No products found for this email",
+      });
+    }
+  } catch (error) {
+    console.error("Error fetching suppliers by email:", error);
+    res.status(500).json({
+      error: "Failed to fetch suppliers",
+      details: error.message,
+    });
+  }
+});
+
 // Email sending endpoint
 app.post("/api/send-email", async (req, res) => {
   console.log("Received email request:", req.body);

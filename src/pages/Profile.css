@@ -347,9 +347,26 @@
 /* History */
 .empty-state {
   text-align: center;
+  padding: 48px 24px;
   color: #6b7280;
   font-size: 16px;
-  padding: 40px 0;
+}
+
+.loading-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: #6b7280;
+  font-size: 16px;
+}
+
+.loading-state p {
+  margin: 0;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
 
 /* Responsive */

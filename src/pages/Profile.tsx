@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ShoppingCart, Package, History, Mail, Building, CreditCard, MapPin, Phone, Pin, Building2, Edit, ChevronDown, ChevronUp } from 'lucide-react';
 import './Profile.css';
 
@@ -22,40 +22,41 @@ const mockBuyProducts = [
   'Hydrochloric Acid'
 ];
 
-const mockSellProducts = [
-  {
-    productName: 'Sodium Thioglycolate',
-    productDescription: 'White powder with 99% purity, used in cosmetics.',
-    category: 'Pharmaceutical Chemicals',
-    price: 205,
-    size: '50 Kg',
-    unit: 'Kg',
-    minOrder: 120,
-    productPicture: 'https://via.placeholder.com/200x150/e5e7eb/9ca3af?text=Product+Image',
-    sellerName: 'Varanasi Chem Supplies',
-    sellerEmail: 'sales@varanasichem.com',
-    sellerPhone: '9313456789',
-    region: 'Uttar Pradesh',
-    sellerVerified: true,
-    rating: 4.8,
-  },
-  {
-    productName: 'Ethyl Acetate',
-    productDescription: 'High grade industrial solvent, 98% purity.',
-    category: 'Industrial Chemicals',
-    price: 150,
-    size: '100 Kg',
-    unit: 'Kg',
-    minOrder: 200,
-    productPicture: 'https://via.placeholder.com/200x150/e5e7eb/9ca3af?text=Product+Image',
-    sellerName: 'Mumbai Chemical Solutions',
-    sellerEmail: 'contact@mumbaichemicals.com',
-    sellerPhone: '9876543210',
-    region: 'Maharashtra',
-    sellerVerified: true,
-    rating: 4.7,
-  },
-];
+// Removed mockSellProducts - now using real data from backend
+// const mockSellProducts = [
+//   {
+//     productName: 'Sodium Thioglycolate',
+//     productDescription: 'White powder with 99% purity, used in cosmetics.',
+//     category: 'Pharmaceutical Chemicals',
+//     price: 205,
+//     size: '50 Kg',
+//     unit: 'Kg',
+//     minOrder: 120,
+//     productPicture: 'https://via.placeholder.com/200x150/e5e7eb/9ca3af?text=Product+Image',
+//     sellerName: 'Varanasi Chem Supplies',
+//     sellerEmail: 'sales@varanasichem.com',
+//     sellerPhone: '9313456789',
+//     region: 'Uttar Pradesh',
+//     sellerVerified: true,
+//     rating: 4.8,
+//   },
+//   {
+//     productName: 'Ethyl Acetate',
+//     productDescription: 'High grade industrial solvent, 98% purity.',
+//     category: 'Industrial Chemicals',
+//     price: 150,
+//     size: '100 Kg',
+//     unit: 'Kg',
+//     minOrder: 200,
+//     productPicture: 'https://via.placeholder.com/200x150/e5e7eb/9ca3af?text=Product+Image',
+//     sellerName: 'Mumbai Chemical Solutions',
+//     sellerEmail: 'contact@mumbaichemicals.com',
+//     sellerPhone: '9876543210',
+//     region: 'Maharashtra',
+//     sellerVerified: true,
+//     rating: 4.7,
+//   },
+// ];
 
 const TABS = [
   { id: 'buy', label: 'Products You Buy', icon: ShoppingCart },
@@ -74,7 +75,8 @@ interface ProfileProps {
 
 const Profile: React.FC<ProfileProps> = ({ user }) => {
   const [tab, setTab] = useState('buy');
-  const [sellProducts, setSellProducts] = useState(mockSellProducts);
+  const [sellProducts, setSellProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [editIdx, setEditIdx] = useState(-1);
   const [editProduct, setEditProduct] = useState(null);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
@@ -84,6 +86,63 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
   const [searchBuy, setSearchBuy] = useState('');
   const [searchSell, setSearchSell] = useState('');
   const [expandedSellIdx, setExpandedSellIdx] = useState<number | null>(null);
+
+  // Fetch user's products from Pinecone
+  useEffect(() => {
+    const fetchUserProducts = async () => {
+      if (!user?.email) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        const response = await fetch('/api/suppliers/email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email: user.email }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.suppliers && Array.isArray(data.suppliers)) {
+            // Transform the data to match the expected format
+            const transformedProducts = data.suppliers.map(supplier => ({
+              productName: supplier.productName || 'Unknown Product',
+              productDescription: supplier.productDescription || 'No description available',
+              category: supplier.productCategory || 'Uncategorized',
+              price: supplier.productPrice || 0,
+              size: supplier.productSize || 'N/A',
+              unit: supplier.productUnit || 'Kg',
+              minOrder: supplier.minimumOrderQuantity || 0,
+              productPicture: supplier.productPictures || 'https://via.placeholder.com/200x150/e5e7eb/9ca3af?text=Product+Image',
+              sellerName: supplier.sellerName || 'Unknown Seller',
+              sellerEmail: supplier.sellerEmail || user.email,
+              sellerPhone: supplier.sellerPOCContactNumber || 'N/A',
+              region: supplier.region || 'Unknown Region',
+              sellerVerified: supplier.sellerVerified || false,
+              rating: supplier.sellerRating || 0,
+            }));
+            setSellProducts(transformedProducts);
+          } else {
+            setSellProducts([]);
+          }
+        } else {
+          console.error('Failed to fetch user products');
+          setSellProducts([]);
+        }
+      } catch (error) {
+        console.error('Error fetching user products:', error);
+        setSellProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserProducts();
+  }, [user?.email]);
 
   const handleEdit = (idx) => {
     setEditIdx(idx);
@@ -277,154 +336,166 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
                 style={{marginBottom: 16, width: '100%'}}
               />
               <h2 className="section-title">Products You Sell</h2>
-              <div className="sell-grid">
-                {sellProducts
-                  .filter(product => product.productName.toLowerCase().includes(searchSell.toLowerCase()))
-                  .map((product, i) => {
-                    const isExpanded = expandedSellIdx === i;
-                    return (
-                      <div
-                        key={i}
-                        className={`sell-item-card${isExpanded ? ' expanded' : ''}`}
-                        style={{ cursor: 'pointer', marginBottom: 16, border: '1px solid #eee', borderRadius: 8, boxShadow: isExpanded ? '0 2px 8px rgba(0,0,0,0.08)' : 'none', transition: 'box-shadow 0.2s' }}
-                      >
-                        <div 
-                          style={{ display: 'flex', alignItems: 'center', padding: 16 }}
-                          onClick={() => setExpandedSellIdx(isExpanded ? null : i)}
+              
+              {loading ? (
+                <div className="loading-state">
+                  <p>Loading your products...</p>
+                </div>
+              ) : sellProducts.length === 0 ? (
+                <div className="empty-state">
+                  <p>No products found for your account.</p>
+                  <p>Products you add to the system will appear here.</p>
+                </div>
+              ) : (
+                <div className="sell-grid">
+                  {sellProducts
+                    .filter(product => product.productName.toLowerCase().includes(searchSell.toLowerCase()))
+                    .map((product, i) => {
+                      const isExpanded = expandedSellIdx === i;
+                      return (
+                        <div
+                          key={i}
+                          className={`sell-item-card${isExpanded ? ' expanded' : ''}`}
+                          style={{ cursor: 'pointer', marginBottom: 16, border: '1px solid #eee', borderRadius: 8, boxShadow: isExpanded ? '0 2px 8px rgba(0,0,0,0.08)' : 'none', transition: 'box-shadow 0.2s' }}
                         >
-                          <Package className="buy-icon" />
-                          <span style={{ flex: 1, marginLeft: 12, fontWeight: 600 }}>{product.productName}</span>
-                          {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-                        </div>
-                        {isExpanded && (
                           <div 
-                            style={{ padding: 16, borderTop: '1px solid #eee', background: '#fafbfc' }}
-                            onClick={(e) => e.stopPropagation()}
+                            style={{ display: 'flex', alignItems: 'center', padding: 16 }}
+                            onClick={() => setExpandedSellIdx(isExpanded ? null : i)}
                           >
-                            <div className="product-header">
-                              {editIdx === i ? (
-                                <input
-                                  name="productName"
-                                  value={editProduct.productName}
-                                  onChange={handleEditChange}
-                                  className="profile-edit-input"
-                                  placeholder="Product Name"
-                                  style={{fontWeight: 600, fontSize: '18px', marginBottom: 0}}
-                                />
-                              ) : (
-                                <h3 className="product-name">{product.productName}</h3>
-                              )}
-                              <button className="edit-btn" onClick={() => handleEdit(i)}>
-                                <Edit size={16} />
-                              </button>
-                            </div>
-                            {editIdx === i ? (
-                              <input
-                                name="category"
-                                value={editProduct.category}
-                                onChange={handleEditChange}
-                                className="profile-edit-input"
-                                placeholder="Category"
-                                style={{marginBottom: 8}}
-                              />
-                            ) : (
-                              <p className="product-category">{product.category}</p>
-                            )}
-                            <div className="product-price">
-                              {editIdx === i ? (
-                                <input
-                                  name="price"
-                                  value={editProduct.price}
-                                  onChange={handleEditChange}
-                                  className="profile-edit-input"
-                                  placeholder="Price"
-                                  type="number"
-                                  style={{width: 100, marginRight: 8}}
-                                />
-                              ) : (
-                                <span className="price">₹{product.price}/Kg</span>
-                              )}
-                            </div>
-                            {editIdx === i ? (
-                              <textarea
-                                name="productDescription"
-                                value={editProduct.productDescription}
-                                onChange={handleEditChange}
-                                className="profile-edit-input"
-                                placeholder="Product Description"
-                                style={{marginBottom: 8, width: '100%', minHeight: 60}}
-                              />
-                            ) : (
-                              <p className="product-description">{product.productDescription}</p>
-                            )}
-                            <div className="product-details">
-                              <div className="detail-item">
-                                <Package size={16} />
-                                {editIdx === i ? (
-                                  <input
-                                    name="minOrder"
-                                    value={editProduct.minOrder}
-                                    onChange={handleEditChange}
-                                    className="profile-edit-input"
-                                    placeholder="Minimum Order Quantity"
-                                    type="number"
-                                    style={{width: 120}}
-                                  />
-                                ) : (
-                                  <span>Min Order: {product.minOrder} Kg</span>
-                                )}
-                              </div>
-                              <div className="detail-item">
-                                <Package size={16} />
-                                {editIdx === i ? (
-                                  <input
-                                    name="size"
-                                    value={editProduct.size}
-                                    onChange={handleEditChange}
-                                    className="profile-edit-input"
-                                    placeholder="Size"
-                                    style={{width: 100}}
-                                  />
-                                ) : (
-                                  <span>Size: {product.size}</span>
-                                )}
-                              </div>
-                              <div className="detail-item">
-                                <MapPin size={16} />
-                                {editIdx === i ? (
-                                  <input
-                                    name="region"
-                                    value={editProduct.region}
-                                    onChange={handleEditChange}
-                                    className="profile-edit-input"
-                                    placeholder="Region"
-                                    style={{width: 100}}
-                                  />
-                                ) : (
-                                  <span>{product.region}</span>
-                                )}
-                              </div>
-                            </div>
-                            <div className="seller-info">
-                              <h4>Seller Information</h4>
-                              <div className="seller-name">
-                                {product.sellerName} 
-                                {product.sellerVerified && <span className="verified">✓ Verified</span>}
-                              </div>
-                              <div className="seller-contact">
-                                <div><Phone size={14} /> {product.sellerPhone}</div>
-                                <div><Mail size={14} /> {product.sellerEmail}</div>
-                              </div>
-                            </div>
-                            {editIdx === i && (
-                              <button className="profile-edit-save" style={{marginTop: 12}} onClick={() => handleEditSave(i)}>Save</button>
-                            )}
+                            <Package className="buy-icon" />
+                            <span style={{ flex: 1, marginLeft: 12, fontWeight: 600 }}>{product.productName}</span>
+                            {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                           </div>
-                        )}
-                      </div>
-                    );
-                  })}
-              </div>
+                          {isExpanded && (
+                            <div 
+                              style={{ padding: 16, borderTop: '1px solid #eee', background: '#fafbfc' }}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <div className="product-header">
+                                {editIdx === i ? (
+                                  <input
+                                    name="productName"
+                                    value={editProduct.productName}
+                                    onChange={handleEditChange}
+                                    className="profile-edit-input"
+                                    placeholder="Product Name"
+                                    style={{fontWeight: 600, fontSize: '18px', marginBottom: 0}}
+                                  />
+                                ) : (
+                                  <h3 className="product-name">{product.productName}</h3>
+                                )}
+                                <button className="edit-btn" onClick={() => handleEdit(i)}>
+                                  <Edit size={16} />
+                                </button>
+                              </div>
+                              {editIdx === i ? (
+                                <input
+                                  name="category"
+                                  value={editProduct.category}
+                                  onChange={handleEditChange}
+                                  className="profile-edit-input"
+                                  placeholder="Category"
+                                  style={{marginBottom: 8}}
+                                />
+                              ) : (
+                                <p className="product-category">{product.category}</p>
+                              )}
+                              <div className="product-price">
+                                {editIdx === i ? (
+                                  <input
+                                    name="price"
+                                    value={editProduct.price}
+                                    onChange={handleEditChange}
+                                    className="profile-edit-input"
+                                    placeholder="Price"
+                                    type="number"
+                                    style={{width: 100, marginRight: 8}}
+                                  />
+                                ) : (
+                                  <span className="price">₹{product.price}/Kg</span>
+                                )}
+                              </div>
+                              {editIdx === i ? (
+                                <textarea
+                                  name="productDescription"
+                                  value={editProduct.productDescription}
+                                  onChange={handleEditChange}
+                                  className="profile-edit-input"
+                                  placeholder="Product Description"
+                                  style={{marginBottom: 8, width: '100%', minHeight: 60}}
+                                />
+                              ) : (
+                                <p className="product-description">{product.productDescription}</p>
+                              )}
+                              <div className="product-details">
+                                <div className="detail-item">
+                                  <Package size={16} />
+                                  {editIdx === i ? (
+                                    <input
+                                      name="minOrder"
+                                      value={editProduct.minOrder}
+                                      onChange={handleEditChange}
+                                      className="profile-edit-input"
+                                      placeholder="Minimum Order Quantity"
+                                      type="number"
+                                      style={{width: 120}}
+                                    />
+                                  ) : (
+                                    <span>Min Order: {product.minOrder} Kg</span>
+                                  )}
+                                </div>
+                                <div className="detail-item">
+                                  <Package size={16} />
+                                  {editIdx === i ? (
+                                    <input
+                                      name="size"
+                                      value={editProduct.size}
+                                      onChange={handleEditChange}
+                                      className="profile-edit-input"
+                                      placeholder="Size"
+                                      style={{width: 100}}
+                                    />
+                                  ) : (
+                                    <span>Size: {product.size}</span>
+                                  )}
+                                </div>
+                                <div className="detail-item">
+                                  <MapPin size={16} />
+                                  {editIdx === i ? (
+                                    <input
+                                      name="region"
+                                      value={editProduct.region}
+                                      onChange={handleEditChange}
+                                      className="profile-edit-input"
+                                      placeholder="Region"
+                                      style={{width: 100}}
+                                    />
+                                  ) : (
+                                    <span>{product.region}</span>
+                                  )}
+                                </div>
+                              </div>
+                              <div className="seller-info">
+                                <h4>Seller Information</h4>
+                                <div className="seller-name">
+                                  {product.sellerName} 
+                                  {product.sellerVerified && <span className="verified">✓ Verified</span>}
+                                </div>
+                                <div className="seller-contact">
+                                  <div><Phone size={14} /> {product.sellerPhone}</div>
+                                  <div><Mail size={14} /> {product.sellerEmail}</div>
+                                </div>
+                              </div>
+                              {editIdx === i && (
+                                <button className="profile-edit-save" style={{marginTop: 12}} onClick={() => handleEditSave(i)}>Save</button>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                </div>
+              )}
             </div>
           )}
           
