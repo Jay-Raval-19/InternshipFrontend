@@ -65,6 +65,10 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
   const [addingSellProduct, setAddingSellProduct] = useState(false);
   const [sellLoading, setSellLoading] = useState(false);
 
+  // Edit and delete sell products state
+  const [editingSellProduct, setEditingSellProduct] = useState<any>(null);
+  const [deletingSellProduct, setDeletingSellProduct] = useState<string | null>(null);
+
   // Fetch user's buy products from Pinecone
   const fetchBuyProducts = async () => {
     if (!user?.email) return;
@@ -146,6 +150,16 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
       fetchProfileData();
     }
   }, [user?.email]);
+
+  // Restore active tab from sessionStorage
+  useEffect(() => {
+    const savedTab = sessionStorage.getItem('profileActiveTab');
+    if (savedTab && ['buy', 'sell', 'history'].includes(savedTab)) {
+      setTab(savedTab);
+      // Clear the stored tab after restoring
+      sessionStorage.removeItem('profileActiveTab');
+    }
+  }, []);
 
   // Add new product function
   const handleAddProduct = async () => {
@@ -234,6 +248,14 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
     }]);
   };
 
+  // Delete a row from sell product form
+  const handleDeleteSellProductRow = (index: number) => {
+    if (sellProductForm.length > 1) {
+      const updatedProducts = sellProductForm.filter((_, i) => i !== index);
+      setSellProductForm(updatedProducts);
+    }
+  };
+
   // Update sell product form data
   const handleSellProductChange = (index: number, field: string, value: string) => {
     const updatedProducts = [...sellProductForm];
@@ -245,22 +267,31 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
   const handleSubmitSellProducts = async () => {
     if (!user?.email) return;
 
-    // Validate form
-    const isValid = sellProductForm.every(product => 
-      product.productName.trim() && 
+    // Filter out empty rows (rows where productName is empty)
+    const validProducts = sellProductForm.filter(product => 
+      product.productName.trim() !== ''
+    );
+
+    if (validProducts.length === 0) {
+      alert('Please fill in at least one product');
+      return;
+    }
+
+    // Validate remaining products
+    const isValid = validProducts.every(product => 
       product.minimumQuantity.trim() && 
       (product.unit !== 'Other' || product.customUnit.trim())
     );
 
     if (!isValid) {
-      alert('Please fill in all required fields');
+      alert('Please fill in all required fields for the products you want to add');
       return;
     }
 
     try {
       setAddingSellProduct(true);
       
-      // Call backend API to add products
+      // Call backend API to add products (only valid ones)
       const response = await fetch('/api/sell-products/add', {
         method: 'POST',
         headers: {
@@ -268,7 +299,7 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
         },
         body: JSON.stringify({
           email: user.email,
-          products: sellProductForm
+          products: validProducts
         }),
       });
 
@@ -289,6 +320,11 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
         }]);
         
         alert(`Successfully added ${data.count} product(s)!`);
+        
+        // Store current tab before reloading
+        sessionStorage.setItem('profileActiveTab', tab);
+        // Reload the page to show changes
+        window.location.reload();
       } else {
         if (data.duplicates && data.duplicates.length > 0) {
           alert(`Some products already exist: ${data.duplicates.join(', ')}`);
@@ -319,6 +355,92 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
     setSellProducts(updated);
     setEditIdx(-1);
     setEditProduct(null);
+  };
+
+  // Edit sell product
+  const handleEditSellProduct = (product: any) => {
+    setEditingSellProduct({
+      productId: product.productId,
+      productName: product.productName,
+      productDescription: product.productDescription,
+      productCategory: product.productCategory,
+      minimumOrderQuantity: product.minimumOrderQuantity,
+      productUnit: product.productUnit
+    });
+  };
+
+  // Update sell product
+  const handleUpdateSellProduct = async () => {
+    if (!editingSellProduct) return;
+
+    try {
+      const response = await fetch('/api/sell-products/update', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          productId: editingSellProduct.productId,
+          updatedData: editingSellProduct
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Refresh the sell products list
+        await fetchSellProducts();
+        setEditingSellProduct(null);
+        alert('Product updated successfully!');
+        
+        // Store current tab before reloading
+        sessionStorage.setItem('profileActiveTab', tab);
+        // Reload the page to show changes
+        window.location.reload();
+      } else {
+        alert(data.error || 'Failed to update product');
+      }
+    } catch (error) {
+      console.error('Error updating sell product:', error);
+      alert('Failed to update product');
+    }
+  };
+
+  // Delete sell product
+  const handleDeleteSellProduct = async (productId: string) => {
+    if (!confirm('Are you sure you want to delete this product?')) return;
+
+    try {
+      setDeletingSellProduct(productId);
+      
+      const response = await fetch('/api/sell-products/delete', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ productId }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Refresh the sell products list
+        await fetchSellProducts();
+        alert('Product deleted successfully!');
+        
+        // Store current tab before reloading
+        sessionStorage.setItem('profileActiveTab', tab);
+        // Reload the page to show changes
+        window.location.reload();
+      } else {
+        alert(data.error || 'Failed to delete product');
+      }
+    } catch (error) {
+      console.error('Error deleting sell product:', error);
+      alert('Failed to delete product');
+    } finally {
+      setDeletingSellProduct(null);
+    }
   };
 
   const handleAddressEdit = () => setIsEditingAddress(true);
@@ -625,9 +747,22 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
                                 ) : (
                                   <h3 className="product-name">{product.productName}</h3>
                                 )}
-                                <button className="edit-btn" onClick={() => handleEdit(i)}>
-                                  <Edit size={16} />
-                                </button>
+                                <div style={{ display: 'flex', gap: '8px' }}>
+                                  <button className="edit-btn" onClick={() => handleEditSellProduct(product)}>
+                                    <Edit size={16} />
+                                  </button>
+                                  <button 
+                                    className="edit-btn" 
+                                    onClick={() => handleDeleteSellProduct(product.productId)}
+                                    disabled={deletingSellProduct === product.productId}
+                                  >
+                                    {deletingSellProduct === product.productId ? (
+                                      <span style={{ fontSize: '12px' }}>...</span>
+                                    ) : (
+                                      <X size={16} />
+                                    )}
+                                  </button>
+                                </div>
                               </div>
                               {editIdx === i ? (
                                 <input
@@ -764,6 +899,7 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
                     <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600, textTransform: 'uppercase', fontSize: '0.875rem' }}>Description</th>
                     <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600, textTransform: 'uppercase', fontSize: '0.875rem' }}>Minimum Quantity</th>
                     <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600, textTransform: 'uppercase', fontSize: '0.875rem' }}>Unit</th>
+                    <th style={{ padding: '1rem', textAlign: 'center', fontWeight: 600, textTransform: 'uppercase', fontSize: '0.875rem' }}>Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -845,6 +981,31 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
                           />
                         )}
                       </td>
+                      <td style={{ padding: '1rem', borderBottom: '1px solid #e0e0e0', textAlign: 'center' }}>
+                        {sellProductForm.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteSellProductRow(index)}
+                            style={{
+                              padding: '0.5rem',
+                              backgroundColor: '#dc3545',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '0.25rem',
+                              cursor: 'pointer',
+                              fontSize: '0.875rem',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              minWidth: '32px',
+                              height: '32px'
+                            }}
+                            title="Delete row"
+                          >
+                            <X size={16} />
+                          </button>
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -873,6 +1034,119 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
                 disabled={addingSellProduct}
               >
                 {addingSellProduct ? 'Adding...' : 'Done'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Sell Product Modal */}
+      {editingSellProduct && (
+        <div className="modal-overlay" onClick={() => setEditingSellProduct(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Edit Product</h3>
+              <button 
+                className="modal-close-btn"
+                onClick={() => setEditingSellProduct(null)}
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="modal-body">
+              <label htmlFor="editProductName">Product Name:</label>
+              <input
+                id="editProductName"
+                type="text"
+                value={editingSellProduct.productName}
+                onChange={(e) => setEditingSellProduct({
+                  ...editingSellProduct,
+                  productName: e.target.value
+                })}
+                className="modal-input"
+                placeholder="Product name"
+              />
+              
+              <label htmlFor="editProductCategory">Category:</label>
+              <select
+                id="editProductCategory"
+                value={editingSellProduct.productCategory}
+                onChange={(e) => setEditingSellProduct({
+                  ...editingSellProduct,
+                  productCategory: e.target.value
+                })}
+                className="modal-input"
+              >
+                <option value="Pharmaceutical">Pharmaceutical</option>
+                <option value="Industrial">Industrial</option>
+                <option value="Agrochemical">Agrochemical</option>
+                <option value="Laboratory">Laboratory</option>
+              </select>
+              
+              <label htmlFor="editProductDescription">Description:</label>
+              <textarea
+                id="editProductDescription"
+                value={editingSellProduct.productDescription}
+                onChange={(e) => setEditingSellProduct({
+                  ...editingSellProduct,
+                  productDescription: e.target.value
+                })}
+                className="modal-input"
+                placeholder="Product description"
+                rows={3}
+              />
+              
+              <label htmlFor="editMinimumQuantity">Minimum Order Quantity:</label>
+              <input
+                id="editMinimumQuantity"
+                type="number"
+                value={editingSellProduct.minimumOrderQuantity}
+                onChange={(e) => setEditingSellProduct({
+                  ...editingSellProduct,
+                  minimumOrderQuantity: parseInt(e.target.value) || 0
+                })}
+                className="modal-input"
+                placeholder="Minimum quantity"
+                min="1"
+              />
+              
+              <label htmlFor="editProductUnit">Unit:</label>
+              <select
+                id="editProductUnit"
+                value={editingSellProduct.productUnit}
+                onChange={(e) => setEditingSellProduct({
+                  ...editingSellProduct,
+                  productUnit: e.target.value
+                })}
+                className="modal-input"
+              >
+                <option value="Piece">Piece</option>
+                <option value="Dozen">Dozen</option>
+                <option value="Unit">Unit</option>
+                <option value="Cm">Cm</option>
+                <option value="Inch">Inch</option>
+                <option value="Feet">Feet</option>
+                <option value="Meter">Meter</option>
+                <option value="Gram">Gram</option>
+                <option value="Kg">Kg</option>
+                <option value="Tonne">Tonne</option>
+                <option value="Mtonne">Mtonne</option>
+                <option value="Litre">Litre</option>
+              </select>
+            </div>
+            <div className="modal-footer">
+              <button 
+                className="modal-cancel-btn"
+                onClick={() => setEditingSellProduct(null)}
+              >
+                Cancel
+              </button>
+              <button 
+                className="modal-submit-btn"
+                onClick={handleUpdateSellProduct}
+                disabled={!editingSellProduct.productName.trim()}
+              >
+                Update Product
               </button>
             </div>
           </div>

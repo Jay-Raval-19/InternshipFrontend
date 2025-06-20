@@ -143,6 +143,7 @@ app.post("/api/suppliers/email", async (req, res) => {
       const suppliers = queryResponse.matches.map((match) => {
         const metadata = match.metadata;
         return {
+          productId: match.id, // Add the Product ID for edit/delete operations
           productName: metadata["Product Name"] || "Unknown Product",
           productDescription:
             metadata["Product Description"] || "No description available",
@@ -693,6 +694,125 @@ app.post("/api/sell-products/add", async (req, res) => {
     console.error("Error adding sell products:", error);
     res.status(500).json({
       error: "Failed to add products",
+      details: error.message,
+    });
+  }
+});
+
+// Update a sell product
+app.put("/api/sell-products/update", async (req, res) => {
+  try {
+    const { productId, updatedData } = req.body;
+
+    if (!productId || !updatedData) {
+      return res.status(400).json({
+        error: "Product ID and updated data are required",
+      });
+    }
+
+    // Get the chemical-frontend index
+    const index = pinecone.index("chemical-frontend");
+
+    // Create a dummy vector with 1024 dimensions (first element is 1, rest are 0)
+    const dummyVector = new Array(1024).fill(0);
+    dummyVector[0] = 1;
+
+    // First, get the existing product to preserve seller information
+    const queryResponse = await index.namespace("chemicals").query({
+      vector: dummyVector,
+      filter: {
+        "Product ID": { $eq: productId },
+      },
+      topK: 1,
+      includeMetadata: true,
+    });
+
+    if (!queryResponse.matches || queryResponse.matches.length === 0) {
+      return res.status(404).json({
+        error: "Product not found",
+      });
+    }
+
+    const existingProduct = queryResponse.matches[0];
+    const existingMetadata = existingProduct.metadata;
+
+    // Update the metadata with new values while preserving seller info
+    const updatedMetadata = {
+      ...existingMetadata,
+      "Product Name":
+        updatedData.productName || existingMetadata["Product Name"],
+      "Product Description":
+        updatedData.productDescription ||
+        existingMetadata["Product Description"],
+      "Product Category":
+        updatedData.productCategory || existingMetadata["Product Category"],
+      "Product Size": `${
+        updatedData.minimumOrderQuantity ||
+        existingMetadata["Minimum Order Quantity"]
+      } ${updatedData.productUnit || existingMetadata["Product Unit"]}`,
+      "Product Unit":
+        updatedData.productUnit || existingMetadata["Product Unit"],
+      "Minimum Order Quantity":
+        parseInt(updatedData.minimumOrderQuantity) ||
+        existingMetadata["Minimum Order Quantity"],
+      "Updated At": new Date().toISOString(),
+    };
+
+    // Delete the existing record and create updated one
+    await index.namespace("chemicals").deleteOne(productId);
+
+    await index.namespace("chemicals").upsert([
+      {
+        id: productId,
+        values: dummyVector,
+        metadata: updatedMetadata,
+      },
+    ]);
+
+    console.log("Successfully updated product:", productId);
+
+    res.status(200).json({
+      success: true,
+      message: "Product updated successfully",
+      productId: productId,
+    });
+  } catch (error) {
+    console.error("Error updating sell product:", error);
+    res.status(500).json({
+      error: "Failed to update product",
+      details: error.message,
+    });
+  }
+});
+
+// Delete a sell product
+app.delete("/api/sell-products/delete", async (req, res) => {
+  try {
+    const { productId } = req.body;
+
+    if (!productId) {
+      return res.status(400).json({
+        error: "Product ID is required",
+      });
+    }
+
+    // Get the chemical-frontend index
+    const index = pinecone.index("chemical-frontend");
+
+    // Delete the product from the database
+    await index.namespace("chemicals").deleteOne(productId);
+
+    console.log("Successfully deleted product:", productId);
+
+    res.status(200).json({
+      success: true,
+      message: "Product deleted successfully",
+      productId: productId,
+    });
+  } catch (error) {
+    console.error("Error deleting sell product:", error);
+    res.status(500).json({
+      error: "Failed to delete product",
       details: error.message,
     });
   }
