@@ -50,11 +50,11 @@ app.post("/api/check-email", async (req, res) => {
 
     // Get the index with the correct namespace
     const index = pinecone.index(
-      process.env.PINECONE_INDEX_NAME || "sourceasy-suppliers"
+      process.env.PINECONE_INDEX_NAME || "chemical-frontend"
     );
 
-    // Create a dummy vector with 1536 dimensions (all zeros)
-    const dummyVector = new Array(1536).fill(0);
+    // Create a dummy vector with 1024 dimensions (all zeros)
+    const dummyVector = new Array(1024).fill(0);
 
     // Query the index for the email in the "chemicals" namespace
     const queryResponse = await index.namespace("chemicals").query({
@@ -159,6 +159,6 @@ app.listen(PORT, () => {
   });
   console.log("Pinecone configuration:", {
     apiKey: process.env.PINECONE_API_KEY ? "****" : "not set",
-    indexName: process.env.PINECONE_INDEX_NAME || "sourceasy-suppliers",
+    indexName: process.env.PINECONE_INDEX_NAME || "chemical-frontend",
   });
 });

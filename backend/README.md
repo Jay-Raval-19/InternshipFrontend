@@ -19,7 +19,7 @@ EMAIL_PASS=your-app-password
 
 # Pinecone Configuration
 PINECONE_API_KEY=your-pinecone-api-key
-PINECONE_INDEX_NAME=sourceasy-suppliers
+PINECONE_INDEX_NAME=chemical-frontend
 
 # Server Configuration
 PORT=5000
@@ -35,7 +35,7 @@ PORT=5000
 ### Pinecone Configuration
 
 - `PINECONE_API_KEY`: Your Pinecone API key
-- `PINECONE_INDEX_NAME`: The name of your Pinecone index (default: "sourceasy-suppliers")
+- `PINECONE_INDEX_NAME`: The name of your Pinecone index (default: "chemical-frontend")
 
 ### Server Configuration
 
